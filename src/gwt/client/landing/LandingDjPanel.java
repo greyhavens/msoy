@@ -15,6 +15,7 @@ import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
+import client.util.InfoCallback;
 
 public class LandingDjPanel extends SimplePanel
 {
@@ -33,13 +34,18 @@ public class LandingDjPanel extends SimplePanel
         content.add(fbLogon);
 
         // https://developers.facebook.com/docs/reference/plugins/facepile/
-        String appId = FBConnect.getKey();
-        Frame facepile = new Frame("http://www.facebook.com/plugins/facepile.php?app_id=" + appId +
-            "&colorscheme=dark");
+        final Frame facepile = new Frame();
         facepile.setStyleName("FacePile");
         facepile.getElement().setAttribute("scrolling", "no");
         facepile.getElement().setAttribute("frameborder", "0");
         facepile.getElement().setAttribute("allowTransparency", "true");
+        FBConnect.wait(new InfoCallback<Void>() {
+            public void onSuccess (Void _) {
+                String appId = FBConnect.getKey();
+                facepile.setUrl("http://www.facebook.com/plugins/facepile.php?app_id=" + appId +
+                    "&colorscheme=dark");
+            }
+        });
         content.add(facepile);
 
         // text and copyright

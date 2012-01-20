@@ -13,6 +13,7 @@ import com.threerings.msoy.web.gwt.SessionData;
 
 import client.shell.CShell;
 import client.shell.Session;
+import client.util.InfoCallback;
 
 /**
  * Handles communication with Facebook Connect. WARNING: This references window.top for convenient
@@ -23,6 +24,8 @@ public class FBConnect
     /**
      * Loads up our Facebook Connect credentials from cookies. Returns null if no creds could be
      * found.
+     *
+     * DANGER: Do not call unless you're sure fbhelper has loaded! Use wait()
      */
     public static FacebookCreds readCreds ()
     {
@@ -45,7 +48,11 @@ public class FBConnect
                 // nada
             }
             public void didLogoff () {
-                logoff();
+                wait(new InfoCallback<Void>() {
+                    public void onSuccess (Void _) {
+                        logoff();
+                    }
+                });
             }
         });
     }
@@ -56,7 +63,19 @@ public class FBConnect
      * @param onReady called when the user's session is ready supplying their Facebook uid as the
      * argument.
      */
-    public native void requireSession (AsyncCallback<String> onReady) /*-{
+    public void requireSession (final AsyncCallback<String> onReady)
+    {
+        wait(new AsyncCallback<Void>() {
+            public void onSuccess (Void _) {
+                getSession(onReady);
+            }
+            public void onFailure (Throwable t) {
+                onReady.onFailure(t);
+            }
+        });
+    }
+
+    protected native void getSession (AsyncCallback<String> onReady) /*-{
         try {
             $wnd.top.FB_RequireSessionCallback = function (uid) {
                 onReady.@com.google.gwt.user.client.rpc.AsyncCallback::onSuccess(Ljava/lang/Object;)(uid);
@@ -87,7 +106,37 @@ public class FBConnect
         }
     }-*/;
 
+    /**
+     * Gets the FB app ID.
+     *
+     * DANGER: Do not call unless you're sure fbhelper has loaded! Use wait()
+     */
     public static native String getKey () /*-{
         return $wnd.top.FB_GetKey();
+    }-*/;
+
+    /**
+     * Calls onReady when the fbhelper script has finished loading.
+     */
+    public static native void wait (AsyncCallback<Void> onReady) /*-{
+        var onload = function () {
+            onReady.@com.google.gwt.user.client.rpc.AsyncCallback::onSuccess(Ljava/lang/Object;)();
+        };
+
+        if ("FB_GetKey" in $wnd.top) {
+            onload();
+
+        } else {
+            var fbhelper = $wnd.top.document.getElementById("fbhelper");
+            if (fbhelper.addEventListener) {
+                fbhelper.addEventListener("load", function listener () {
+                    fbhelper.removeEventListener("load", listener, false);
+                    onload();
+                }, false);
+            } else if (fbhelper.attachEvent) {
+                // Legacy IE ludicrousy
+                fbhelper.attachEvent("onload", onload);
+            }
+        }
     }-*/;
 }
