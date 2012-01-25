@@ -48,7 +48,7 @@ public class ABTestLogic
         // register new tests here
         // registerTest("NAME", 4 /* num groups */, false /* only new */, false /* landing */);
         registerTest("2010 05 register (1) room (2)", 2, true, true);
-        registerTest("2012 01 DJ landings, dark (1) light (2)", 2, false, true);
+        registerTest("2012 01 DJ landings, dark (1) light (2)", 2, true, true);
 
         // mark any tests that are no longer registered as ended, purge really old tests
         Set<Integer> activeIds = Sets.newHashSet();
