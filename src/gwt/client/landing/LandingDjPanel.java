@@ -21,7 +21,7 @@ public class LandingDjPanel extends SimplePanel
 {
     public LandingDjPanel (boolean light)
     {
-        final String scheme = light ? "light" : "dark";
+        String scheme = light ? "light" : "dark";
         setStyleName("landingDj " + scheme);
         FlowPanel content = MsoyUI.createFlowPanel("Content");
         this.add(content);
@@ -33,26 +33,11 @@ public class LandingDjPanel extends SimplePanel
         FBLogonPanel fbLogon = new FBLogonPanel(
             "/images/account/fbconnect_big.png", "/images/ui/bar_loader.gif");
         fbLogon.setStyleName("Connect");
+        content.add(MsoyUI.createHTML(_msgs.djFooter(), "Info"));
         content.add(fbLogon);
-
-        // https://developers.facebook.com/docs/reference/plugins/facepile/
-        final Frame facepile = new Frame();
-        facepile.setStyleName("FacePile");
-        facepile.getElement().setAttribute("scrolling", "no");
-        facepile.getElement().setAttribute("frameborder", "0");
-        facepile.getElement().setAttribute("allowTransparency", "true");
-        FBConnect.wait(new InfoCallback<Void>() {
-            public void onSuccess (Void _) {
-                String appId = FBConnect.getKey();
-                facepile.setUrl("http://www.facebook.com/plugins/facepile.php?app_id=" + appId +
-                    "&colorscheme=" + scheme);
-            }
-        });
-        content.add(facepile);
 
         // text and copyright
         FlowPanel footer = MsoyUI.createFlowPanel("Footer");
-        footer.add(MsoyUI.createHTML(_msgs.djFooter(), "Info"));
         footer.add(LandingCopyright.addFinePrint(MsoyUI.createFlowPanel("Copyright")));
         content.add(footer);
     }
