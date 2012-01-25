@@ -58,9 +58,9 @@ public class SubNaviPanel extends FlowPanel
             if (CShell.isGuest()) {
                 addLink(null, "Home", Pages.LANDING);
             } else {
+                addImageLink("/images/me/menu_home.png", "Home",
+                             Pages.WORLD, Args.compose("m" + memberId));
                 if (!CShell.getClientMode().isMinimal()) {
-                    addImageLink("/images/me/menu_home.png", "Home",
-                                 Pages.WORLD, Args.compose("m" + memberId));
                     addLink(null, "My Rooms", Pages.PEOPLE, "rooms", memberId);
                 }
                 if (CShell.isRegistered()) {
