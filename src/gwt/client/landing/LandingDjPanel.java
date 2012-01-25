@@ -19,9 +19,10 @@ import client.util.InfoCallback;
 
 public class LandingDjPanel extends SimplePanel
 {
-    public LandingDjPanel ()
+    public LandingDjPanel (boolean light)
     {
-        setStyleName("landingDj");
+        final String scheme = light ? "light" : "dark";
+        setStyleName("landingDj " + scheme);
         FlowPanel content = MsoyUI.createFlowPanel("Content");
         this.add(content);
 
@@ -29,7 +30,8 @@ public class LandingDjPanel extends SimplePanel
         content.add(MsoyUI.createImage("/images/landing/monsterave/logo_big_white.png", "Logo"));
 
         // login box
-        FBLogonPanel fbLogon = new FBLogonPanel("/images/account/fbconnect_big.png", "/images/ui/bar_loader.gif");
+        FBLogonPanel fbLogon = new FBLogonPanel(
+            "/images/account/fbconnect_big.png", "/images/ui/bar_loader.gif");
         fbLogon.setStyleName("Connect");
         content.add(fbLogon);
 
@@ -43,7 +45,7 @@ public class LandingDjPanel extends SimplePanel
             public void onSuccess (Void _) {
                 String appId = FBConnect.getKey();
                 facepile.setUrl("http://www.facebook.com/plugins/facepile.php?app_id=" + appId +
-                    "&colorscheme=dark");
+                    "&colorscheme=" + scheme);
             }
         });
         content.add(facepile);

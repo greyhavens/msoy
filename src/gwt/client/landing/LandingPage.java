@@ -34,6 +34,8 @@ public class LandingPage extends Page
     public static final String PLAY_BLUE_LANDING = "playbluelanding";
     public static final String NEW_MONSTER_LANDING = "monsterlanding";
     public static final String DJ_LANDING = "dj";
+    public static final String DJ_DARK_LANDING = "djdark";
+    public static final String DJ_LIGHT_LANDING = "djlight";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -68,8 +70,26 @@ public class LandingPage extends Page
         } else if (action.equals(NEW_MONSTER_LANDING)) {
             setContent(_msgs.titleLanding(), new LandingMonsterPanel());
 
+        } else if (action.equals(DJ_DARK_LANDING)) {
+            setContent(_msgs.titleLanding(), new LandingDjPanel(false));
+
+        } else if (action.equals(DJ_LIGHT_LANDING)) {
+            setContent(_msgs.titleLanding(), new LandingDjPanel(true));
+
         } else if (CShell.getClientMode() == ClientMode.WHIRLED_DJ || action.equals(DJ_LANDING)) {
-            setContent(_msgs.djTitleLanding(), new LandingDjPanel());
+            // Split test between the light and dark landing page
+            _membersvc.getABTestGroup(CShell.frame.getVisitorInfo(),
+                "2012 01 DJ landings, dark (1) light (2)", true, new AsyncCallback<Integer>() {
+                public void onSuccess (Integer group) {
+                    gotABGroup(group);
+                }
+                public void onFailure (Throwable cause) {
+                    gotABGroup(-1);
+                }
+                protected void gotABGroup (int group) {
+                    setContent(_msgs.titleLanding(), new LandingDjPanel(group != 1));
+                }
+            });
 
         } else {
             if (action.equals("theme")) {
