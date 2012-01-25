@@ -71,10 +71,10 @@ public class LandingPage extends Page
             setContent(_msgs.titleLanding(), new LandingMonsterPanel());
 
         } else if (action.equals(DJ_DARK_LANDING)) {
-            setContent(_msgs.titleLanding(), new LandingDjPanel(false));
+            setContent(_msgs.djTitleLanding(), new LandingDjPanel(false));
 
         } else if (action.equals(DJ_LIGHT_LANDING)) {
-            setContent(_msgs.titleLanding(), new LandingDjPanel(true));
+            setContent(_msgs.djTitleLanding(), new LandingDjPanel(true));
 
         } else if (CShell.getClientMode() == ClientMode.WHIRLED_DJ || action.equals(DJ_LANDING)) {
             // Split test between the light and dark landing page
@@ -87,7 +87,7 @@ public class LandingPage extends Page
                     gotABGroup(-1);
                 }
                 protected void gotABGroup (int group) {
-                    setContent(_msgs.titleLanding(), new LandingDjPanel(group != 1));
+                    setContent(_msgs.djTitleLanding(), new LandingDjPanel(group != 1));
                 }
             });
 
