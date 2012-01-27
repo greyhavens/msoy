@@ -49,8 +49,8 @@ public class DjTutorial
             })
             .queue();
 
-        waitForPage(seq.newSuggestion("The shop is stuffed with all sorts of useful goodies. We " +
-            " want music, so go down to the music section."), Page.SHOP, MsoyItemType.AUDIO.toByte())
+        waitForPage(seq.newSuggestion("The shop is stuffed with all sorts of useful goodies. Click" +
+            " on the music section to look for songs."), Page.SHOP, MsoyItemType.AUDIO.toByte())
             .onShow(function () :void {
                 arrowRight(-0.01, 123, function (address :Address) :Boolean {
                     return address.page == Page.SHOP && address.args.length == 0 });
