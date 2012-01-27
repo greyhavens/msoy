@@ -1481,6 +1481,7 @@ public class WorldController extends MsoyController
         try {
             if (ExternalInterface.available) {
                 ExternalInterface.call("trackEvent", category, action);
+                log.info("Tracked GA event", "category", category, "action", action);
             }
         } catch (e :Error) {
         }

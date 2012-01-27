@@ -34,13 +34,16 @@ public class DjTutorial
         });
         _ctx.getLocationDirector().addLocationObserver(_locObserver);
 
-        var seq :TutorialSequenceBuilder = _ctx.getTutorialDirector().newSequence("djTutorial")
+        var tutorialName :String = "djTutorial";
+        var seq :TutorialSequenceBuilder = _ctx.getTutorialDirector().newSequence(tutorialName)
             .showAlways();
 
+        // Step 0
         step(seq.newSuggestion("Hello, welcome to my night club! Ok, it's not much to look at... yet."))
             .button("Next", null)
             .queue();
 
+        // Step 1
         waitForPage(seq.newSuggestion("Help a tofu out, would you? I need someone with fine" +
             " musical taste to pick out a song over in the shop."), Page.SHOP)
             .onShow(function () :void {
@@ -49,6 +52,7 @@ public class DjTutorial
             })
             .queue();
 
+        // Step 2
         waitForPage(seq.newSuggestion("The shop is stuffed with all sorts of useful goodies. Click" +
             " on the music section to look for songs."), Page.SHOP, MsoyItemType.AUDIO.toByte())
             .onShow(function () :void {
@@ -57,12 +61,14 @@ public class DjTutorial
             })
             .queue();
 
+        // Step 3
         waitForPage(seq.newSuggestion(
             "If you've got a song or genre in mind, you can search for it. Or just pick whatever" +
             " catches your eye. You can keep it afterwards!"),
                 Page.SHOP, "l", MsoyItemType.AUDIO.toByte())
             .queue();
 
+        // Step 4
         waitForCondition(seq.newSuggestion("This one? I can't say it would have been my first" +
             " choice, but it's catchy... Once you've decided, buy it then add it to the room."),
             function () :Boolean {
@@ -70,6 +76,7 @@ public class DjTutorial
             })
             .queue();
 
+        // Step 5
         waitForCondition(seq.newSuggestion("Not bad! That livens this place up a bit." +
             " You can press the X button on the very right to close the shop now."),
             function () :Boolean {
@@ -79,11 +86,18 @@ public class DjTutorial
             .queue();
 
         // TODO(bruno): Explain the music widget?
+        // Step 6
         step(seq.newSuggestion("Maybe you can own your own club one day... try exploring," +
             " DJ-ing with other people and building your reputation. Off you go!"))
             .onShow(function () :void {
                 // Tutorial complete, open the blast doors
                 _ctx.getWorldDirector().completeDjTutorial();
+
+                var obs :LocationAdapter = new LocationAdapter(null, function (..._) :void {
+                    _ctx.getWorldController().trackEvent("tutorial", tutorialName + ":7");
+                    _ctx.getLocationDirector().removeLocationObserver(obs);
+                });
+                _ctx.getLocationDirector().addLocationObserver(obs);
             })
             .queue();
 
