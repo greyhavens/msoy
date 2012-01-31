@@ -793,8 +793,8 @@ public abstract class ItemEditor extends FlowPanel
     {
         if (widget instanceof TextBoxBase) {
             final TextBoxBase textbox = (TextBoxBase)widget;
-            TextBoxUtil.addTypingListener(textbox, new Command() {
-                public void execute () {
+            textbox.addChangeHandler(new ChangeHandler() {
+                public void onChange (ChangeEvent event) {
                     if (_item != null) {
                         binder.textUpdated(textbox.getText());
                     }

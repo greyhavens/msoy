@@ -3,5 +3,6 @@
    <allow-access-from domain="@SERVER_URL_HOST@" to-ports="*"/>
    <allow-access-from domain="www.dev.whirled.com" to-ports="*"/>
    <allow-access-from domain="djwhirled.com" to-ports="*"/>
+   <allow-access-from domain="djwhirled-localhost.com" to-ports="*"/>
    <allow-access-from domain="@MEDIA_URL_HOST@" to-ports="@HTTP_PORT@"/>
 </cross-domain-policy>
