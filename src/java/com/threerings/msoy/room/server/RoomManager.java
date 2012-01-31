@@ -2335,7 +2335,7 @@ public class RoomManager extends SpotSceneManager
     protected void activatePuppet ()
     {
         MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
-        if (msm.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER || msm.noPuppet) {
+        if (msm.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER || msm.noPuppet || msm.ownerId == 0) {
             return;
         }
         final int ownerId = msm.ownerId;
