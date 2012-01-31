@@ -164,4 +164,7 @@ public interface ProfileService extends RemoteService
      */
     FeedMessage poke (int memberId)
         throws ServiceException;
+
+    void complainProfile (int memberId, String description)
+        throws ServiceException;
 }

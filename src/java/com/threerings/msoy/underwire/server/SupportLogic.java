@@ -21,6 +21,8 @@ import com.threerings.user.OOOUser;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.Pages;
@@ -71,6 +73,21 @@ public class SupportLogic
 
         // add the event to the repository
         _underRepo.insertEvent(event);
+    }
+
+    public void addProfileComplaint (MemberName source, int targetId, String description)
+    {
+        EventRecord event = new EventRecord();
+        event.source = Integer.toString(source.getId());
+        event.sourceHandle = source.toString();
+        event.status = Event.OPEN;
+        event.subject = description;
+
+        // Include their current status in the report
+        ProfileRecord profile = _profileRepo.loadProfile(targetId);
+        event.chatHistory = "Profile status: \"" + profile.headline + "\"";
+
+        addComplaint(event, targetId);
     }
 
     /**
@@ -146,4 +163,5 @@ public class SupportLogic
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected ProfileRepository _profileRepo;
 }

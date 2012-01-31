@@ -51,6 +51,7 @@ import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Page;
 import client.shell.ShellMessages;
+import client.ui.ComplainPopup;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -261,6 +262,12 @@ public class ProfileBlurb extends Blurb
                         return true;
                     }
                     return false;
+                }
+            });
+        } else if (!CShell.isGuest()) {
+            setFooterLabel(_msgs.profileComplain(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    new ProfileComplainPopup().show();
                 }
             });
         }
@@ -508,6 +515,20 @@ public class ProfileBlurb extends Blurb
         if (_registration != null) {
             _registration.remove();
             _registration = null;
+        }
+    }
+
+    protected class ProfileComplainPopup extends ComplainPopup
+    {
+        public ProfileComplainPopup ()
+        {
+            super(255);
+        }
+
+        protected boolean callService ()
+        {
+            _profilesvc.complainProfile(_pdata.name.getId(), _description.getText(), this);
+            return true;
         }
     }
 

@@ -78,6 +78,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.msoy.spam.server.SpamLogic;
+import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard.NotOnline;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -445,6 +446,13 @@ public class ProfileServlet extends MsoyServiceServlet
             System.currentTimeMillis());
     }
 
+    public void complainProfile (int memberId, String description)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        _supportLogic.addProfileComplaint(mrec.getName(), memberId, description);
+    }
+
     protected List<GroupCard> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)
     {
         boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
@@ -574,6 +582,7 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected SpamLogic _spamLogic;
+    @Inject protected SupportLogic _supportLogic;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected UserActionRepository _userActionRepo;
 
