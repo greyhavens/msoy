@@ -30,8 +30,10 @@ public class CloudfrontMediaDesc extends HashMediaDesc
     override public function getMediaPath () :String
     {
         if (_url == null) {
-            _url = super.getMediaPath() + "?Expires=" + _expiration + "&Key-Pair-Id=" +
-                DeploymentConfig.signingKeyId + "&Signature=" + _signature;
+            // NOTE: Signed URLs are disabled, see commit log for r20143
+            // _url = super.getMediaPath() + "?Expires=" + _expiration + "&Key-Pair-Id=" +
+            //     DeploymentConfig.signingKeyId + "&Signature=" + _signature;
+            _url = super.getMediaPath();
         }
         return _url;
     }
