@@ -198,6 +198,12 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
+     * Requests that the caller be added to a group using a mailed invitation.
+     */
+    void joinGroupFromInvite (int groupId, int conversationId, long sent)
+        throws ServiceException;
+
+    /**
      * Update the rank of a group member.
      */
     void updateMemberRank (int groupId, int memberId, Rank newRank)

@@ -76,7 +76,8 @@ public class GroupInviteDisplay extends MailPayloadDisplay
             if (_enabled) {
                 new ClickCallback<Void>(joinButton) {
                     @Override protected boolean callService () {
-                        _groupsvc.joinGroup(_invitePayload.groupId, this);
+                        _groupsvc.joinGroupFromInvite(
+                            _invitePayload.groupId, _convoId, _message.sent.getTime(), this);
                         return true;
                     }
                     @Override protected boolean gotResult (Void result) {

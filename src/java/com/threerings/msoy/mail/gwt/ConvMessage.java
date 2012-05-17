@@ -15,6 +15,8 @@ import com.threerings.msoy.web.gwt.MemberCard;
 public class ConvMessage
     implements IsSerializable
 {
+    public int conversationId;
+
     /** The card for the author of this message. */
     public MemberCard author;
 

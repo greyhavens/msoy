@@ -4,15 +4,13 @@
 package com.threerings.msoy.group.gwt;
 
 import java.util.List;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.gwt.util.PagedResult;
-
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
@@ -25,44 +23,14 @@ import com.threerings.msoy.web.gwt.TagHistory;
 public interface GroupServiceAsync
 {
     /**
-     * The async version of {@link GroupService#getTheme}.
+     * The async version of {@link GroupService#getGroups}.
      */
-    void getTheme (int groupId, AsyncCallback<Theme> callback);
+    void getGroups (int offset, int count, GroupService.GroupQuery query, boolean needCount, AsyncCallback<PagedResult<GroupCard>> callback);
 
     /**
-     * The async version of {@link GroupService#getMembershipGroups}.
+     * The async version of {@link GroupService#createGroup}.
      */
-    void getMembershipGroups (int memberId, boolean canInvite, AsyncCallback<List<GroupMembership>> callback);
-
-    /**
-     * The async version of {@link GroupService#getGroupDetail}.
-     */
-    void getGroupDetail (int groupId, AsyncCallback<GroupDetail> callback);
-
-    /**
-     * The async version of {@link GroupService#getGroupMembers}.
-     */
-    void getGroupMembers (int groupId, int offset, int count, AsyncCallback<PagedResult<GroupMemberCard>> callback);
-
-    /**
-     * The async version of {@link GroupService#quoteCreateGroup}.
-     */
-    void quoteCreateGroup (AsyncCallback<PriceQuote> callback);
-
-    /**
-     * The async version of {@link GroupService#transferRoom}.
-     */
-    void transferRoom (int groupId, int sceneId, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link GroupService#quoteCreateTheme}.
-     */
-    void quoteCreateTheme (AsyncCallback<PriceQuote> callback);
-
-    /**
-     * The async version of {@link GroupService#createTheme}.
-     */
-    void createTheme (int groupId, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Theme>> callback);
+    void createGroup (Group group, GroupExtras extras, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Group>> callback);
 
     /**
      * The async version of {@link GroupService#updateGroup}.
@@ -83,6 +51,11 @@ public interface GroupServiceAsync
      * The async version of {@link GroupService#joinGroup}.
      */
     void joinGroup (int groupId, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link GroupService#joinGroupFromInvite}.
+     */
+    void joinGroupFromInvite (int groupId, int conversationId, long sent, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link GroupService#updateMemberRank}.
@@ -113,6 +86,56 @@ public interface GroupServiceAsync
      * The async version of {@link GroupService#getGameGroups}.
      */
     void getGameGroups (int gameId, AsyncCallback<List<GroupMembership>> callback);
+
+    /**
+     * The async version of {@link GroupService#getGroupMembers}.
+     */
+    void getGroupMembers (int groupId, int offset, int count, AsyncCallback<PagedResult<GroupMemberCard>> callback);
+
+    /**
+     * The async version of {@link GroupService#transferRoom}.
+     */
+    void transferRoom (int groupId, int sceneId, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link GroupService#quoteCreateGroup}.
+     */
+    void quoteCreateGroup (AsyncCallback<PriceQuote> callback);
+
+    /**
+     * The async version of {@link GroupService#quoteCreateTheme}.
+     */
+    void quoteCreateTheme (AsyncCallback<PriceQuote> callback);
+
+    /**
+     * The async version of {@link GroupService#createTheme}.
+     */
+    void createTheme (int groupId, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Theme>> callback);
+
+    /**
+     * The async version of {@link GroupService#getGalaxyData}.
+     */
+    void getGalaxyData (AsyncCallback<GalaxyData> callback);
+
+    /**
+     * The async version of {@link GroupService#getGroupInfo}.
+     */
+    void getGroupInfo (int groupId, AsyncCallback<GroupService.GroupInfo> callback);
+
+    /**
+     * The async version of {@link GroupService#getTheme}.
+     */
+    void getTheme (int groupId, AsyncCallback<Theme> callback);
+
+    /**
+     * The async version of {@link GroupService#getMembershipGroups}.
+     */
+    void getMembershipGroups (int memberId, boolean canInvite, AsyncCallback<List<GroupMembership>> callback);
+
+    /**
+     * The async version of {@link GroupService#getGroupDetail}.
+     */
+    void getGroupDetail (int groupId, AsyncCallback<GroupDetail> callback);
 
     /**
      * The async version of {@link GroupService#updateMedal}.
@@ -148,24 +171,4 @@ public interface GroupServiceAsync
      * The async version of {@link GroupService#setBrandShares}.
      */
     void setBrandShares (int brandId, int targetId, int shares, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link GroupService#getGalaxyData}.
-     */
-    void getGalaxyData (AsyncCallback<GalaxyData> callback);
-
-    /**
-     * The async version of {@link GroupService#getGroupInfo}.
-     */
-    void getGroupInfo (int groupId, AsyncCallback<GroupService.GroupInfo> callback);
-
-    /**
-     * The async version of {@link GroupService#getGroups}.
-     */
-    void getGroups (int offset, int count, GroupService.GroupQuery query, boolean needCount, AsyncCallback<PagedResult<GroupCard>> callback);
-
-    /**
-     * The async version of {@link GroupService#createGroup}.
-     */
-    void createGroup (Group group, GroupExtras extras, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Group>> callback);
 }

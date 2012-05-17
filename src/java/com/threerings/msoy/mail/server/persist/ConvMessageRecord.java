@@ -73,6 +73,7 @@ public class ConvMessageRecord extends PersistentRecord
     public ConvMessage toConvMessage ()
     {
         ConvMessage cmsg = new ConvMessage();
+        cmsg.conversationId = conversationId;
         cmsg.sent = new Date(sent.getTime());
         cmsg.body = body;
 

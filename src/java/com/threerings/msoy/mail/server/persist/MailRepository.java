@@ -89,6 +89,12 @@ public class MailRepository extends DepotRepository
                        OrderBy.ascending(ConvMessageRecord.SENT)));
     }
 
+    public ConvMessageRecord loadMessage (int conversationId, long sent)
+    {
+        return load(ConvMessageRecord._R,
+            ConvMessageRecord.getKey(conversationId, new Timestamp(sent)));
+    }
+
     /**
      * Returns the sent time of the last message read by the specified participant in the specified
      * conversation or null if the specified member is not a participant in that conversation.
