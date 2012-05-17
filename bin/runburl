@@ -5,6 +5,8 @@
 # A script to invoke the MetaSOY! bureau launcher and email the generated 
 # logs when it eventually exits.
 
+ulimit -n 65536
+
 NAME=msoy
 DESC="MetaSOY bureau launcher"
 

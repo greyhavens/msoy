@@ -40,7 +40,7 @@ fi
 PROCID=`hostname | sed 's:\..*::'`
 
 # Let's blow that file descriptor limit wide open baby!
-ulimit -n 4096
+ulimit -n 65536
 
 # Bump our maximum data segment size to 1.5 gigs
 ulimit -d 1572864
