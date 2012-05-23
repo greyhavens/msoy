@@ -59,9 +59,9 @@ public class FavoritesRepository extends DepotRepository
     {
         List<SQLExpression<?>> conditions = Lists.newArrayList();
 
-        // only care about members with a subscriber bit set
-        int subscriberBits = (Flag.SUBSCRIBER.getBit() | Flag.SUBSCRIBER_PERMANENT.getBit());
-        conditions.add(MemberRecord.FLAGS.bitAnd(subscriberBits).notEq(0));
+        // only count upstanding players who have logged a few hours into Whirled
+        conditions.add(MemberRecord.SESSION_MINUTES.greaterEq(8*60));
+        conditions.add(MemberRecord.FLAGS.bitAnd(Flag.TROUBLEMAKER.getBit()).eq(0));
 
         // only look at favoriting done in the past N days
         conditions.add(FavoriteItemRecord.NOTED_ON.greaterThan(
