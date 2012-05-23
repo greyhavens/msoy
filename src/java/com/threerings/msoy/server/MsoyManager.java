@@ -187,10 +187,6 @@ public class MsoyManager
         throws InvocationException
     {
         final MemberObject member = _locator.requireMember(caller);
-        if (!member.tokens.isSubscriberPlus()) {
-            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
-        }
-
         final int baseCost = _runtime.getBarCost(CostsConfigObject.BROADCAST_BASE);
         final int increment = _runtime.getBarCost(CostsConfigObject.BROADCAST_INCREMENT);
         final int memberId = member.getMemberId();

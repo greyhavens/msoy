@@ -32,18 +32,6 @@ public class MsoyBroadcastHandler extends BroadcastHandler
             ((user is PlayerObject) && !PlayerObject(user).isPermaguest());
     }
 
-    override public function handleCommand (
-        ctx :CrowdContext, speakSvc :SpeakService,
-        cmd :String, args :String, history :Array) :String
-    {
-        if (!MsoyTokenRing(getBody(ctx).getTokens()).isSubscriberPlus()) {
-            getMsoyContext(ctx).displayFeedback(MsoyCodes.GENERAL_MSGS, "e.subscription_required");
-            return ChatCodes.SUCCESS; // because we want to clear the chat entry field
-        }
-
-        return super.handleCommand(ctx, speakSvc, cmd, args, history);
-    }
-
     override protected function doBroadcast (ctx :CrowdContext, msg :String) :void
     {
         // if they have access to the normal broadcast, that's what they get
