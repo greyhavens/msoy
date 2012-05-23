@@ -33,10 +33,6 @@ public class ThemeBuyPanel extends BuyPanel<Theme>
         FlowPanel ui = MsoyUI.createFlowPanel("buyTheme",
             new ThemeBuyPanel(groupId, callback));
 
-        if (!CShell.isSubscriber()) {
-            ui.add(MsoyUI.createHTML(_msgs.ctUpsell(), "upsell"));
-        }
-
         popup.setContents(ui);
         popup.show();
 

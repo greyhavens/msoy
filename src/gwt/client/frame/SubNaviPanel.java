@@ -82,7 +82,6 @@ public class SubNaviPanel extends FlowPanel
                     }
                 }, false);
             addLink(null, "Get Bars", false, Pages.BILLING);
-            addLink(null, "Club Whirled", Pages.BILLING, "subscribe");
             if (CShell.isRegistered()) {
                 addLink(null, "My Bars", Pages.ME, Args.compose("transactions", "2"));
             }

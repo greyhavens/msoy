@@ -221,8 +221,7 @@ public class ThemeLogic
      */
     protected int getThemeBarCost (MemberRecord mrec)
     {
-        return _runtime.getBarCost(mrec.isSubscriber() ?
-            CostsConfigObject.NEW_THEME_SUB : CostsConfigObject.NEW_THEME_NONSUB);
+        return _runtime.getBarCost(CostsConfigObject.NEW_THEME_NONSUB);
 
     }
 

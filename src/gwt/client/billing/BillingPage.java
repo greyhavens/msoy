@@ -17,10 +17,8 @@ import client.util.BillingUtil;
 public class BillingPage extends Page
 {
     public static final String ABOUT_BARS = "aboutbars";
-    public static final String SUBSCRIBE = "subscribe";
     public static final String ADMIN = "admin";
     public static final String IFRAME = "iframe";
-    public static final String IFRAME_SUBSCRIBE = "iframesubscribe";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -28,14 +26,10 @@ public class BillingPage extends Page
         String action = args.get(0, "");
         if (action.equals(ABOUT_BARS)) {
             setContent(_msgs.aboutBarsTitle(), new AboutBarsPanel());
-        } else if (action.equals(SUBSCRIBE)) {
-            setContent(_msgs.subscribeTitle(), new SubscribePanel());
         } else if (action.equals(ADMIN)) {
             setContent(_msgs.billingIframeTitle(), new BillingIframePanel("admin/"));
         } else if (action.equals(IFRAME)) {
             setContent(_msgs.billingIframeTitle(), new BillingIframePanel(""));
-        } else if (action.equals(IFRAME_SUBSCRIBE)) {
-            setContent(_msgs.billingIframeTitle(), new BillingIframePanel("subscribe.wm"));
 
         // default guests to ABOUT_BARS and registered billing-ready users to IFRAME
         } else {

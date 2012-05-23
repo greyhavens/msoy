@@ -594,8 +594,8 @@ public class MsoyUI
         Label icon = null;
         switch (role) {
         case SUBSCRIBER:
+            // Club Whirled is gone, but the icons beside player names remain
             icon = new Label();
-            icon.addClickHandler(Link.createHandler(Pages.BILLING, "subscribe"));
             icon.addStyleName("clubWhirledIcon");
             break;
         }

@@ -26,12 +26,6 @@ public class AboutBarsPanel extends BillingPanel
         super("/images/billing/buy_some_bars.png", _msgs.aboutBarsIntro());
         addStyleName("aboutBars");
 
-        FloatPanel subscription = new FloatPanel("Subscription");
-        subscription.add(MsoyUI.createImage("/images/ui/clubwhirled.png", "SubscriptionStar"));
-        subscription.add(MsoyUI.createHTML(_msgs.aboutBarsSubscription(), "SubscriptionText"));
-        subscription.add(MsoyUI.createImage("/images/ui/clubwhirled.png", "SubscriptionStar"));
-        add(subscription);
-
         add(MsoyUI.createHTML(_msgs.aboutBarsMethods(), "Methods"));
 
         // show some sample payment methods, link the whole thing to billing

@@ -33,6 +33,7 @@ import client.util.Link;
 /**
  * Displays an interface explaining subscription and linking to the billing system.
  */
+@Deprecated
 public class SubscribePanel extends BillingPanel
 {
     public SubscribePanel ()

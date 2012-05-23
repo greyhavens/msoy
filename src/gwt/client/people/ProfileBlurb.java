@@ -95,11 +95,7 @@ public class ProfileBlurb extends Blurb
         photo.add(!hasProfileGallery ? new ThumbBox(_profile.photo) :
                   new ThumbBox(_profile.photo, Pages.PEOPLE,
                                GalleryActions.VIEW_PROFILE, _name.getId()));
-        if (isMe && _profile.role == WebCreds.Role.REGISTERED) {
-            photo.add(Link.create(_msgs.subscribeNow(), Pages.BILLING, "subscribe"));
-        } else {
-            photo.add(MsoyUI.createRoleLabel(_profile.role));
-        }
+        photo.add(MsoyUI.createRoleLabel(_profile.role));
         if (hasProfileGallery) {
             photo.add(Link.create(_msgs.photosOfMe(),
                     Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getId()));

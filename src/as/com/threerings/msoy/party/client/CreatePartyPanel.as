@@ -105,16 +105,6 @@ public class CreatePartyPanel extends FloatingPanel
         GridUtil.addRow(grid, Msgs.PARTY.get("l.invite_friends"), _inviteAll);
         addChild(grid);
 
-        if (WorldContext(_ctx).getMemberObject().tokens.isSubscriberPlus()) {
-            addChild(FlexUtil.createLabel(Msgs.PARTY.get("m.create_sub")));
-
-        } else {
-            var upsell :Text = FlexUtil.createWideText("");
-            upsell.selectable = true; // so fucking links work
-            upsell.htmlText = Msgs.PARTY.get("m.create_nonsub");
-            addChild(upsell);
-        }
-
         addChild(_buyPanel);
         addButtons(CANCEL_BUTTON);
     }

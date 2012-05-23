@@ -84,7 +84,6 @@ public class EditAccountPanel extends FlowPanel
         add(new TongueBox(null, makePermanameSection()));
         add(new TongueBox(_msgs.editEmailHeader(), makeChangeEmailSection()));
         add(new TongueBox(_msgs.editPrefsHeader(), makePrefsSection()));
-        add(new TongueBox(_msgs.editSubscribeHeader(), makeSubscribeSection()));
         add(new TongueBox(_msgs.editRealNameHeader(), makeRealNameSection()));
         add(new TongueBox(_msgs.editPasswordHeader(), makeChangePasswordSection()));
         add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
@@ -196,20 +195,6 @@ public class EditAccountPanel extends FlowPanel
             }
         });
         table.setWidget(++row, 1, _upprefs);
-        return table;
-    }
-
-    protected Widget makeSubscribeSection ()
-    {
-        SmartTable table = new SmartTable(0, 10);
-        if (CShell.isSubscriber()) {
-            table.setWidget(0, 0, MsoyUI.createHTML(_msgs.editSubscribeIs(
-                                                        BillingUtil.getAccountStatusPage()), null));
-        } else {
-            table.setText(0, 0, _msgs.editSubscribeIsnt());
-            table.setWidget(0, 1, Link.create(_msgs.editSubscribeJoin(),
-                                              Pages.BILLING, "subscribe"));
-        }
         return table;
     }
 

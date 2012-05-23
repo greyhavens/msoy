@@ -111,8 +111,7 @@ public class ShopPanel extends FlowPanel
                     _controlContainer.add(MsoyUI.createLabel(
                         _msgs.themeShopHeader(theme.toString()), null));
                 } else {
-                    _controlContainer.add(
-                        Link.create(_msgs.shopClubPicks(), Pages.BILLING, "subscribe"));
+                    _controlContainer.add(MsoyUI.createLabel(_msgs.shopClubPicks()));
                 }
 
                 super.displayResults(start, count, list);

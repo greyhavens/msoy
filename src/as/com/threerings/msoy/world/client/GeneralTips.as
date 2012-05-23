@@ -51,9 +51,6 @@ public class GeneralTips
             .button(xlate("b.link_default"), viewWiki("Share_this_room")).limit(notEditing)
             .queue();
 
-        tut.newTip("tipClub", xlate("i.link_club")).buttonCloses()
-            .button(xlate("b.link_club"), display(Address.SUBSCRIBE)).limit(notEditing).queue();
-
         // TODO: tipShareFB - share on facebook
 
         tut.newTip("tipTransactions", xlate("i.link_transactions")).beginner().buttonCloses()
