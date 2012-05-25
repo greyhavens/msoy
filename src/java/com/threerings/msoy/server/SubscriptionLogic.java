@@ -46,18 +46,6 @@ public class SubscriptionLogic
      */
     public void init ()
     {
-        // check for bar and special item grants every hour
-        _cronLogic.scheduleEvery(1, "SubscriptionLogic hourly", new Runnable() {
-            public void run () {
-                endBarscribers();
-                grantBars();
-                grantSpecialItem();
-            }
-
-            public String toString () {
-                return "SubscriptionLogic.hourly";
-            }
-        });
     }
 
     @BlockingThread
