@@ -132,7 +132,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
     protected void addTagBits (ItemDetail detail)
     {
-        boolean canEditTags = CShell.isSubscriber() || _item.creatorId == CShell.getMemberId();
+        boolean canEditTags = CShell.isRegistered();
         TagDetailPanel.TagService tagService = new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback<TagHistory> callback) {
                 _itemsvc.tagItem(_item.getIdent(), tag, true, callback);

@@ -228,9 +228,8 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        // only subscribers and the item's creator can tag the item
-        if (!memrec.isSubscriber() && memrec.memberId != item.creatorId) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        if (memrec.isTroublemaker() && memrec.memberId != item.creatorId) {
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
         // map tag to tag id
