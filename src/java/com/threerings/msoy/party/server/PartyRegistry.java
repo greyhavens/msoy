@@ -292,14 +292,8 @@ public class PartyRegistry
     {
         final MemberObject member = _memberLocator.requireMember(caller);
 
-        PriceQuote quote;
-        if (member.tokens.isSubscriberPlus()) {
-            quote = new PriceQuote(Currency.COINS, 0, 0, 0, 0, 0); // free!
-
-        } else {
-            quote = _moneyLogic.securePrice(
-                member.getMemberId(), PARTY_PURCHASE_KEY, Currency.COINS, getPartyCoinCost());
-        }
+        PriceQuote quote = _moneyLogic.securePrice(
+            member.getMemberId(), PARTY_PURCHASE_KEY, Currency.COINS, getPartyCoinCost());
         rl.requestProcessed(quote);
     }
 
@@ -322,7 +316,7 @@ public class PartyRegistry
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR); // shouldn't happen
         }
 
-        final int cost = member.tokens.isSubscriberPlus() ? 0 : getPartyCoinCost();
+        final int cost = getPartyCoinCost();
         _invoker.postUnit(new ServiceUnit("createParty", jl) {
             public void invokePersistent () throws Exception {
                 _group = _groupRepo.loadGroup(groupId);
