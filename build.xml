@@ -158,7 +158,7 @@
     <artifact:dependencies filesetId="runtime.fileset">
       <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="${gwt.version}"/>
-      <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
+      <dependency groupId="postgresql" artifactid="postgresql" version="9.1-901.jdbc4"/>
       <dependency groupId="net.sf.ehcache" artifactid="ehcache" version="1.6.0"/>
       <dependency groupId="com.restfb" artifactid="restfb" version="1.6.9"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
