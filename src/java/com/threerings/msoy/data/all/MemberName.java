@@ -77,7 +77,8 @@ public class MemberName extends OrthName
                 name.length() >= MIN_DISPLAY_NAME_LENGTH &&
                 name.length() <= MAX_DISPLAY_NAME_LENGTH &&
                 containsKnownVisibleCharacter(name) &&
-                containsOnlyLegalChars(name));
+                containsOnlyLegalChars(name) &&
+                !name.contains("$'"); // $' fucks with link delimiting for whatever reason
     }
 
     /**
