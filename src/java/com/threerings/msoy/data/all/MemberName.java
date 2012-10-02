@@ -38,7 +38,8 @@ public class MemberName extends OrthName
 
     /** Characters (above ' ') that are illegal in display names.
      */
-    public static final String ILLEGAL_DISPLAY_NAME_CHARS = "\u007F" + // renders invisible in flash
+    public static final String ILLEGAL_DISPLAY_NAME_CHARS =
+        "\u007F\u0770\u0783\u0794" + // renders invisible in flash
         "\uFFFC\uFFFD" + // used by whirled for delimiting links in chat
         "\u202A\u202B\u202C\u202D\u202E" + // control text direction
         "\u534D\u5350\u0FCC"; // swastikas
