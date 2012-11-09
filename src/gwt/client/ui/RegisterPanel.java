@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.CookieUtil;
 import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.StringUtil;
 
@@ -51,6 +52,11 @@ public class RegisterPanel extends FlowPanel
 {
     public RegisterPanel ()
     {
+        if (CookieUtil.get(NOT_THIRTEEN_COOKIE) != null) {
+            blockKiddies();
+            return;
+        }
+
         // Use HTML5 accessibility hints
         // TODO: someday GWT may support this directly
         _newemail.getElement().setAttribute("type", "email");
@@ -95,7 +101,8 @@ public class RegisterPanel extends FlowPanel
                 } else if (StringUtil.isBlank(_newpass.getText().trim())) {
                     MsoyUI.errorNear(_cmsgs.regiFillAll(), _newpass);
                 } else if (!isThirteen()) {
-                    MsoyUI.errorNear(_cmsgs.regiNotThirteen(), _birthday);
+                    CookieUtil.set("/", 9001, NOT_THIRTEEN_COOKIE, "1");
+                    blockKiddies();
                 } else if (!MemberMailUtil.isValidAddress(_newemail.getValue())) {
                     MsoyUI.errorNear(_smsgs.invalid_email(), _newemail);
                 } else {
@@ -211,6 +218,12 @@ public class RegisterPanel extends FlowPanel
         return ((AgeDropdown)_birthday).getAge() >= 13;
     }
 
+    protected void blockKiddies ()
+    {
+        clear();
+        add(MsoyUI.createLabel(_cmsgs.regiNotThirteen(), "errorPopup"));
+    }
+
     protected static Widget createAdWordsTracker ()
     {
         Frame tracker = new Frame("./googleconversion.html");
@@ -236,10 +249,11 @@ public class RegisterPanel extends FlowPanel
     {
         public AgeDropdown () {
             setStyleName("ageDropdown");
-            int minAge = 13;
+            int minAge = 4;
             for (int ii = 0; ii < 100; ii++) {
                 _agelist.addItem("" + (minAge + ii));
             }
+            _agelist.setSelectedIndex(13-minAge); // Start with 13 selected
             add(_agelist);
         }
 
@@ -270,4 +284,6 @@ public class RegisterPanel extends FlowPanel
     protected static final String[][] BEACONS = new String[][] {
         { "a.shizmoo", "http://server.cpmstar.com/action.aspx?advertiserid=275&gif=1" }
     };
+
+    protected static final String NOT_THIRTEEN_COOKIE = "NotThirteen";
 }
