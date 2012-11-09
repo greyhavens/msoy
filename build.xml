@@ -535,11 +535,11 @@
   <!-- prepares to build our Flash client -->
   <target name="asprepare" depends="prepare">
     <!-- locate our flex sdk -->
-    <condition property="rel.flexsdk.dir" value="../flex/current">
-      <available file="../flex/current/lib/compc.jar"/>
+    <condition property="rel.flexsdk.dir" value="../flex/flex3">
+      <available file="../flex/flex3/lib/compc.jar"/>
     </condition>
-    <condition property="rel.flexsdk.dir" value="../OOOLIBS-FLEX/current">
-      <available file="../OOOLIBS-FLEX/current/lib/compc.jar"/>
+    <condition property="rel.flexsdk.dir" value="../OOOLIBS-FLEX/flex3">
+      <available file="../OOOLIBS-FLEX/flex3/lib/compc.jar"/>
     </condition>
     <dirname property="parent.dir" file="../somefile.txt"/>
     <fail><condition><not><isset property="rel.flexsdk.dir"/></not></condition>
