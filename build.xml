@@ -184,6 +184,11 @@
       <mapper type="flatten"/>
     </copy>
 
+    <!-- Major fucking hack since I've had enough trying to exclude this dependency the right way.
+         If both normal guava and the JDK5 version is in the classpath, things will crash and burn.
+         Thanks Ray! -->
+    <delete file="${deploy.dir}/lib/guava-jdk5-13.0.jar"/>
+
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
       <dependency groupId="com.google.gwt" artifactId="gwt-user" version="${gwt.version}"/>
