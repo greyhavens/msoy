@@ -152,7 +152,7 @@
   </filelist>
 
   <!-- fetches our library dependencies -->
-  <property name="gwt.version" value="2.4.0"/>
+  <property name="gwt.version" value="2.5.0"/>
   <target name="mavendeps" depends="prepare">
     <!-- these libraries we need for building and for the server runtime -->
     <artifact:dependencies filesetId="runtime.fileset">
