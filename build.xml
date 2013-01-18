@@ -157,6 +157,7 @@
     <!-- these libraries we need for building and for the server runtime -->
     <artifact:dependencies filesetId="runtime.fileset">
       <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="${gwt.version}"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="${gwt.version}"/>
       <dependency groupId="postgresql" artifactid="postgresql" version="9.1-901.jdbc4"/>
       <dependency groupId="net.sf.ehcache" artifactid="ehcache" version="1.6.0"/>
