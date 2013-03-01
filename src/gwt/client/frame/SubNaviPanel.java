@@ -74,17 +74,6 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case BILLING:
-            addImageLink("/images/billing/menu_lock.png",
-                "Billing pages are https secure, click here to open in a new window",
-                new ClickHandler() {
-                    public void onClick (ClickEvent event) {
-                        BillingUtil.popBillingPage("");
-                    }
-                }, false);
-            addLink(null, "Get Bars", false, Pages.BILLING);
-            if (CShell.isRegistered()) {
-                addLink(null, "My Bars", Pages.ME, Args.compose("transactions", "2"));
-            }
             addExternalLink("http://wiki.whirled.com/Billing_FAQ", "Billing FAQ", true);
             if (CShell.isSupport()) {
                 addLink(null, "Billing Admin", Pages.BILLING, "admin");
@@ -128,7 +117,6 @@ public class SubNaviPanel extends FlowPanel
             addLink(null, "My Favorites", Pages.SHOP, "f");
             if (CShell.isRegistered()) {
                 addLink(null, "Transactions", Pages.ME, "transactions");
-                addLink(null, "Get Bars", Pages.BILLING);
             }
             break;
 

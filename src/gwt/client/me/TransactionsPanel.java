@@ -39,13 +39,6 @@ public class TransactionsPanel extends FlowPanel
         tip.add(MsoyUI.createHTML(comboIndex < 0 ? ":(" : REPORT_TIPS[comboIndex], null));
         blurb.setWidget(0, 0, tip);
 
-        FlowPanel billing = MsoyUI.createFlowPanel("BillingTip");
-        billing.add(MsoyUI.createHTML(_msgs.billingTip(), null));
-        billing.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.buyBars(),
-                                        Link.createHandler(Pages.BILLING)));
-        blurb.setWidget(0, 1, billing);
-        blurb.getCellFormatter().setStyleName(0, 1, "Billing");
-
         // we use titleless tongue boxes here to make the indentation work
         add(new TongueBox(null, blurb));
 

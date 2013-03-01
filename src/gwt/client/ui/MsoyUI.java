@@ -558,8 +558,6 @@ public class MsoyUI
         // subscriber is special
         if (role == WebCreds.Role.SUBSCRIBER) {
             InlineLabel label = new InlineLabel(_cmsgs.roleSubscriber());
-            label.addClickHandler(Link.createHandler(Pages.BILLING, "subscribe"));
-            label.addStyleName("actionLabel");
             return createFlowPanel("roleLabel", label);
         }
 
