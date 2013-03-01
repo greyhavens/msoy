@@ -146,7 +146,6 @@ public class DoListItemPopup extends VerticalPanel
             _basisBox.addChangeHandler(new ChangeHandler() {
                 public void onChange (ChangeEvent event) {
                     ListingCard basis = getBasis();
-                    _currencyBox.setEnabled(basis == null);
                     if (basis != null) {
                         setCurrency(basis.currency);
                     }
@@ -206,14 +205,9 @@ public class DoListItemPopup extends VerticalPanel
 
             pricing.addWidget(WidgetUtil.makeShim(5, 5), 3);
 
-            _currencyBox = new ListBox();
-            for (int i=0; i<LISTABLE_CURRENCIES.length; ++i) {
-                _currencyBox.addItem(_dmsgs.xlate(LISTABLE_CURRENCIES[i].getLabel()));
-            }
             if (listing != null) {
                 setCurrency(listing.quote.getListedCurrency());
                 if (listing.basisId > 0) {
-                    _currencyBox.setEnabled(false);
                     _catalogsvc.loadListing(item.getType(), listing.basisId, false,
                         new InfoCallback<CatalogListing>() {
                             public void onSuccess (CatalogListing result) {
@@ -222,10 +216,6 @@ public class DoListItemPopup extends VerticalPanel
                         });
                 }
             }
-            row = pricing.addWidget(new Label(_imsgs.doListCurrency()), 1, "rightLabel");
-            pricing.setWidget(row, 1, _currencyBox);
-            pricing.setWidget(row, 2, new Label(_imsgs.doListCurrencyTip()), 1, "Blurb");
-            pricing.getFlexCellFormatter().setRowSpan(row, 2, 2);
 
             row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
             pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 7, 7), 1);
@@ -386,8 +376,7 @@ public class DoListItemPopup extends VerticalPanel
 
     protected Currency getCurrency ()
     {
-        return (_currencyBox == null) ? Currency.COINS :
-            LISTABLE_CURRENCIES[_currencyBox.getSelectedIndex()];
+        return Currency.COINS;
     }
 
     protected int getCost ()
@@ -427,16 +416,7 @@ public class DoListItemPopup extends VerticalPanel
 
     protected void setCurrency (Currency currency)
     {
-        if (_currencyBox == null) {
-            return;
-        }
-
-        for (int ii = 0; ii < LISTABLE_CURRENCIES.length; ++ii) {
-            if (LISTABLE_CURRENCIES[ii] == currency) {
-                _currencyBox.setSelectedIndex(ii);
-                break;
-            }
-        }
+        // Nothing at all
     }
 
     protected void gotBasisItems (List<ListingCard> items, CatalogListing listing)
@@ -491,7 +471,6 @@ public class DoListItemPopup extends VerticalPanel
     protected List<BrandDetail> _brandItems = Lists.newArrayList();
 
     protected ListBox _pricingBox;
-    protected ListBox _currencyBox;
     protected Label _pricingTip, _salesTargetLabel;
     protected NumberTextBox _salesTarget, _cost;
 

@@ -81,8 +81,6 @@ public abstract class BuyPanel<T> extends SmartTable
         // Buy with coins, plus a link to switch to buying with bars
         _coinPanel = new FlowPanel();
         _coinPanel.add(_buyCoins = new BuyButton(Currency.COINS));
-        _coinPanel.add(
-            _switchToBars = MsoyUI.createActionLabel(_msgs.buyWithBars(), switchCurrency));
         setWidget(1, 0, _coinPanel, 2);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
 
@@ -264,7 +262,7 @@ public abstract class BuyPanel<T> extends SmartTable
     protected BuyButton _buyBars, _buyCoins;
     protected Widget _getBars;
     protected HTML _barLabel;
-    protected Widget _switchToCoins, _switchToBars;
+    protected Widget _switchToCoins;
 
     /** Are we showing the "alternate currency" view? (showing a bar price for a coin item) */
     protected boolean _altCurrency;
