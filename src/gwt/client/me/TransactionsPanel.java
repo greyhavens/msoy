@@ -3,6 +3,8 @@
 
 package client.me;
 
+import java.util.Arrays;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -27,11 +29,14 @@ public class TransactionsPanel extends FlowPanel
     {
         setStyleName("transactions");
 
+        ReportType report = ReportType.fromIndex(reportIndex);
+        int comboIndex = Arrays.asList(REPORT_TYPES).indexOf(report);
+
         FlexTable blurb = new FlexTable();
         blurb.setStyleName("Blurb");
 
         RoundBox tip = new RoundBox(RoundBox.MEDIUM_BLUE);
-        tip.add(MsoyUI.createHTML(REPORT_TIPS[reportIndex-1], null));
+        tip.add(MsoyUI.createHTML(comboIndex < 0 ? ":(" : REPORT_TIPS[comboIndex], null));
         blurb.setWidget(0, 0, tip);
 
         FlowPanel billing = MsoyUI.createFlowPanel("BillingTip");
@@ -44,7 +49,6 @@ public class TransactionsPanel extends FlowPanel
         // we use titleless tongue boxes here to make the indentation work
         add(new TongueBox(null, blurb));
 
-        ReportType report = ReportType.fromIndex(reportIndex);
         // The data model is used in both the balance panel and the bling panel.
         MoneyTransactionDataModel model = new MoneyTransactionDataModel(memberId, report);
 
@@ -54,10 +58,13 @@ public class TransactionsPanel extends FlowPanel
         }
         reportBox.addChangeHandler(new ChangeHandler() {
             public void onChange (ChangeEvent event) {
-                Link.go(Pages.ME, MePage.TRANSACTIONS, reportBox.getSelectedIndex()+1, memberId);
+                ReportType type = REPORT_TYPES[reportBox.getSelectedIndex()];
+                Link.go(Pages.ME, MePage.TRANSACTIONS, type.toIndex(), memberId);
             }
         });
-        reportBox.setSelectedIndex(reportIndex-1);
+        if (comboIndex >= 0) {
+            reportBox.setSelectedIndex(comboIndex);
+        }
 
         // figure out which display mode to use
         Widget panel;
@@ -85,10 +92,13 @@ public class TransactionsPanel extends FlowPanel
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
 
-    protected static final String[] REPORT_NAMES = { _msgs.reportCoins(), _msgs.reportBars(),
-        _msgs.reportBling(), _msgs.reportCreatorCoins(), _msgs.reportCreatorBling()
+    protected static final String[] REPORT_NAMES = {
+        _msgs.reportCoins(), _msgs.reportCreatorCoins(),
     };
-    protected static final String[] REPORT_TIPS = { _msgs.tipCoins(), _msgs.tipBars(),
-        _msgs.tipBling(), _msgs.tipCreatorCoins(), _msgs.tipCreatorBling()
+    protected static final String[] REPORT_TIPS = {
+        _msgs.tipCoins(), _msgs.tipCreatorCoins(),
+    };
+    protected static final ReportType[] REPORT_TYPES = {
+        ReportType.COINS, ReportType.CREATOR_COINS,
     };
 }
