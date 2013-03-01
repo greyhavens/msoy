@@ -24,9 +24,11 @@ import com.samskivert.util.Logger;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.CountRecord;
+import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
+import com.samskivert.depot.Exps;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
@@ -63,6 +65,25 @@ public class MoneyRepository extends DepotRepository
     public MoneyRepository (final PersistenceContext ctx)
     {
         super(ctx);
+
+        registerMigration(new DataMigration("2013-03 Account bars and bling removal") {
+            @Override public void invoke ()
+                throws DatabaseException {
+                int coinsPerBar = 10000;
+                int coinsPerCentiBling = coinsPerBar/100;
+                Where all = new Where(Exps.value(true).eq(true));
+
+                updatePartial(MemberAccountRecord._R, all, null,
+                    MemberAccountRecord.COINS, MemberAccountRecord.COINS.plus(
+                        MemberAccountRecord.BARS.times(coinsPerBar).plus(
+                        MemberAccountRecord.BLING.times(coinsPerCentiBling))),
+
+                    MemberAccountRecord.ACC_COINS, MemberAccountRecord.ACC_COINS.plus(
+                        MemberAccountRecord.BARS.times(coinsPerBar).plus(
+                        MemberAccountRecord.BLING.times(coinsPerCentiBling)))
+                );
+            }
+        });
     }
 
     /**
