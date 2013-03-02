@@ -36,8 +36,6 @@ public class BuyPanel extends VBox
 
         _switchToCoins = new CommandLinkButton(Msgs.GENERAL.get("b.switchToCoins"), switchCurrency);
         _switchToCoins.styleName = "underLink"
-        _switchToBars = new CommandLinkButton(Msgs.GENERAL.get("b.switchToBars"), switchCurrency);
-        _switchToBars.styleName = "underLink"
 
         _barPanel.addChild(_bars);
         _barPanel.addChild(_barLabel = new Label());
@@ -45,7 +43,6 @@ public class BuyPanel extends VBox
         _barPanel.addChild(_switchToCoins);
 
         _coinPanel.addChild(_coins);
-        _coinPanel.addChild(_switchToBars);
 
         // hide everything until we're ready to roll
         FlexUtil.setVisible(_coinPanel, false);
@@ -70,7 +67,6 @@ public class BuyPanel extends VBox
         } else {
             FlexUtil.setVisible(_coinPanel, !_altCurrency);
             FlexUtil.setVisible(_barPanel, _altCurrency);
-            FlexUtil.setVisible(_switchToBars, quote.getCoins() != 0);
             var change :int = quote.getCoinChange();
             if (change > 0) {
                 barTip = Msgs.GENERAL.get("m.coinChange", Currency.COINS.format(change));
@@ -125,7 +121,6 @@ public class BuyPanel extends VBox
     protected var _coins :BuyButton;
     protected var _getBars :CommandLinkButton;
     protected var _switchToCoins :CommandLinkButton;
-    protected var _switchToBars :CommandLinkButton;
     protected var _barLabel :Label;
 
     protected var _altCurrency :Boolean;

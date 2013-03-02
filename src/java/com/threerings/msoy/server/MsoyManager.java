@@ -160,8 +160,8 @@ public class MsoyManager
         ClientObject caller, final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final int baseCost = _runtime.getBarCost(CostsConfigObject.BROADCAST_BASE);
-        final int increment = _runtime.getBarCost(CostsConfigObject.BROADCAST_INCREMENT);
+        final int baseCost = _runtime.getCoinCost(CostsConfigObject.BROADCAST_BASE);
+        final int increment = _runtime.getCoinCost(CostsConfigObject.BROADCAST_INCREMENT);
         final int memberId = _locator.requireMember(caller).getMemberId();
         _invoker.postUnit(new PersistingUnit("secureBroadcastQuote", listener) {
             @Override public void invokePersistent ()
@@ -240,12 +240,12 @@ public class MsoyManager
     /**
      * Blocks and obtains a price quote.
      */
-    protected PriceQuote secureBroadcastQuote (int memberId, int baseBars, int incrementBars)
+    protected PriceQuote secureBroadcastQuote (int memberId, int baseCoins, int incrementCoins)
     {
-        int cost = baseBars +
-            (int) Math.ceil(incrementBars * _moneyLogic.getRecentBroadcastFactor());
+        int cost = baseCoins +
+            (int) Math.ceil(incrementCoins * _moneyLogic.getRecentBroadcastFactor());
         return _moneyLogic.securePrice(
-            memberId, BROADCAST_PURCHASE_KEY, Currency.BARS, cost, false);
+            memberId, BROADCAST_PURCHASE_KEY, Currency.COINS, cost, false);
     }
 
     // dependencies

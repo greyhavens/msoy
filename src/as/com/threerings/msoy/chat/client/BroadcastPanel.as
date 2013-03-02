@@ -105,7 +105,7 @@ public class BroadcastPanel extends FloatingPanel
     {
         _buyPanel.setPriceQuote(quote);
         _instructions.text = Msgs.CHAT.get(
-            "m.broadcast_instructions_" + (first ? "initial" : "price_change"), quote.getBars());
+            "m.broadcast_instructions_" + (first ? "initial" : "price_change"), quote.getCoins());
     }
 
     protected function broadcastSent (result :PriceQuote) :void
