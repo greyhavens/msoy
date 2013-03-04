@@ -180,7 +180,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if this item is listed in the catalog or listable, add a UI for that
-        if (canEditAndList && (listedOriginal || _item.sourceId == 0)) {
+        if (_item.getType().isShopType() && canEditAndList && (listedOriginal || _item.sourceId == 0)) {
             _details.add(WidgetUtil.makeShim(10, 10));
 
             // this handles both creating and updating of listings

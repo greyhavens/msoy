@@ -30,7 +30,7 @@ public enum MsoyItemType implements EntityType<MsoyItemType>
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
     public static MsoyItemType[] SHOP_ITEMS = {
-        AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, AUDIO, VIDEO
+        AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, VIDEO
     };
 
     public static MsoyItemType[] STUFF_ITEMS = {
@@ -38,7 +38,7 @@ public enum MsoyItemType implements EntityType<MsoyItemType>
     };
 
     public static MsoyItemType[] FAVORITE_ITEMS = {
-        NOT_A_TYPE, AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, AUDIO, VIDEO
+        NOT_A_TYPE, AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, VIDEO
     };
 
     public static MsoyItemType[] DJ_ITEMS = {
@@ -147,6 +147,16 @@ public enum MsoyItemType implements EntityType<MsoyItemType>
         switch(this) {
             case AVATAR: case FURNITURE: case DECOR: case TOY: case PET: case LAUNCHER:
             case LEVEL_PACK: case ITEM_PACK: case PHOTO: case AUDIO: case VIDEO: case PROP:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isUploadableType ()
+    {
+        switch(this) {
+            case AVATAR: case FURNITURE: case DECOR: case TOY: case PET: case PHOTO: case AUDIO:
+            case VIDEO:
                 return true;
         }
         return false;
