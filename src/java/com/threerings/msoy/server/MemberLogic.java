@@ -585,8 +585,8 @@ public class MemberLogic
         // do the award
         try {
             _memberRepo.noteFriendPayment(friendId, mrec.affiliateMemberId);
-            _moneyLogic.award(mrec.affiliateMemberId, Currency.BARS, TransactionType.FRIEND_AWARD,
-                1, true, UserAction.receivedFriendAward(mrec.affiliateMemberId, friendId));
+            _moneyLogic.award(mrec.affiliateMemberId, Currency.COINS, TransactionType.FRIEND_AWARD,
+                10000, true, UserAction.receivedFriendAward(mrec.affiliateMemberId, friendId));
 
         } catch (DuplicateKeyException dke) {
             log.warning("Baby Jeeves! Friend payment triggered twice?", "friend", friendId,
