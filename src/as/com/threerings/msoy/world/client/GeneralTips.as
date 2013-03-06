@@ -38,8 +38,8 @@ public class GeneralTips
         tut.newTip("tipStartupGuide", xlate("i.link_startup_guide")).beginner().buttonCloses()
             .button(xlate("b.link_default"), viewWiki("Starting_out")).limit(notEditing).queue();
 
-        tut.newTip("tipGetBars", xlate("i.link_get_bars")).beginner().buttonCloses()
-            .button(xlate("b.link_default"), viewWiki("Billing_FAQ")).limit(notEditing).queue();
+        // tut.newTip("tipGetBars", xlate("i.link_get_bars")).beginner().buttonCloses()
+        //     .button(xlate("b.link_default"), viewWiki("Billing_FAQ")).limit(notEditing).queue();
 
         tut.newTip("tipShare", xlate("i.link_share")).buttonCloses()
             .button(xlate("b.link_default"), display(Address.SHARE)).limit(notEditing).queue();
