@@ -329,6 +329,11 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser();
         int memberId = (mrec != null) ? mrec.memberId : 0;
 
+        // At some point (hah) we'll remove the shop entirely, but for now just try to hide it
+        if (itemType == MsoyItemType.AUDIO) {
+            requireSupportUser();
+        }
+
         // load up the old catalog record
         CatalogRecord record = _itemLogic.requireListing(itemType, catalogId, true);
 
