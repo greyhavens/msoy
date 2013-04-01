@@ -2600,7 +2600,7 @@ public class RoomManager extends SpotSceneManager
     protected static final int MAX_MOBS_PER_GAME = 99;
 
     /** The maximum number of songs in the playlist. */
-    protected static final int MAX_PLAYLIST_SIZE = 99;
+    protected static final int MAX_PLAYLIST_SIZE = 1;
 
     /** The number of DJ-ed tracks stored after being played. */
     protected static final int TRACK_HISTORY_SIZE = 10;
