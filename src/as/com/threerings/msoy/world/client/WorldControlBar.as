@@ -89,12 +89,12 @@ public class WorldControlBar extends ControlBar
             return _wctx.getPartyDirector().createAppropriatePartyPanel();
         }, partyBtn));
 
-        if (Prefs.IS_APRIL_FOOLS) {
-            foolsBtn = createButton("", "Toggle Foolishness");
-            foolsBtn.toggle = true;
-            foolsBtn.selected = Prefs.isAprilFoolsEnabled();
-            foolsBtn.setCallback(Prefs.setAprilFoolsEnabled);
-        }
+        // if (Prefs.IS_APRIL_FOOLS) {
+        //     foolsBtn = createButton("", "Toggle Foolishness");
+        //     foolsBtn.toggle = true;
+        //     foolsBtn.selected = Prefs.isAprilFoolsEnabled();
+        //     foolsBtn.setCallback(Prefs.setAprilFoolsEnabled);
+        // }
     }
 
     override protected function checkControls (... ignored) :void
