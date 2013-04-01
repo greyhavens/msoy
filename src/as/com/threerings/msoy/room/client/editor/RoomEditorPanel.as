@@ -337,7 +337,7 @@ public class RoomEditorPanel extends FlyingPanel
         // playlist control
         _playlistControl = new CommandCheckBox(Msgs.EDITING.get("l.playlist"),
             _controller.setPlaylistControl);
-        GridUtil.addRow(contents, _playlistControl, [ 3, 1 ]);
+        // GridUtil.addRow(contents, _playlistControl, [ 3, 1 ]);
 
         // puppet control
         var puppetControlRow :UIComponent = GridUtil.addRow(contents,

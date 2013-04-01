@@ -475,7 +475,7 @@ public class RoomManager extends SpotSceneManager
                 // This should never happen
                 throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
             }
-            modifyDJ(who, audioItemId, add, listener);
+            // modifyDJ(who, audioItemId, add, listener);
         }
     }
 
