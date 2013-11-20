@@ -621,7 +621,7 @@ public class WebUserServlet extends MsoyServiceServlet
         InputStream in = null;
         try {
             // the reCaptcha verify api
-            URL curl = new URL("http://api-verify.recaptcha.net/verify");
+            URL curl = new URL("http://www.google.com/recaptcha/api/verify");
             HttpURLConnection conn = (HttpURLConnection)curl.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");

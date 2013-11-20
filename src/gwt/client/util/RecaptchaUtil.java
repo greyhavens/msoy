@@ -57,7 +57,7 @@ public class RecaptchaUtil
         initKey(DeploymentConfig.recaptchaPublic);
 
         // start the captcha JS loading
-        DOM.setElementAttribute(e, "src", "http://api.recaptcha.net/js/recaptcha_ajax.js");
+        DOM.setElementAttribute(e, "src", "http://www.google.com/recaptcha/api/js/recaptcha_ajax.js");
 
         // display a little "loading" indicator
         RootPanel.get(elemId).add(MsoyUI.createLabel(_cmsgs.captchaLoading(), "label"));
