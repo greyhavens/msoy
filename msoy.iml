@@ -947,9 +947,9 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="panopticon-client-0.0-SNAPSHOT.jar">
+      <library name="panopticon-client-1.0.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/dist/lib/panopticon-client-0.0-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/dist/lib/panopticon-client-1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

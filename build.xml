@@ -165,8 +165,7 @@
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.samskivert" artifactId="samskivert" version="1.5"/>
       <dependency groupId="com.samskivert" artifactId="depot" version="1.5"/>
-      <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
-                  version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client" version="1.0"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.6"/>
       <dependency groupId="com.threerings" artifactId="narya" version="1.9"/>
       <dependency groupId="com.threerings" artifactId="vilya" version="1.1"/>
