@@ -155,33 +155,8 @@
   <property name="gwt.version" value="2.5.0"/>
   <target name="mavendeps" depends="prepare">
     <!-- these libraries we need for building and for the server runtime -->
-    <artifact:dependencies filesetId="runtime.fileset">
-      <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
-      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="${gwt.version}"/>
-      <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="${gwt.version}"/>
-      <dependency groupId="postgresql" artifactid="postgresql" version="9.1-901.jdbc4"/>
-      <dependency groupId="net.sf.ehcache" artifactid="ehcache" version="1.6.0"/>
-      <dependency groupId="com.restfb" artifactid="restfb" version="1.6.9"/>
-      <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.samskivert" artifactId="samskivert" version="1.5"/>
-      <dependency groupId="com.samskivert" artifactId="depot" version="1.5"/>
-      <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client" version="1.0"/>
-      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.6"/>
-      <dependency groupId="com.threerings" artifactId="narya" version="1.9"/>
-      <dependency groupId="com.threerings" artifactId="vilya" version="1.1"/>
-      <dependency groupId="com.threerings" artifactId="orth" version="0.9"/>
-      <dependency groupId="com.threerings" artifactId="whirled-code" version="1.1-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="pulse" version="1.1"/>
-      <dependency groupId="com.threerings" artifactId="threerings" version="1.1"/>
-      <dependency groupId="com.threerings" artifactId="database-utils" version="1.0"/>
-      <dependency groupId="com.threerings" artifactId="toybox" version="1.0"/>
-      <dependency groupId="com.threerings" artifactId="underwire" version="1.0"/>
-      <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
-                  version="0.0-SNAPSHOT"/>
-
-      <!-- explicitly depend on later gauva -->
-      <dependency groupId="com.google.guava" artifactId="guava" version="13.0.1"/>
-    </artifact:dependencies>
+    <artifact:pom id="msoypom" file="pom.xml" />
+    <artifact:dependencies filesetId="runtime.fileset" pomRefId="msoypom" />
     <copy todir="${deploy.dir}/lib">
       <fileset refid="runtime.fileset"/>
       <mapper type="flatten"/>
