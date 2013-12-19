@@ -178,6 +178,9 @@
       <dependency groupId="com.threerings" artifactId="underwire" version="1.0"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
+
+      <!-- explicitly depend on later gauva -->
+      <dependency groupId="com.google.guava" artifactId="guava" version="13.0.1"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="runtime.fileset"/>
@@ -188,6 +191,7 @@
          If both normal guava and the JDK5 version is in the classpath, things will crash and burn.
          Thanks Ray! -->
     <delete file="${deploy.dir}/lib/guava-jdk5-13.0.jar"/>
+    <delete file="${deploy.dir}/lib/guava-jdk5-13.0.1.jar"/>
 
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
