@@ -459,7 +459,7 @@ public class MemberRepository extends DepotRepository
     public List<FunnelByDateRecord> funnelByDate (ColumnExp<?> joinColumn,
                                                   SQLExpression<?> whereBit)
     {
-        final FluentExp dateExp = DateFuncs.date(EntryVectorRecord.CREATED);
+        final FluentExp<?> dateExp = DateFuncs.date(EntryVectorRecord.CREATED);
         List<QueryClause> clauses = Lists.newArrayList(
             new FromOverride(EntryVectorRecord.class),
             new FieldOverride(FunnelByDateRecord.DATE, dateExp),

@@ -1302,10 +1302,12 @@ public class ItemLogic
             QuicklistState.VALID : QuicklistState.INVALID;
     }
 
-    @SuppressWarnings("unchecked")
-    protected void registerRepository (MsoyItemType itemType, ItemRepository repo)
+    protected void registerRepository (MsoyItemType itemType,
+                                       ItemRepository<? extends ItemRecord> repo)
     {
-        _repos.put(itemType, repo);
+        @SuppressWarnings("unchecked") ItemRepository<ItemRecord> casted =
+            (ItemRepository<ItemRecord>)repo;
+        _repos.put(itemType, casted);
         repo.init(itemType);
     }
 

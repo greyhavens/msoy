@@ -335,5 +335,5 @@ public class JSONMarshaller<T>
     protected static Map<Class<?>, Map<String, String>> _migrations = Maps.newHashMap();
 
     /** Some classes need to be mutated into something else when they come off the wire. */
-    protected static Map<Class, JSONMutator<?>> _mutators = Maps.newHashMap();
+    protected static Map<Class<?>, JSONMutator<?>> _mutators = Maps.newHashMap();
 }

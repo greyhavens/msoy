@@ -369,9 +369,9 @@ public abstract class TagRepository extends DepotRepository
     protected Key<TagRecord> getTagKey (int tagId, int targetId)
     {
         return new Key<TagRecord>(getTagClass(),
-                                  new ColumnExp[] { getTagColumn(TagRecord.TAG_ID),
+                                  new ColumnExp<?>[] { getTagColumn(TagRecord.TAG_ID),
                                                     getTagColumn(TagRecord.TARGET_ID) },
-                                  new Comparable[] { tagId, targetId });
+                                  new Comparable<?>[] { tagId, targetId });
     }
 
     @Override // from DepotRepository

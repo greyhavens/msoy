@@ -15,6 +15,6 @@ public class HowdyPardner extends Applet
     @Override // from Applet
     public void init () {
         JSObject win = JSObject.getWindow(this);
-        win.call("howdyPardner", null);
+        win.call("howdyPardner");
     }
 }

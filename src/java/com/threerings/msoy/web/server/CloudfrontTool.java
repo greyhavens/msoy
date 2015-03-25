@@ -151,7 +151,7 @@ public abstract class CloudfrontTool
         });
     }
 
-    protected interface Modifier<T extends WriteableComplexType>
+    protected interface Modifier<T extends WriteableComplexType<T>>
     {
         public boolean modify (T object);
     }

@@ -238,7 +238,7 @@ public abstract class CloudfrontConnection
             throws XMLStreamException;
     }
 
-    protected static abstract class ComplexType<T extends ComplexType>
+    protected static abstract class ComplexType<T extends ComplexType<T>>
         extends ContainerElement implements ReturnBodyParser<T>
     {
         public T initialize (CloudfrontEventReader reader)
@@ -269,7 +269,7 @@ public abstract class CloudfrontConnection
         protected abstract boolean isComplete ();
     }
 
-    protected static abstract class WriteableComplexType<T extends WriteableComplexType>
+    protected static abstract class WriteableComplexType<T extends WriteableComplexType<T>>
         extends ComplexType<T> implements RequestBodyConstructor
     {
         public void constructBody (CloudfrontEventWriter writer) throws XMLStreamException

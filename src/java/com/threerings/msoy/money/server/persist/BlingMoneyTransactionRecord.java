@@ -52,9 +52,9 @@ public class BlingMoneyTransactionRecord extends MoneyTransactionRecord
     /**
      * Defines the subject multikey index.
      */
-    public static ColumnExp[] ixSubject ()
+    public static ColumnExp<?>[] ixSubject ()
     {
-        return new ColumnExp[] { SUBJECT_TYPE, SUBJECT_ID_TYPE, SUBJECT_ID };
+        return new ColumnExp<?>[] { SUBJECT_TYPE, SUBJECT_ID_TYPE, SUBJECT_ID };
     }
 
     // AUTO-GENERATED: METHODS START
