@@ -208,6 +208,12 @@
       <version>1.1.3</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.owasp</groupId>
+      <artifactId>antisamy</artifactId>
+      <version>1.4</version>
+    </dependency>
+
 <!--
     <dependency>
       <groupId>mysql</groupId>
@@ -240,6 +246,18 @@
       <version>1.2.16</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-client</artifactId>
+      <version>3.1.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-server</artifactId>
+      <version>3.1.2</version>
+    </dependency>
+
     <!-- migrated
     <file name="${extlibs.dir}/backport-util-concurrent-3.1-jdk1.6.jar"/>
     <file name="${extlibs.dir}/commons-configuration.jar"/>
@@ -255,6 +273,9 @@
     <file name="${extlibs.dir}/quartz.jar"/>
     <file name="${extlibs.dir}/slf4j-api.jar"/>
     <file name="${extlibs.dir}/slf4j-log4j12.jar"/>
+    <file name="${extlibs.dir}/xmlrpc-client.jar"/>
+    <file name="${extlibs.dir}/xmlrpc-common.jar"/>
+    <file name="${extlibs.dir}/xmlrpc-server.jar"/>
     -->
 
     <!-- not migrated

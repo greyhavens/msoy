@@ -387,6 +387,7 @@
       </classpath>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
+      <compilerarg value="-Xlint:-path"/>
     </javac>
     <delete dir="${deploy.dir}/gclasses"/>
   </target>
@@ -851,7 +852,7 @@
     <!-- <asimports srcdir="${asrc.dir}"/> -->
   </target>
 
-  <!-- adds readField and writeField methods to Streamable classes -->
+  <!-- adds readField and writeField methods to Streamable classes (NOTE: disabled!) -->
   <target name="procstream" depends="toolprep">
     <!-- now instrument the associated files -->
     <instream outdir="${classes.dir}">
@@ -961,7 +962,7 @@
   </target>
 
   <!-- builds the distribution jar files -->
-  <target name="dist" depends="prepare,compile,procstream">
+  <target name="dist" depends="prepare,compile">
     <!-- copy the translation strings for the news feed emails -->
     <mkdir dir="${classes.dir}/rsrc/i18n/feed"/>
     <copy todir="${classes.dir}/rsrc/i18n/feed" flatten="true">

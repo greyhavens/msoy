@@ -9,12 +9,12 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-import octazen.addressbook.AddressBookAuthenticationException;
-import octazen.addressbook.AddressBookException;
-import octazen.addressbook.Contact;
-import octazen.addressbook.SimpleAddressBookImporter;
-import octazen.addressbook.UnexpectedFormatException;
-import octazen.http.UserInputRequiredException;
+// import octazen.addressbook.AddressBookAuthenticationException;
+// import octazen.addressbook.AddressBookException;
+// import octazen.addressbook.Contact;
+// import octazen.addressbook.SimpleAddressBookImporter;
+// import octazen.addressbook.UnexpectedFormatException;
+// import octazen.http.UserInputRequiredException;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.IntIntMap;
@@ -61,56 +61,57 @@ public class InviteServlet extends MsoyServiceServlet
     public List<EmailContact> getWebMailAddresses (String email, String password)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
+        // MemberRecord memrec = requireAuthedUser();
 
-        // don't let someone attempt more than 5 imports in a 5 minute period
-        long now = System.currentTimeMillis();
-        if (now > _webmailCleared + WEB_ACCESS_CLEAR_INTERVAL) {
-            _webmailAccess.clear();
-            _webmailCleared = now;
-        }
-        if (_webmailAccess.increment(memrec.memberId, 1) > MAX_WEB_ACCESS_ATTEMPTS) {
-            throw new ServiceException(ProfileCodes.E_MAX_WEBMAIL_ATTEMPTS);
-        }
+        // // don't let someone attempt more than 5 imports in a 5 minute period
+        // long now = System.currentTimeMillis();
+        // if (now > _webmailCleared + WEB_ACCESS_CLEAR_INTERVAL) {
+        //     _webmailAccess.clear();
+        //     _webmailCleared = now;
+        // }
+        // if (_webmailAccess.increment(memrec.memberId, 1) > MAX_WEB_ACCESS_ATTEMPTS) {
+        //     throw new ServiceException(ProfileCodes.E_MAX_WEBMAIL_ATTEMPTS);
+        // }
 
-        try {
-            List<Contact> contacts = SimpleAddressBookImporter.fetchContacts(email, password);
-            List<EmailContact> results = Lists.newArrayList();
+        // try {
+        //     List<Contact> contacts = SimpleAddressBookImporter.fetchContacts(email, password);
+        //     List<EmailContact> results = Lists.newArrayList();
 
-            for (Contact contact : contacts) {
-                // don't invite the account owner
-                if (email.equals(contact.getEmail())) {
-                    continue;
-                }
-                EmailContact ec = new EmailContact();
-                ec.name = contact.getName();
-                ec.email = contact.getEmail();
-                MemberRecord member = _memberRepo.loadMember(ec.email);
-                if (member != null) {
-                    if (member.memberId == memrec.memberId) {
-                        // skip self invites
-                        continue;
-                    }
-                    ec.friendship = _memberRepo.getFriendship(memrec.memberId, member.memberId);
-                    ec.mname = member.getName();
-                }
-                results.add(ec);
-            }
-            return results;
+        //     for (Contact contact : contacts) {
+        //         // don't invite the account owner
+        //         if (email.equals(contact.getEmail())) {
+        //             continue;
+        //         }
+        //         EmailContact ec = new EmailContact();
+        //         ec.name = contact.getName();
+        //         ec.email = contact.getEmail();
+        //         MemberRecord member = _memberRepo.loadMember(ec.email);
+        //         if (member != null) {
+        //             if (member.memberId == memrec.memberId) {
+        //                 // skip self invites
+        //                 continue;
+        //             }
+        //             ec.friendship = _memberRepo.getFriendship(memrec.memberId, member.memberId);
+        //             ec.mname = member.getName();
+        //         }
+        //         results.add(ec);
+        //     }
+        //     return results;
 
-        } catch (AddressBookAuthenticationException e) {
-            throw new ServiceException(ProfileCodes.E_BAD_USERNAME_PASS);
-        } catch (UnexpectedFormatException e) {
-            log.warning("getWebMailAddresses failed", "email", email, e);
-            throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
-        } catch (AddressBookException e) {
-            throw new ServiceException(ProfileCodes.E_UNSUPPORTED_WEBMAIL);
-        } catch (UserInputRequiredException e) {
-            throw new ServiceException(ProfileCodes.E_USER_INPUT_REQUIRED);
-        } catch (Exception e) {
-            log.warning("getWebMailAddresses failed", "who", memrec.who(), "email", email, e);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        // } catch (AddressBookAuthenticationException e) {
+        //     throw new ServiceException(ProfileCodes.E_BAD_USERNAME_PASS);
+        // } catch (UnexpectedFormatException e) {
+        //     log.warning("getWebMailAddresses failed", "email", email, e);
+        //     throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
+        // } catch (AddressBookException e) {
+        //     throw new ServiceException(ProfileCodes.E_UNSUPPORTED_WEBMAIL);
+        // } catch (UserInputRequiredException e) {
+        //     throw new ServiceException(ProfileCodes.E_USER_INPUT_REQUIRED);
+        // } catch (Exception e) {
+        //     log.warning("getWebMailAddresses failed", "who", memrec.who(), "email", email, e);
+        //     throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        // }
     }
 
     // from InviteService
