@@ -20,17 +20,6 @@ log4j_config = etc/log4j.properties
 log4j_bureau_config = etc/log4j-bureaulauncher.properties
 
 #
-# Indicates which browser you use for testing (GWT builds are restricted to one
-# browser to reduce build times). If no value is specified, all browsers are built.
-
-# gwt_user_agent = gecko
-# gwt_user_agent = gecko1_8 (later FF3 builds)
-# gwt_user_agent = chrome
-# gwt_user_agent = ie6
-# gwt_user_agent = safari
-# gwt_user_agent = opera
-
-#
 # Indicates whether or not GWT should build OBFuscated or PRETTY JavaScript. We
 # always use OBF in dev and production builds, but sometimes this can aid in
 # tracking down a bug that only happens in browser.

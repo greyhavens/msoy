@@ -45,9 +45,13 @@
     <when-property-is name="user.agent" value="ie8"/>
   </replace-with>
 
-<!-- Work-around for GWT 2.0 compiler bug;
-     see http://code.google.com/p/google-web-toolkit/issues/detail?id=4438 -->
-<extend-configuration-property name="rpc.blacklist"
-                               value="com.google.gwt.user.client.ui.*Collection"/>
+  <!-- Work-around for GWT 2.0 compiler bug;
+       see http://code.google.com/p/google-web-toolkit/issues/detail?id=4438 -->
+  <extend-configuration-property name="rpc.blacklist"
+                                 value="com.google.gwt.user.client.ui.*Collection"/>
+
+  <!-- Build just one version which targets "modern" HTML5 browsers -->
+  <set-property name='user.agent' value='safari'/>
+  <set-configuration-property name="user.agent.runtimeWarning" value="false" />
 
 </module>

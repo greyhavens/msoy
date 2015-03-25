@@ -12,8 +12,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.widgetideas.graphics.client.Color;
-import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
+// import com.google.gwt.widgetideas.graphics.client.Color;
+// import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -155,58 +155,61 @@ public class GameMetricsPanel extends VerticalPanel
 
         int width = BAR_WIDTH*data.length;
 
-        GWTCanvas canvas = new GWTCanvas(width, GRAPH_HEIGHT);
+        // NOTE: GameMetricsPanel is unused, but we'll just comment out the GWTCanvas parts because
+        // that's the dependency we can't be bothered to track down (or replace)
 
-        canvas.setStrokeStyle(Color.GREY);
-        canvas.strokeRect(0, 0, width-1, GRAPH_HEIGHT-1);
-        canvas.setLineWidth(0.1f);
+        // GWTCanvas canvas = new GWTCanvas(width, GRAPH_HEIGHT);
 
-        int xx = 0;
-        do {
-            canvas.moveTo(xx, 0);
-            canvas.lineTo(xx, GRAPH_HEIGHT);
-            canvas.stroke();
-            xx += width/10;
-        } while (xx < width);
+        // canvas.setStrokeStyle(Color.GREY);
+        // canvas.strokeRect(0, 0, width-1, GRAPH_HEIGHT-1);
+        // canvas.setLineWidth(0.1f);
 
-        int yy = GRAPH_HEIGHT-1;
-        do {
-            canvas.moveTo(0, yy);
-            canvas.lineTo(width-1, yy);
-            canvas.stroke();
-            yy -= GRAPH_HEIGHT/5;
-        } while (yy > 0);
+        // int xx = 0;
+        // do {
+        //     canvas.moveTo(xx, 0);
+        //     canvas.lineTo(xx, GRAPH_HEIGHT);
+        //     canvas.stroke();
+        //     xx += width/10;
+        // } while (xx < width);
 
-        canvas.setStrokeStyle(Color.BLACK);
-        canvas.setGlobalAlpha(0.5f);
-        canvas.moveTo(0, GRAPH_HEIGHT);
-        for (int ii = 0; ii < data.length; ii++) {
-            int height = GRAPH_HEIGHT - data[ii];
-            canvas.lineTo(BAR_WIDTH*ii, height);
-            canvas.lineTo(BAR_WIDTH*(ii+1), height);
-        }
-        canvas.lineTo(width-1, GRAPH_HEIGHT);
-        canvas.fill();
+        // int yy = GRAPH_HEIGHT-1;
+        // do {
+        //     canvas.moveTo(0, yy);
+        //     canvas.lineTo(width-1, yy);
+        //     canvas.stroke();
+        //     yy -= GRAPH_HEIGHT/5;
+        // } while (yy > 0);
 
-        holder.setWidget(0, 0, canvas);
-        holder.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        holder.getFlexCellFormatter().setColSpan(0, 0, 3);
+        // canvas.setStrokeStyle(Color.BLACK);
+        // canvas.setGlobalAlpha(0.5f);
+        // canvas.moveTo(0, GRAPH_HEIGHT);
+        // for (int ii = 0; ii < data.length; ii++) {
+        //     int height = GRAPH_HEIGHT - data[ii];
+        //     canvas.lineTo(BAR_WIDTH*ii, height);
+        //     canvas.lineTo(BAR_WIDTH*(ii+1), height);
+        // }
+        // canvas.lineTo(width-1, GRAPH_HEIGHT);
+        // canvas.fill();
 
-        // create the y-axis
-        holder.setText(0, 1, maxY);
-        holder.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
-        holder.getFlexCellFormatter().setStyleName(0, 1, "tipLabel");
-        holder.setText(1, 0, "0");
-        holder.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_BOTTOM);
-        holder.getFlexCellFormatter().setStyleName(1, 0, "tipLabel");
+        // holder.setWidget(0, 0, canvas);
+        // holder.getFlexCellFormatter().setRowSpan(0, 0, 2);
+        // holder.getFlexCellFormatter().setColSpan(0, 0, 3);
 
-        // create the x-axis
-        holder.setText(2, 0, "0");
-        holder.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_LEFT);
-        holder.setText(2, 1, xLabel);
-        holder.getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_CENTER);
-        holder.setText(2, 2, maxX);
-        holder.getFlexCellFormatter().setHorizontalAlignment(2, 2, HasAlignment.ALIGN_RIGHT);
+        // // create the y-axis
+        // holder.setText(0, 1, maxY);
+        // holder.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
+        // holder.getFlexCellFormatter().setStyleName(0, 1, "tipLabel");
+        // holder.setText(1, 0, "0");
+        // holder.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_BOTTOM);
+        // holder.getFlexCellFormatter().setStyleName(1, 0, "tipLabel");
+
+        // // create the x-axis
+        // holder.setText(2, 0, "0");
+        // holder.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_LEFT);
+        // holder.setText(2, 1, xLabel);
+        // holder.getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_CENTER);
+        // holder.setText(2, 2, maxX);
+        // holder.getFlexCellFormatter().setHorizontalAlignment(2, 2, HasAlignment.ALIGN_RIGHT);
 
         return holder;
     }

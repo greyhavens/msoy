@@ -12,7 +12,7 @@
   <name>Meta SOY</name>
 
   <properties>
-    <gwt.version>2.5.0</gwt.version>
+    <gwt.version>2.6.1</gwt.version>
   </properties>
 
   <dependencies>
@@ -73,13 +73,7 @@
     <dependency>
       <groupId>com.threerings</groupId>
       <artifactId>gwt-utils</artifactId>
-      <version>1.6</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava-jdk5</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>1.7.2</version>
     </dependency>
 
     <dependency>
@@ -145,7 +139,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>10.0.1</version>
+      <version>14.0.1</version>
     </dependency>
 
     <dependency>
