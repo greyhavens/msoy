@@ -41,7 +41,7 @@ public class ContactEntry
     public int compareTo (ContactEntry that)
     {
         // online folks show up above offline folks, then sort by name
-        return ComparisonChain.start().compare(online, that.online)
+        return ComparisonChain.start().compareFalseFirst(online, that.online)
             .compare(name, that.name).result();
     }
 

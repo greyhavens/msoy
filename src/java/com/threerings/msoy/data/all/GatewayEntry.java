@@ -50,7 +50,7 @@ public class GatewayEntry
     public int compareTo (GatewayEntry that)
     {
         // online connections shown first then sort by gateway
-        return ComparisonChain.start().compare(online, that.online)
+        return ComparisonChain.start().compareFalseFirst(online, that.online)
             .compare(gateway, that.gateway).result();
     }
 
