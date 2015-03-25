@@ -62,6 +62,11 @@ public class GameSummary extends SimpleStreamableObject
     }
 
     @Override // from Object
+    public int hashCode () {
+        return gameId;
+    }
+
+    @Override // from Object
     public GameSummary clone ()
     {
         try {

@@ -256,15 +256,13 @@ public class FeedMessageAggregator
         public MessageKey actorsKey;
         public MessageKey actionsKey;
 
-        public KeyedMessage (FeedMessage message)
-        {
+        public KeyedMessage (FeedMessage message) {
             this.message = message;
             this.actorsKey = getActorsKey(message);
             this.actionsKey = getActionsKey(message);
         }
 
-        public MessageKey getKey (Style style)
-        {
+        public MessageKey getKey (Style style) {
             switch (style) {
             case ACTIONS: return actionsKey;
             case ACTORS: return actorsKey;
@@ -272,16 +270,18 @@ public class FeedMessageAggregator
             return null; // not aggregated
         }
 
-        public boolean equals (Object other)
-        {
+        public boolean equals (Object other) {
             return message.equals(((KeyedMessage)other).message);
+        }
+
+        public int hashCode () {
+            return message.hashCode();
         }
 
         /**
          * Checks whether this message is a duplicate of another.
          */
-        public boolean isDuplicateKey (KeyedMessage other, Style style)
-        {
+        public boolean isDuplicateKey (KeyedMessage other, Style style) {
             MessageKey key1 = getKey(style);
             MessageKey key2 = other.getKey(style);
             if (key1 == null || key2 == null) {
