@@ -897,6 +897,7 @@
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
+      <compilerarg value="-Xlint:-path"/>
       <exclude name="**/tests/**"/>
     </javac>
 
@@ -906,6 +907,7 @@
       <classpath refid="test.classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
+      <compilerarg value="-Xlint:-path"/>
       <include name="**/tests/**"/>
     </javac>
   </target>
