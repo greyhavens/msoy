@@ -59,7 +59,7 @@ import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
-import com.threerings.msoy.web.server.RPCProfiler;
+// import com.threerings.msoy.web.server.RPCProfiler;
 
 import static com.threerings.msoy.Log.log;
 
@@ -77,17 +77,17 @@ public class MeServlet extends MsoyServiceServlet
         MyWhirledData data = new MyWhirledData();
         data.whirledPopulation = _memberMan.getPPSnapshot().getPopulationCount();
 
-        if (PROFILING_ENABLED) {
-            _profiler.enter("promotions");
-        }
+        // if (PROFILING_ENABLED) {
+        //     _profiler.enter("promotions");
+        // }
 
         // include all our active promotions
         data.promos = Lists.newArrayList(
             Iterables.transform(_promoRepo.loadActivePromotions(), PromotionRecord.TO_PROMOTION));
 
-        if (PROFILING_ENABLED) {
-            _profiler.swap("friends");
-        }
+        // if (PROFILING_ENABLED) {
+        //     _profiler.swap("friends");
+        // }
 
         // load information on their friends
         Set<Integer> friendIds = _memberRepo.loadFriendIds(mrec.memberId);
@@ -96,9 +96,9 @@ public class MeServlet extends MsoyServiceServlet
             data.friends = _mhelper.resolveMemberCards(friendIds, true, null);
         }
 
-        if (PROFILING_ENABLED) {
-            _profiler.swap("greeters");
-        }
+        // if (PROFILING_ENABLED) {
+        //     _profiler.swap("greeters");
+        // }
 
         // load the eligible greeters
         HashSet<Integer> greeterIds = new HashSet<Integer>(
@@ -116,23 +116,23 @@ public class MeServlet extends MsoyServiceServlet
         // shuffle to avoid greeter fighting (shortList is sorted, thus the cards are too)
         Collections.shuffle(data.greeters);
 
-        if (PROFILING_ENABLED) {
-            _profiler.swap("forums");
-        }
+        // if (PROFILING_ENABLED) {
+        //     _profiler.swap("forums");
+        // }
 
         Set<Integer> groupIds = _groupLogic.getMemberGroupIds(mrec.memberId);
         data.updatedThreads = _forumRepo.countUnreadThreads(mrec.memberId, groupIds);
 
-        if (PROFILING_ENABLED) {
-            _profiler.swap("stream");
-        }
+        // if (PROFILING_ENABLED) {
+        //     _profiler.swap("stream");
+        // }
 
         data.stream = _feedLogic.loadStreamActivity(mrec.memberId, System.currentTimeMillis(),
             MyWhirledData.STREAM_PAGE_LENGTH);
 
-        if (PROFILING_ENABLED) {
-            _profiler.exit(null);
-        }
+        // if (PROFILING_ENABLED) {
+        //     _profiler.exit(null);
+        // }
 
         return data;
     }
@@ -362,7 +362,7 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected PromotionRepository _promoRepo;
-    @Inject protected RPCProfiler _profiler;
+    // @Inject protected RPCProfiler _profiler;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int MAX_GREETERS_TO_SHOW = 10;

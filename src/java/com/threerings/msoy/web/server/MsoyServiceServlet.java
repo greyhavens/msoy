@@ -38,24 +38,24 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyServiceServlet extends RemoteServiceServlet
 {
-    @Override // from RemoteServiceServlet
-    protected void onBeforeRequestDeserialized (String payload)
-    {
-        super.onBeforeRequestDeserialized(payload);
-        if (PROFILING_ENABLED) {
-            RPCRequest req = RPC.decodeRequest(payload, this.getClass(), this);
-            _profiler.enter(req.getMethod().getName());
-        }
-    }
+    // @Override // from RemoteServiceServlet
+    // protected void onBeforeRequestDeserialized (String payload)
+    // {
+    //     super.onBeforeRequestDeserialized(payload);
+    //     if (PROFILING_ENABLED) {
+    //         RPCRequest req = RPC.decodeRequest(payload, this.getClass(), this);
+    //         _profiler.enter(req.getMethod().getName());
+    //     }
+    // }
 
-    @Override // from RemoteServiceServlet
-    protected void onAfterResponseSerialized (String payload)
-    {
-        if (PROFILING_ENABLED) {
-            _profiler.exitAndClear(null);
-        }
-        super.onAfterResponseSerialized(payload);
-    }
+    // @Override // from RemoteServiceServlet
+    // protected void onAfterResponseSerialized (String payload)
+    // {
+    //     if (PROFILING_ENABLED) {
+    //         _profiler.exitAndClear(null);
+    //     }
+    //     super.onAfterResponseSerialized(payload);
+    // }
 
     /**
      * Returns the member record for the member making this service request, or null if their
@@ -213,7 +213,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     @Inject protected MemberHelper _mhelper;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected RPCProfiler _profiler;
+    // @Inject protected RPCProfiler _profiler;
     @Inject protected RootDObjectManager _omgr;
 
     /** Whether or not RPC profiling is enabled. */

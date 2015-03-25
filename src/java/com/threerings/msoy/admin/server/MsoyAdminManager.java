@@ -59,7 +59,7 @@ import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.MailSender;
-import com.threerings.msoy.web.server.RPCProfiler;
+// import com.threerings.msoy.web.server.RPCProfiler;
 
 import static com.threerings.msoy.Log.log;
 
@@ -95,7 +95,7 @@ public class MsoyAdminManager extends AdminManager
         _collectors.put(StatsModel.Type.DEPOT, new DepotStatCollector(_perCtx));
         _collectors.put(StatsModel.Type.DEPOT_QUERIES, new DepotQueriesStatCollector(_perCtx));
         _collectors.put(StatsModel.Type.CACHE, new CacheStatCollector(cacheMgr));
-        _collectors.put(StatsModel.Type.RPC, new RPCStatCollector(_rpcProfiler));
+        // _collectors.put(StatsModel.Type.RPC, new RPCStatCollector(_rpcProfiler));
 
         // start up the pulse recorder
         _pulseMan.init(ServerConfig.nodeName);
@@ -322,7 +322,7 @@ public class MsoyAdminManager extends AdminManager
     @Inject protected MsoyRebootManager _rebmgr;
     @Inject protected PersistenceContext _perCtx;
     @Inject protected PresentsPulseManager _pulseMan;
-    @Inject protected RPCProfiler _rpcProfiler;
+    // @Inject protected RPCProfiler _rpcProfiler;
     @Inject protected RootDObjectManager _omgr;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
