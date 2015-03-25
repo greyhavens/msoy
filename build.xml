@@ -63,8 +63,6 @@
 
   <!-- declare the libraries needed by the MSOY runtime and for building -->
   <filelist dir="." id="runtime.libs">
-    <file name="lib/s3lib-r347.jar"/>
-
     <!-- The following are used for HTML sanitization -->
 <!-- TODO: move into lib?
     <file name="${extlibs.dir}/antisamy/antisamy-bin.1.0.jar"/>

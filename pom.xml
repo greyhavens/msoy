@@ -61,7 +61,7 @@
     <dependency>
       <groupId>com.samskivert</groupId>
       <artifactId>depot</artifactId>
-      <version>1.5</version>
+      <version>1.6</version>
     </dependency>
 
     <dependency>
@@ -252,6 +252,14 @@
       <version>3.1.2</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.threerings.s3lib</groupId>
+      <artifactId>s3lib</artifactId>
+      <version>r347</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/s3lib-r347.jar</systemPath>
+    </dependency>
+
     <!-- migrated
     <file name="${extlibs.dir}/backport-util-concurrent-3.1-jdk1.6.jar"/>
     <file name="${extlibs.dir}/commons-configuration.jar"/>
@@ -293,4 +301,9 @@
     -->
 
   </dependencies>
+
+  <build>
+    <directory>dist</directory>
+    <sourceDirectory>src/java</sourceDirectory>
+  </build>
 </project>
