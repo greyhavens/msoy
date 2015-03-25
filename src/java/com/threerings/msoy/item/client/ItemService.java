@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -11,7 +12,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 /**
  * Provides services related to items.
  */
-public interface ItemService extends InvocationService
+public interface ItemService extends InvocationService<ClientObject>
 {
     /**
      * Given an array of ItemIdents, provides an array of item names, in the same order as idents.

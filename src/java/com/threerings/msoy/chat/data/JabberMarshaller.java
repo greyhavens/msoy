@@ -6,6 +6,7 @@ package com.threerings.msoy.chat.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.chat.client.JabberService;
@@ -20,7 +21,7 @@ import com.threerings.msoy.data.all.JabberName;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from JabberService.java.")
-public class JabberMarshaller extends InvocationMarshaller
+public class JabberMarshaller extends InvocationMarshaller<ClientObject>
     implements JabberService
 {
     /** The method id used to dispatch {@link #registerIM} requests. */

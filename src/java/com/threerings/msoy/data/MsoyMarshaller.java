@@ -6,6 +6,7 @@ package com.threerings.msoy.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.client.MsoyService;
@@ -19,7 +20,7 @@ import com.threerings.msoy.client.MsoyService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from MsoyService.java.")
-public class MsoyMarshaller extends InvocationMarshaller
+public class MsoyMarshaller extends InvocationMarshaller<ClientObject>
     implements MsoyService
 {
     /** The method id used to dispatch {@link #dispatchDeferredNotifications} requests. */

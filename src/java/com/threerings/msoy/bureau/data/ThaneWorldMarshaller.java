@@ -6,6 +6,7 @@ package com.threerings.msoy.bureau.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.bureau.client.ThaneWorldService;
@@ -19,7 +20,7 @@ import com.threerings.msoy.bureau.client.ThaneWorldService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from ThaneWorldService.java.")
-public class ThaneWorldMarshaller extends InvocationMarshaller
+public class ThaneWorldMarshaller extends InvocationMarshaller<ClientObject>
     implements ThaneWorldService
 {
     /** The method id used to dispatch {@link #locateRoom} requests. */

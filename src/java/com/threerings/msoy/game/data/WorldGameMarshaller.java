@@ -6,6 +6,7 @@ package com.threerings.msoy.game.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.game.client.WorldGameService;
@@ -19,7 +20,7 @@ import com.threerings.msoy.game.client.WorldGameService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from WorldGameService.java.")
-public class WorldGameMarshaller extends InvocationMarshaller
+public class WorldGameMarshaller extends InvocationMarshaller<ClientObject>
     implements WorldGameService
 {
     /**

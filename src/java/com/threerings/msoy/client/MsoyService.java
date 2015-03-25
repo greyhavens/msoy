@@ -4,13 +4,14 @@
 package com.threerings.msoy.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
  * Provides global non-member-related services.
  */
-public interface MsoyService extends InvocationService
+public interface MsoyService extends InvocationService<ClientObject>
 {
     /**
      * Requests that any notifications that were deferred on the MemberObject be dispatched now

@@ -4,13 +4,14 @@
 package com.threerings.msoy.chat.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.data.all.JabberName;
 
 /**
  * Defines Jabber related invocation services.
  */
-public interface JabberService extends InvocationService
+public interface JabberService extends InvocationService<ClientObject>
 {
     /**
      * Registers a client with an IM gateway and logs them in.

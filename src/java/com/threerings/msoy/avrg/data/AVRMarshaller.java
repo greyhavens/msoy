@@ -6,6 +6,7 @@ package com.threerings.msoy.avrg.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.avrg.client.AVRService;
@@ -19,7 +20,7 @@ import com.threerings.msoy.avrg.client.AVRService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from AVRService.java.")
-public class AVRMarshaller extends InvocationMarshaller
+public class AVRMarshaller extends InvocationMarshaller<ClientObject>
     implements AVRService
 {
     /**

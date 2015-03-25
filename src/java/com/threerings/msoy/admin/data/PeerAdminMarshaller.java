@@ -6,6 +6,7 @@ package com.threerings.msoy.admin.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.admin.client.PeerAdminService;
@@ -20,7 +21,7 @@ import com.threerings.msoy.admin.gwt.StatsModel;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from PeerAdminService.java.")
-public class PeerAdminMarshaller extends InvocationMarshaller
+public class PeerAdminMarshaller extends InvocationMarshaller<ClientObject>
     implements PeerAdminService
 {
     /** The method id used to dispatch {@link #compileStatistics} requests. */

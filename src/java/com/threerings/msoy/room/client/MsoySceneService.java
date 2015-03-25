@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 import com.threerings.whirled.client.SceneService.SceneMoveListener;
 import com.threerings.whirled.client.SceneService;
@@ -15,7 +16,7 @@ import com.threerings.msoy.world.client.WorldService;
 /**
  * Extends the {@link SceneService} with a scene traversal mechanism needed by Whirled.
  */
-public interface MsoySceneService extends InvocationService
+public interface MsoySceneService extends InvocationService<ClientObject>
 {
     public static interface MsoySceneMoveListener extends SceneMoveListener
     {

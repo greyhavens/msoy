@@ -4,11 +4,12 @@
 package com.threerings.msoy.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 /**
  * Services for members.
  */
-public interface MemberService extends InvocationService
+public interface MemberService extends InvocationService<ClientObject>
 {
     /**
      * Request to invite the specified user to be our friend. The result returned is a Boolean

@@ -6,6 +6,7 @@ package com.threerings.msoy.party.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.party.client.PartyService;
@@ -19,7 +20,7 @@ import com.threerings.msoy.party.client.PartyService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from PartyService.java.")
-public class PartyMarshaller extends InvocationMarshaller
+public class PartyMarshaller extends InvocationMarshaller<ClientObject>
     implements PartyService
 {
     /** The method id used to dispatch {@link #assignLeader} requests. */

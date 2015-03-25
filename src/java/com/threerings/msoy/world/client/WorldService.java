@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -11,7 +12,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 /**
  * Provides global services to the world client.
  */
-public interface WorldService extends InvocationService
+public interface WorldService extends InvocationService<ClientObject>
 {
     /**
      * Result listener for {@link #getHomeId()}.

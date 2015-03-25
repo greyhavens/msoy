@@ -6,6 +6,7 @@ package com.threerings.msoy.world.tour.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.world.tour.client.TourService;
@@ -19,7 +20,7 @@ import com.threerings.msoy.world.tour.client.TourService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from TourService.java.")
-public class TourMarshaller extends InvocationMarshaller
+public class TourMarshaller extends InvocationMarshaller<ClientObject>
     implements TourService
 {
     /** The method id used to dispatch {@link #endTour} requests. */

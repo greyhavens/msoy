@@ -6,6 +6,7 @@ package com.threerings.msoy.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.client.MemberService;
@@ -19,7 +20,7 @@ import com.threerings.msoy.client.MemberService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from MemberService.java.")
-public class MemberMarshaller extends InvocationMarshaller
+public class MemberMarshaller extends InvocationMarshaller<ClientObject>
     implements MemberService
 {
     /** The method id used to dispatch {@link #acknowledgeWarning} requests. */

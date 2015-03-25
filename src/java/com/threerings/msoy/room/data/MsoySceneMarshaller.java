@@ -5,6 +5,7 @@ package com.threerings.msoy.room.data;
 
 import javax.annotation.Generated;
 
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.crowd.data.PlaceConfig;
@@ -24,7 +25,7 @@ import com.threerings.msoy.room.client.MsoySceneService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from MsoySceneService.java.")
-public class MsoySceneMarshaller extends InvocationMarshaller
+public class MsoySceneMarshaller extends InvocationMarshaller<ClientObject>
     implements MsoySceneService
 {
     /**

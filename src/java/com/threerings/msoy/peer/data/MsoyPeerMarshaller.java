@@ -10,6 +10,7 @@ import com.threerings.io.Streamable;
 import com.threerings.util.Name;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.data.MemberObject;
@@ -25,7 +26,7 @@ import com.threerings.msoy.peer.client.MsoyPeerService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from MsoyPeerService.java.")
-public class MsoyPeerMarshaller extends InvocationMarshaller
+public class MsoyPeerMarshaller extends InvocationMarshaller<ClientObject>
     implements MsoyPeerService
 {
     /** The method id used to dispatch {@link #forwardMemberObject} requests. */

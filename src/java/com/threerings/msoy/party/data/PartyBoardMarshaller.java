@@ -6,6 +6,7 @@ package com.threerings.msoy.party.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -21,7 +22,7 @@ import com.threerings.msoy.party.client.PartyBoardService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from PartyBoardService.java.")
-public class PartyBoardMarshaller extends InvocationMarshaller
+public class PartyBoardMarshaller extends InvocationMarshaller<ClientObject>
     implements PartyBoardService
 {
     /**

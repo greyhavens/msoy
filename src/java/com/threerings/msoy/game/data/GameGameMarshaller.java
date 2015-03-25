@@ -6,6 +6,7 @@ package com.threerings.msoy.game.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.game.client.GameGameService;
@@ -19,7 +20,7 @@ import com.threerings.msoy.game.client.GameGameService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from GameGameService.java.")
-public class GameGameMarshaller extends InvocationMarshaller
+public class GameGameMarshaller extends InvocationMarshaller<ClientObject>
     implements GameGameService
 {
     /** The method id used to dispatch {@link #complainPlayer} requests. */

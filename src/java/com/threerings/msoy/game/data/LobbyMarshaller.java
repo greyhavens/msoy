@@ -6,6 +6,7 @@ package com.threerings.msoy.game.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.game.client.LobbyService;
@@ -19,7 +20,7 @@ import com.threerings.msoy.game.client.LobbyService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from LobbyService.java.")
-public class LobbyMarshaller extends InvocationMarshaller
+public class LobbyMarshaller extends InvocationMarshaller<ClientObject>
     implements LobbyService
 {
     /** The method id used to dispatch {@link #identifyLobby} requests. */

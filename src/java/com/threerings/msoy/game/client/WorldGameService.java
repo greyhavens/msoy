@@ -4,11 +4,12 @@
 package com.threerings.msoy.game.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 /**
  * Game-related services provided by the World server.
  */
-public interface WorldGameService extends InvocationService
+public interface WorldGameService extends InvocationService<ClientObject>
 {
     /** Reports the server and port on which to connect to a requested game's server. */
     public static interface LocationListener extends InvocationListener

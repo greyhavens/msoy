@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
@@ -15,7 +16,7 @@ import com.threerings.msoy.room.data.MobInfo;
 /**
  * Service requests for rooms.
  */
-public interface RoomService extends InvocationService
+public interface RoomService extends InvocationService<ClientObject>
 {
     /**
      * Requests that the specified item be assigned a controller. Other distributed state modifying

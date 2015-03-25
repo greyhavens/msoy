@@ -4,13 +4,14 @@
 package com.threerings.msoy.avrg.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.room.data.MsoyLocation;
 
 /**
  * A service for AVR (in-world) games.
  */
-public interface AVRGameService extends InvocationService
+public interface AVRGameService extends InvocationService<ClientObject>
 {
     /**
      * Instruct the server to compute a payout for this player linearly proportional to the

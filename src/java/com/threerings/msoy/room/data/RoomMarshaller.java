@@ -6,6 +6,7 @@ package com.threerings.msoy.room.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.whirled.data.SceneUpdate;
@@ -23,7 +24,7 @@ import com.threerings.msoy.room.client.RoomService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from RoomService.java.")
-public class RoomMarshaller extends InvocationMarshaller
+public class RoomMarshaller extends InvocationMarshaller<ClientObject>
     implements RoomService
 {
     /** The method id used to dispatch {@link #addOrRemoveSong} requests. */

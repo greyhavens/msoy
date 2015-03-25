@@ -6,6 +6,7 @@ package com.threerings.msoy.item.data;
 import javax.annotation.Generated;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.item.client.ItemService;
@@ -21,7 +22,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from ItemService.java.")
-public class ItemMarshaller extends InvocationMarshaller
+public class ItemMarshaller extends InvocationMarshaller<ClientObject>
     implements ItemService
 {
     /** The method id used to dispatch {@link #addFlag} requests. */

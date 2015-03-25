@@ -5,6 +5,7 @@ package com.threerings.msoy.bureau.data;
 
 import javax.annotation.Generated;
 
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
@@ -19,7 +20,7 @@ import com.threerings.msoy.bureau.client.BureauLauncherService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from BureauLauncherService.java.")
-public class BureauLauncherMarshaller extends InvocationMarshaller
+public class BureauLauncherMarshaller extends InvocationMarshaller<ClientObject>
     implements BureauLauncherService
 {
     /** The method id used to dispatch {@link #launcherInitialized} requests. */

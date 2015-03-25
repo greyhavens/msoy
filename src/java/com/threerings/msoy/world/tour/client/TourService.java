@@ -4,11 +4,12 @@
 package com.threerings.msoy.world.tour.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 /**
  * Service for the "Whirled Tour".
  */
-public interface TourService extends InvocationService
+public interface TourService extends InvocationService<ClientObject>
 {
     /**
      * If the caller is not yet touring, start them touring.

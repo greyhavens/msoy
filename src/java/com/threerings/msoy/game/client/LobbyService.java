@@ -4,11 +4,12 @@
 package com.threerings.msoy.game.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 /**
  * A service for locating the lobby for a particular game.
  */
-public interface LobbyService extends InvocationService
+public interface LobbyService extends InvocationService<ClientObject>
 {
     /**
      * Return the oid of the lobby for the specified game item.

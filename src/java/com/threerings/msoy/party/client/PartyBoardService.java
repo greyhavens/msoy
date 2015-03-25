@@ -4,6 +4,7 @@
 package com.threerings.msoy.party.client;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
@@ -11,7 +12,7 @@ import com.threerings.msoy.money.data.all.PriceQuote;
 /**
  * Provides party services accessed via a world session.
  */
-public interface PartyBoardService extends InvocationService
+public interface PartyBoardService extends InvocationService<ClientObject>
 {
     /** Provides a response to {@link #createParty} and {@link #locateParty}. */
     public static interface JoinListener extends InvocationListener

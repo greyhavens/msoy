@@ -5,6 +5,7 @@ package com.threerings.msoy.avrg.data;
 
 import javax.annotation.Generated;
 
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 
 import com.threerings.msoy.avrg.client.AVRGameAgentService;
@@ -18,7 +19,7 @@ import com.threerings.msoy.avrg.client.AVRGameAgentService;
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
            comments="Derived from AVRGameAgentService.java.")
-public class AVRGameAgentMarshaller extends InvocationMarshaller
+public class AVRGameAgentMarshaller extends InvocationMarshaller<ClientObject>
     implements AVRGameAgentService
 {
     /** The method id used to dispatch {@link #leaveGame} requests. */
