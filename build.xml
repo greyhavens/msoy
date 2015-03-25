@@ -58,50 +58,17 @@
     <file name="${extlibs.dir}/gwt-dnd.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/junit4.jar"/>
+
     <!--<file name="${extlibs.dir}/retroweaver-all-1.2.2.jar"/>
     <file name="${extlibs.dir}/retroweaver-rt-1.2.2.jar"/>-->
   </filelist>
 
   <!-- declare the libraries needed by the MSOY runtime and for building -->
   <filelist dir="." id="runtime.libs">
-    <file name="${extlibs.dir}/args4j-2.0.7.jar"/>
-    <file name="${extlibs.dir}/backport-util-concurrent-3.1-jdk1.6.jar"/>
-    <file name="${extlibs.dir}/collectd.jar"/>
-    <file name="${extlibs.dir}/commons-configuration.jar"/>
-    <file name="${extlibs.dir}/commons-fileupload.jar"/>
-    <file name="${extlibs.dir}/commons-httpclient.jar"/>
-    <file name="${extlibs.dir}/commons-io.jar"/>
-    <file name="${extlibs.dir}/ganymed.jar"/>
-    <file name="${extlibs.dir}/gson.jar"/>
-    <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
-    <file name="${extlibs.dir}/jcip-annotations.jar"/>
-    <file name="${extlibs.dir}/mina-core.jar"/>
-    <file name="${extlibs.dir}/mina-filter-ssl.jar"/>
-    <file name="${extlibs.dir}/mysql-connector-java.jar"/>
-    <file name="${extlibs.dir}/quartz.jar"/>
-    <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
-    <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
-    <file name="${extlibs.dir}/s3lib.jar"/>
-    <file name="${extlibs.dir}/slf4j-api.jar"/>
-    <file name="${extlibs.dir}/slf4j-log4j12.jar"/>
-    <file name="${extlibs.dir}/svnClientAdapter.jar"/>
-    <file name="${extlibs.dir}/svnjavahl.jar"/>
-    <file name="${extlibs.dir}/svnkit-cli.jar"/>
-    <file name="${extlibs.dir}/svnkit-javahl.jar"/>
-    <file name="${extlibs.dir}/svnkit.jar"/>
-    <file name="${extlibs.dir}/swfutils-ooo.jar"/>
-    <file name="${extlibs.dir}/ws-commons-util.jar"/>
-    <file name="${extlibs.dir}/xml-writer.jar"/>
-    <file name="${extlibs.dir}/xmlrpc-client.jar"/>
-    <file name="${extlibs.dir}/xmlrpc-common.jar"/>
-    <file name="${extlibs.dir}/xmlrpc-server.jar"/>
-    <file name="${extlibs.dir}/rabbitmq-client.jar"/>
-
-    <!-- The following are used for Panopticon -->
-    <file name="${extlibs.dir}/log4j.jar"/>
-    <file name="${extlibs.dir}/hessian.jar"/>
+    <file name="lib/s3lib-r347.jar"/>
 
     <!-- The following are used for HTML sanitization -->
+<!-- TODO: move into lib?
     <file name="${extlibs.dir}/antisamy/antisamy-bin.1.0.jar"/>
     <file name="${extlibs.dir}/antisamy/batik-css.jar"/>
     <file name="${extlibs.dir}/antisamy/batik-util.jar"/>
@@ -109,6 +76,7 @@
     <file name="${extlibs.dir}/antisamy/nekohtml.jar"/>
     <file name="${extlibs.dir}/antisamy/sac.jar"/>
     <file name="${extlibs.dir}/xercesImpl.jar"/>
+-->
 
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
@@ -139,16 +107,20 @@
     <file name="lib/aperture/winlaf-0.5.1.jar"/>
 
     <!-- The following are used for webmail address book importing -->
+<!--
     <file name="${extlibs.dir}/abimporter.jar"/>
     <file name="${extlibs.dir}/ozcommons.jar"/>
+-->
 
     <!-- The following are used by our Flash clients -->
     <file name="lib/tweener.swc"/>
     <file name="lib/KongregateAPI.swc"/>
 
     <!-- The following are used to build abc files -->
+<!-- TODO: move to lib?
     <file name="${extlibs.dir}/asc.jar"/>
     <file name="${extlibs.dir}/flexTasks.jar"/>
+-->
   </filelist>
 
   <!-- fetches our library dependencies -->
@@ -165,9 +137,11 @@
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
       <dependency groupId="com.google.gwt" artifactId="gwt-user" version="${gwt.version}"/>
+<!--
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
-      <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.9"/>
+-->
+
+      <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.8"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.9"/>
       <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.6"/>
@@ -183,7 +157,6 @@
   <target name="mavendeps-as">
     <!-- these libraries we need for building actionscript -->
     <artifact:dependencies filesetId="aslib.fileset">
-      <remoteRepository refid="ooo.maven.depends.repo"/>
       <remoteRepository id="ooo-public" url="http://ooo-maven.googlecode.com/hg/repository"/>
       <dependency groupId="org.osflash" artifactId="signals"
                   version="0.8.1-ooo" type="swc"/>
@@ -242,18 +215,15 @@
 
     <!-- grab the deployment et al properties from the configuration location. -->
     <dirname property="absolute.deploy.dir" file="${deploy.dir}/somefile.txt"/>
-    <gatherconfiguration app="${app.name}" distribution="${ooo.distribution}"
-                         dest="${absolute.deploy.dir}">
-      <sources refid="ooo.msoyconfig.source"/>
-      <sources><directory path="${basedir}/etc"/></sources>
-      <files>
-        <file name="msoy-server.properties"/>
-        <file name="msoy-server.conf"/>
-        <file name="burl-server.properties"/>
-        <file name="burl-server.conf"/>
-        <file name="build_settings.properties"/>
-      </files>
-    </gatherconfiguration>
+    <copy todir="${absolute.deploy.dir}">
+      <fileset dir="${basedir}/etc">
+        <include name="msoy-server.properties"/>
+        <include name="msoy-server.conf"/>
+        <include name="burl-server.properties"/>
+        <include name="burl-server.conf"/>
+        <include name="build_settings.properties"/>
+      </fileset>
+    </copy>
 
     <!-- Read in all the deployment & build configuration bits. -->
     <property file="${deploy.dir}/msoy-server.properties"/>
@@ -278,9 +248,11 @@
     <copyfilelist dest="${deploy.dir}/lib">
       <filelist refid="runtime.libs"/>
     </copyfilelist>
+<!-- TODO
     <copyfilelist dest="${deploy.dir}/build">
       <filelist refid="build.libs"/>
     </copyfilelist>
+-->
 
     <!-- create our toybox propertis from msoy-server.properties -->
     <exec executable="egrep">
@@ -329,7 +301,6 @@
   <!-- defines our various presents ant tasks -->
   <target name="toolprep" depends="prepare">
     <artifact:dependencies pathId="tools.classpath">
-      <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.threerings" artifactId="narya-tools" version="1.9"/>
     </artifact:dependencies>
     <taskdef resource="com/threerings/presents/tools.properties"
@@ -409,7 +380,7 @@
     <echo>Compiling GWT classes...</echo>
     <mkdir dir="${deploy.dir}/gclasses"/>
     <javac srcdir="${gsrc.dir}" destdir="${deploy.dir}/gclasses" includeAntRuntime="false"
-           debug="on" optimize="off" source="1.5" target="1.5">
+           debug="on" optimize="off" source="1.6" target="1.6">
       <classpath>
         <path refid="gwt.classpath"/>
         <pathelement path="${classes.dir}"/>
@@ -452,7 +423,7 @@
       <dependency groupId="com.google.gwt" artifactId="gwt-dev" version="${gwt.version}"/>
     </artifact:dependencies>
     <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
-    	classname="com.google.gwt.dev.Compiler">
+     classname="com.google.gwt.dev.Compiler">
       <classpath>
         <path refid="gwt-dev.classpath"/>
         <path refid="gwt.classpath"/>
@@ -789,7 +760,7 @@
              classpathref="classpath"/>
     <!-- make sure the record class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
-           debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
+           debug="on" optimize="${build.optimize}" deprecation="on" source="1.6" target="1.6">
       <classpath refid="classpath"/>
       <include name="**/*Record.java"/>
     </javac>
@@ -803,7 +774,7 @@
   <target name="gendobj" depends="toolprep">
     <!-- make sure the dobject class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
-           debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
+           debug="on" optimize="${build.optimize}" deprecation="on" source="1.6" target="1.6">
       <classpath refid="classpath"/>
       <include name="**/*Object.java"/>
     </javac>
@@ -820,7 +791,7 @@
   <target name="genstreamable" depends="toolprep">
     <!-- make sure the streamable class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
-           debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
+           debug="on" optimize="${build.optimize}" deprecation="on" source="1.6" target="1.6">
       <classpath refid="classpath"/>
       <include name="**/data/*.java"/>
     </javac>
@@ -835,7 +806,7 @@
   <target name="genservice" depends="toolprep">
     <!-- make sure the service class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
-           debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
+           debug="on" optimize="${build.optimize}" deprecation="on" source="1.6" target="1.6">
       <classpath refid="classpath"/>
       <include name="**/client/*Service.java"/>
       <exclude name="**/web/**"/>
@@ -867,7 +838,7 @@
   <target name="genreceiver" depends="toolprep">
     <!-- make sure the receiver class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
-           debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
+           debug="on" optimize="${build.optimize}" deprecation="on" source="1.6" target="1.6">
       <classpath refid="classpath"/>
       <include name="**/*Receiver.java"/>
     </javac>
@@ -894,7 +865,7 @@
   <target name="genasync" description="Regenerates GWT Async interfaces.">
     <!-- make sure the record class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
-           debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
+           debug="on" optimize="${build.optimize}" deprecation="on" source="1.6" target="1.6">
       <classpath refid="classpath"/>
       <include name="**/gwt/*Service.java"/>
     </javac>
@@ -952,7 +923,7 @@
   <target name="qcompile">
     <echo>Compiling main classes...</echo>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
-           debug="on" optimize="off" deprecation="on" source="1.5" target="1.5">
+           debug="on" optimize="off" deprecation="on" source="1.6" target="1.6">
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
@@ -961,7 +932,7 @@
 
     <echo>Compiling test classes...</echo>
     <javac srcdir="${src.dir}" destdir="${tclasses.dir}" includeAntRuntime="false"
-           debug="on" optimize="off" deprecation="on" source="1.5" target="1.5">
+           debug="on" optimize="off" deprecation="on" source="1.6" target="1.6">
       <classpath refid="test.classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
@@ -1035,14 +1006,6 @@
     <chmod perm="oug+x" file="dist/lib/avmthane"/>
   </target>
 
-  <!-- builds the whirled-specific panopticon cell; not part of the standard build -->
-  <target name="distcell" depends="prepare,mavendeps,dist">
-    <ant dir="projects/mcell" target="dist" inheritRefs="false" inheritAll="false">
-        <reference refid="ooo.msoyconfig.source"/>
-        <reference refid="ooo.maven.depends.repo"/>
-    </ant>
-  </target>
-
   <!-- rebuilds all subprojects and the whole top-level distribution -->
   <target name="distbits" depends="dist,flashapps,thane-client"/>
   <target name="distall-package"
@@ -1085,7 +1048,6 @@
     <delete dir="${deploy.dir}"/>
     <ant dir="projects/whirledmap" target="clean" inheritAll="false"/>
     <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
-    <ant dir="projects/mcell" target="distclean" inheritAll="false"/>
   </target>
 
   <!-- fully cleans out the application and all subprojects -->
@@ -1383,16 +1345,6 @@
     <move todir="${package.output}">
       <fileset dir="${pkgroot.root}" includes="*.dpkg"/>
     </move>
-  </target>
-
-  <target name="package-cell" depends="distcell,prepare-package">
-    <ant dir="projects/mcell" target="just-package" inheritAll="false">
-        <property name="cell.package.output" value="${package.output}"/>
-        <property name="ooo.architecture" value="${ooo.architecture}"/>
-        <property name="ooo.prefix" value="${ooo.prefix}"/>
-        <reference refid="ooo.msoyconfig.source"/>
-        <reference refid="ooo.maven.depends.repo"/>
-    </ant>
   </target>
 
   <!-- builds our javadocs and packages them up -->

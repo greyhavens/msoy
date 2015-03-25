@@ -7,9 +7,13 @@
   </parent>
 
   <groupId>com.threerings.msoy</groupId>
-  <artifactId>msoy-legacy</artifactId>
-  <version>0.0-SNAPSHOT</version>
+  <artifactId>msoy</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <name>Meta SOY</name>
+
+  <properties>
+    <gwt.version>2.5.0</gwt.version>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -143,5 +147,135 @@
       <artifactId>guava</artifactId>
       <version>10.0.1</version>
     </dependency>
+
+    <dependency>
+      <groupId>args4j</groupId>
+      <artifactId>args4j</artifactId>
+      <version>2.0.8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>1.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>1.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.2.6</version>
+    </dependency>
+
+    <dependency>
+      <groupId>net.jcip</groupId>
+      <artifactId>jcip-annotations</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.mina</groupId>
+      <artifactId>mina-core</artifactId>
+      <version>1.1.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.mina</groupId>
+      <artifactId>mina-filter-ssl</artifactId>
+      <version>1.1.3</version>
+    </dependency>
+
+<!--
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.0.6</version>
+    </dependency>
+-->
+
+    <dependency>
+      <groupId>org.opensymphony.quartz</groupId>
+      <artifactId>quartz</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.4.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.4.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.16</version>
+    </dependency>
+
+    <!-- migrated
+    <file name="${extlibs.dir}/backport-util-concurrent-3.1-jdk1.6.jar"/>
+    <file name="${extlibs.dir}/commons-configuration.jar"/>
+    <file name="${extlibs.dir}/commons-fileupload.jar"/>
+    <file name="${extlibs.dir}/commons-httpclient.jar"/>
+    <file name="${extlibs.dir}/commons-io.jar"/>
+    <file name="${extlibs.dir}/gson.jar"/>
+    <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
+    <file name="${extlibs.dir}/jcip-annotations.jar"/>
+    <file name="${extlibs.dir}/mina-core.jar"/>
+    <file name="${extlibs.dir}/mina-filter-ssl.jar"/>
+    <file name="${extlibs.dir}/mysql-connector-java.jar"/>
+    <file name="${extlibs.dir}/quartz.jar"/>
+    <file name="${extlibs.dir}/slf4j-api.jar"/>
+    <file name="${extlibs.dir}/slf4j-log4j12.jar"/>
+    -->
+
+    <!-- not migrated
+    <file name="${extlibs.dir}/collectd.jar"/>
+    <file name="${extlibs.dir}/ganymed.jar"/>
+    <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
+    <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
+    <file name="${extlibs.dir}/s3lib.jar"/>
+    <file name="${extlibs.dir}/svnClientAdapter.jar"/>
+    <file name="${extlibs.dir}/svnjavahl.jar"/>
+    <file name="${extlibs.dir}/svnkit-cli.jar"/>
+    <file name="${extlibs.dir}/svnkit-javahl.jar"/>
+    <file name="${extlibs.dir}/svnkit.jar"/>
+    <file name="${extlibs.dir}/swfutils-ooo.jar"/>
+    <file name="${extlibs.dir}/ws-commons-util.jar"/>
+    <file name="${extlibs.dir}/xml-writer.jar"/>
+    <file name="${extlibs.dir}/xmlrpc-client.jar"/>
+    <file name="${extlibs.dir}/xmlrpc-common.jar"/>
+    <file name="${extlibs.dir}/xmlrpc-server.jar"/>
+    <file name="${extlibs.dir}/rabbitmq-client.jar"/>
+    -->
+
   </dependencies>
 </project>
