@@ -115,12 +115,6 @@
     <!-- The following are used by our Flash clients -->
     <file name="lib/tweener.swc"/>
     <file name="lib/KongregateAPI.swc"/>
-
-    <!-- The following are used to build abc files -->
-<!-- TODO: move to lib?
-    <file name="${extlibs.dir}/asc.jar"/>
-    <file name="${extlibs.dir}/flexTasks.jar"/>
--->
   </filelist>
 
   <!-- fetches our library dependencies -->
@@ -484,20 +478,6 @@
 
   <!-- prepares to build our Flash client -->
   <target name="asprepare" depends="prepare">
-    <!-- locate our flex sdk -->
-    <condition property="rel.flexsdk.dir" value="../flex/flex3">
-      <available file="../flex/flex3/lib/compc.jar"/>
-    </condition>
-    <condition property="rel.flexsdk.dir" value="../OOOLIBS-FLEX/flex3">
-      <available file="../OOOLIBS-FLEX/flex3/lib/compc.jar"/>
-    </condition>
-    <dirname property="parent.dir" file="../somefile.txt"/>
-    <fail><condition><not><isset property="rel.flexsdk.dir"/></not></condition>
-      You must either pass -Drel.flexsdk.dir=somedir on the command line, or check
-      out the Flex SDK like so:
-      svn checkout svn+ssh://src.earth.threerings.net/flex/trunk ${parent.dir}/flex
-    </fail>
-    <dirname property="flexsdk.dir" file="${rel.flexsdk.dir}/somefile.txt"/>
     <echo message="The Flex SDK is in ${flexsdk.dir}."/>
 
     <mkdir dir="pages/clients/${version}"/>
@@ -654,13 +634,18 @@
     </java>
 
     <echo message="Turning .swfs into .abcs..."/>
-    <java outputproperty="dump" classpathref="classpath"
+    <path id="swfx.classpath">
+      <file name="lib/swfutils-ooo.jar"/>
+      <file name="lib/asc.jar"/>
+      <file name="lib/flexTasks.jar"/>
+    </path>
+    <java outputproperty="dump" classpathref="swfx.classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/msoylib.abc"/>
       <arg value="${deploy.dir}/msoylib.swc"/>
     </java>
-    <java outputproperty="dump" classpathref="classpath"
+    <java outputproperty="dump" classpathref="swfx.classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/MsoyThaneClient.abc"/>
@@ -1012,7 +997,8 @@
   <target name="distall-package"
           depends="prepare,mavendeps,mavendeps-as,distbits,tests,checkstyle,gclients"
           description="Rebuilds all architecture independent targets."/>
-  <target name="distall" depends="copythanebinaries,distall-package"
+  <!-- <target name="distall" depends="copythanebinaries,distall-package" -->
+  <target name="distall" depends="distall-package"
           description="Rebuilds all subprojects and whole top-level distribution."/>
 
   <!-- cleans out the compiled code -->

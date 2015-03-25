@@ -9,6 +9,11 @@
 ehcache_config = etc/ehcache.xml
 
 #
+# Where to find the Flex 3 SDK (absolute path or relative to project root)
+
+flexsdk.dir = flex3
+
+#
 # Indicates which log4j configuration file to use.
 
 log4j_config = etc/log4j.properties
