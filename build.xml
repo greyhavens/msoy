@@ -446,13 +446,9 @@
 
     <!-- if we succeeded, gzip our generated HTML output -->
     <apply failonerror="true" executable="gzip">
-      <arg value="-c"/>
+      <arg value="-k"/>
       <srcfile/>
       <fileset dir="${pageout.dir}/${page}" includes="*.cache.html"/>
-      <redirector>
-        <outputmapper type="glob" from="*.cache.html"
-                      to="${pageout.dir}/${page}/*.cache.html.gz"/>
-      </redirector>
     </apply>
 
     <!-- if we're building the 'frame' page, we need to move it up out of the version dir -->
