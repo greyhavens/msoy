@@ -995,7 +995,7 @@
   <!-- rebuilds all subprojects and the whole top-level distribution -->
   <target name="distbits" depends="dist,flashapps,thane-client"/>
   <target name="distall-package"
-          depends="prepare,mavendeps,mavendeps-as,distbits,tests,checkstyle,gclients"
+          depends="prepare,mavendeps,mavendeps-as,distbits,tests,gclients"
           description="Rebuilds all architecture independent targets."/>
   <!-- <target name="distall" depends="copythanebinaries,distall-package" -->
   <target name="distall" depends="distall-package"
