@@ -1,0 +1,673 @@
+<!-- build configuration -->
+<project name="build-support" xmlns:artifact="urn:maven-artifact-ant">
+
+  <!-- figure out the absolute path to this build file -->
+  <dirname property="buildetc.dir" file="${ant.file.build-support}"/>
+
+  <!-- specify where we'll find our various dependencies -->
+  <property name="projects.dir"  value="projects"/>
+  <property name="libs.dir"      value="${deploy.dir}/lib"/>
+  <property name="buildlibs.dir" value="${buildetc.dir}/../lib/java"/>
+
+  <!-- enumerate our available libraries -->
+  <property name="buildlib.ant-contrib.jar" value="${buildlibs.dir}/ant-contrib.jar"/>
+  <property name="buildlib.ant-copyfilelist.jar" value="${buildlibs.dir}/ant-copyfilelist.jar"/>
+  <property name="buildlib.ant-gatherconfiguration.jar"
+      value="${buildlibs.dir}/ant-gatherconfiguration.jar"/>
+  <property name="buildlib.ant-gettext.jar" value="${buildlibs.dir}/ant-gettext.jar"/>
+  <property name="buildlib.antidote.jar" value="${buildlibs.dir}/antidote-1.4.jar"/>
+  <property name="buildlib.ant-oooscripts.jar" value="${buildlibs.dir}/ant-oooscripts.jar"/>
+  <property name="buildlib.ant-setsysprop.jar" value="${buildlibs.dir}/ant-setsysprop.jar"/>
+  <property name="buildlib.ant-startupscript.jar" value="${buildlibs.dir}/ant-startupscript.jar"/>
+  <property name="buildlib.ant-xmlrpc.jar" value="${buildlibs.dir}/ant-xmlrpc.jar"/>
+  <property name="buildlib.commons-collections.jar"
+      value="${buildlibs.dir}/commons-collections-3.2.jar"/>
+  <property name="buildlib.commons-io.jar" value="${buildlibs.dir}/commons-io-1.3.2.jar"/>
+  <property name="buildlib.ganymed.jar" value="${buildlibs.dir}/ganymed.jar"/>
+  <property name="buildlib.jdk1.5.dir" value="${buildlibs.dir}/jdk1.5"/>
+  <property name="buildlib.jdk1.6.dir" value="${buildlibs.dir}/jdk1.6"/>
+  <property name="buildlib.jpkg-combined.jar" value="${buildlibs.dir}/jpkg-combined-1.4.jar"/>
+  <property name="buildlib.junit.jar" value="${buildlibs.dir}/junit-4.2.jar"/>
+  <property name="buildlib.maven-ant-tasks.jar" value="${buildlibs.dir}/maven-ant-tasks-2.1.3.jar"/>
+  <property name="buildlib.mockrunner.dir" value="${buildlibs.dir}/mockrunner-0.3.8"/>
+  <property name="buildlib.pack200task.jar" value="${buildlibs.dir}/pack200task.jar"/>
+  <property name="buildlib.rscbundlecheck.jar"
+      value="${buildlibs.dir}/rscbundlecheck-1.31-bin.jar"/>
+  <property name="buildlib.s3lib.jar" value="${buildlibs.dir}/s3lib-1.0.jar"/>
+  <property name="buildlib.s3upload.jar" value="${buildlibs.dir}/s3upload.jar"/>
+  <property name="buildlib.svnant.jar" value="${buildlibs.dir}/svnant.jar"/>
+  <property name="buildlib.svnclean.jar" value="${buildlibs.dir}/svnclean.jar"/>
+  <property name="buildlib.svnClientAdapter.jar" value="${buildlibs.dir}/svnClientAdapter.jar"/>
+  <property name="buildlib.svn-javahl.jar" value="${buildlibs.dir}/svn-javahl.jar"/>
+  <property name="buildlib.svnjavahl.jar" value="${buildlibs.dir}/svnjavahl.jar"/>
+  <property name="buildlib.svnkit-cli.jar" value="${buildlibs.dir}/svnkit-cli.jar"/>
+  <property name="buildlib.svnkit.jar" value="${buildlibs.dir}/svnkit.jar"/>
+  <property name="buildlib.svnkit-javahl.jar" value="${buildlibs.dir}/svnkit-javahl.jar"/>
+  <property name="buildlib.tlddoc.jar" value="${buildlibs.dir}/tlddoc-1.3.jar"/>
+  <property name="buildlib.velocity-dev.jar" value="${buildlibs.dir}/velocity-1.5-dev.jar"/>
+  <property name="buildlib.ws-commons-util.jar" value="${buildlibs.dir}/ws-commons-util-1.0.1.jar"/>
+  <property name="buildlib.xmlrpc-client.jar" value="${buildlibs.dir}/xmlrpc-client-3.1.jar"/>
+  <property name="buildlib.xmlrpc-common.jar" value="${buildlibs.dir}/xmlrpc-common-3.1.jar"/>
+  <property name="buildlib.xmltask.jar" value="${buildlibs.dir}/xmltask-v1.15.1.jar"/>
+
+  <!-- we rely on subversion in multiple locations, so define the classpath once here -->
+  <path id="subversion.classpath">
+    <pathelement location="${buildlib.ganymed.jar}"/>
+    <pathelement location="${buildlib.svnant.jar}"/>
+    <pathelement location="${buildlib.svnClientAdapter.jar}"/>
+    <pathelement location="${buildlib.svnjavahl.jar}"/>
+    <pathelement location="${buildlib.svnkit.jar}"/>
+    <pathelement location="${buildlib.svnkit-javahl.jar}"/>
+    <pathelement location="${buildlib.svnkit-cli.jar}"/>
+  </path>
+
+  <!-- class path for maven ant tasks -->
+  <path id="maven-ant-tasks.classpath">
+    <pathelement location="${buildlib.maven-ant-tasks.jar}"/>
+  </path>
+
+  <!-- Vend the mockrunner J2EE Mock Testing suite to interested projects -->
+  <path id="j2ee.mockrunner.classpath">
+    <fileset dir="${buildlib.mockrunner.dir}"/>
+  </path>
+
+  <!-- we want some tasks from ant-contrib -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml">
+    <classpath>
+      <pathelement location="${buildlib.ant-contrib.jar}"/>
+    </classpath>
+  </taskdef>
+
+  <!-- only load these tasks once per ant instance -->
+  <if><not><istrue value="${load.common.tasks.done}"/></not><then>
+
+    <!-- Setup the maven deployment task -->
+    <taskdef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+      classpathref="maven-ant-tasks.classpath"/>
+
+    <!-- NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE -->
+    <!-- Don't add new tasks here where the CPU and disk resources are spent resolving   -->
+    <!-- them whether projects need them or not. Add an an -init-foo task like the ones  -->
+    <!-- below (e.g. -init-jetty-ant) and explicitly set the tasks up in your project    -->
+    <!-- when and where you need them.                                                   -->
+    <!-- NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE -->
+
+    <!-- Setup the gettext tasks -->
+<!--
+      <taskdef resource="com/threerings/ant/gettext/antlib.xml"
+             classpath="${buildlib.ant-gettext.jar}"/>
+-->
+    <!-- Setup the svnant tasks -->
+<!--
+    <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml"
+             classpathref="subversion.classpath"/>
+-->
+
+    <!-- Setup the JPkg <dpkg> task and the oooscripts -->
+    <path id="jpkg.classpath">
+      <pathelement location="${buildlib.jpkg-combined.jar}"/>
+      <pathelement location="${buildlib.ant-oooscripts.jar}"/>
+    </path>
+    <!-- include the dpkg task -->
+<!--
+    <taskdef resource="antlib.xml" classpathref="jpkg.classpath" loaderref="jpkg.loader"/>
+-->
+    <!-- include the oooscripts -->
+<!--
+    <typedef resource="antlib-oooscripts.xml" classpathref="jpkg.classpath"
+             loaderref="jpkg.loader"/>
+-->
+
+    <!-- Setup the <gatherconfiguration> task -->
+<!--
+    <taskdef resource="antlib-gatherconfiguration.xml">
+      <classpath>
+        <pathelement location="${buildlib.ant-gatherconfiguration.jar}"/>
+        <pathelement location="${buildlib.antidote.jar}"/>
+        <pathelement location="${buildlib.commons-io.jar}"/>
+        <pathelement location="${buildlib.ws-commons-util.jar}"/>
+      </classpath>
+    </taskdef>
+
+    <macrodef name="gatherappconfig"
+        description="Gathers configuration for the current app from etc and the ooo source">
+       <element name="filesets" implicit="yes"/>
+       <sequential>
+         <gatherconfiguration app="${ant.project.name}" distribution="${ooo.distribution}"
+             dest="${deploy.dir}">
+             <sources refid="ooo.oooconfig.source"/>
+             <sources>
+                 <directory path="${basedir}/etc"/>
+             </sources>
+             <files>
+                 <filesets/>
+             </files>
+         </gatherconfiguration>
+       </sequential>
+    </macrodef>
+-->
+
+    <!-- Setup the <startupscript> task -->
+<!--
+    <taskdef name="startupscript" classname="com.threerings.ant.startupscript.StartupScript">
+      <classpath>
+        <pathelement location="${buildlib.ant-startupscript.jar}"/>
+        <pathelement location="${buildlib.commons-collections.jar}"/>
+        <pathelement location="${buildlib.velocity-dev.jar}"/>
+      </classpath>
+    </taskdef>
+-->
+
+    <!-- Setup the <jettystartup> task -->
+<!--
+    <taskdef name="jettystartup" classname="com.threerings.ant.startupscript.JettyStartup">
+      <classpath>
+        <pathelement location="${buildlib.ant-startupscript.jar}"/>
+        <pathelement location="${buildlib.commons-collections.jar}"/>
+        <pathelement location="${buildlib.velocity-dev.jar}"/>
+      </classpath>
+    </taskdef>
+-->
+
+    <!-- Setup the <xmlrpc> task -->
+<!--
+    <taskdef name="xmlrpc" classname="com.threerings.ant.xmlrpc.XmlRpc">
+      <classpath>
+        <pathelement location="${buildlib.ant-xmlrpc.jar}"/>
+        <pathelement location="${buildlib.ws-commons-util.jar}"/>
+        <pathelement location="${buildlib.xmlrpc-common.jar}"/>
+        <pathelement location="${buildlib.xmlrpc-client.jar}"/>
+      </classpath>
+    </taskdef>
+-->
+
+    <!-- Setup the <copyfilelist> task -->
+    <taskdef name="copyfilelist" classname="com.threerings.ant.CopyFileList"
+      classpath="${buildlib.ant-copyfilelist.jar}"/>
+
+    <!-- Setup the xmltask -->
+<!--
+    <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+      <classpath>
+        <pathelement location="${buildlib.xmltask.jar}"/>
+      </classpath>
+    </taskdef>
+-->
+
+    <!-- Setup the s3upload task -->
+<!--
+    <taskdef name="s3upload" classname="com.threerings.ant.S3Upload">
+      <classpath>
+        <pathelement location="${buildlib.s3lib.jar}"/>
+        <pathelement location="${buildlib.s3upload.jar}"/>
+      </classpath>
+    </taskdef>
+    <typedef name="s3header" classname="com.threerings.ant.S3Upload$Header">
+      <classpath>
+        <pathelement location="${buildlib.s3upload.jar}"/>
+      </classpath>
+    </typedef>
+-->
+
+    <!-- Set up a macro that retries the s3upload task and doesn't break the build on failure. -->
+    <macrodef name="s3upload-retry">
+      <!-- all the same params as s3upload -->
+      <attribute name="awsAuthId"/>
+      <attribute name="awsAuthKey"/>
+      <attribute name="awsBucket"/>
+      <attribute name="accessPolicy" default="private"/>
+      <!-- plus two to customize the behavior -->
+      <attribute name="tries" default="3"/>
+      <attribute name="failMessage" default="Unable to upload files to s3"/>
+      <element name="nestingSpot" implicit="true"/>
+      <sequential>
+        <trycatch>
+          <try>
+            <retry retrycount="@{tries}">
+              <s3upload awsAuthId="@{awsAuthId}" awsAuthKey="@{awsAuthKey}"
+                  awsBucket="@{awsBucket}" accessPolicy="@{accessPolicy}">
+                <nestingSpot/>
+              </s3upload>
+            </retry>
+          </try>
+          <catch>
+            <echo message="@{failMessage}"/>
+          </catch>
+        </trycatch>
+      </sequential>
+    </macrodef>
+
+    <!-- Setup the pack200 and unpack200 tasks-->
+<!--
+    <taskdef name="pack200" classname="com.sun.tools.apache.ant.pack200.Pack200Task"
+             classpath="${buildlib.pack200task.jar}"/>
+    <taskdef name="unpack200" classname="com.sun.tools.apache.ant.pack200.Unpack200Task"
+             classpath="${buildlib.pack200task.jar}"/>
+-->
+
+    <property name="load.common.tasks.done" value="true"/>
+  </then></if>
+
+  <!-- import our x509 keystore. this is Java 1.5's keystore, with the -->
+  <!-- addition of the Three Rings Design CA root -->
+<!--
+  <taskdef name="setsysprop" classname="com.threerings.ant.SetSysPropTask"
+           classpath="${buildlib.ant-setsysprop.jar}"/>
+  <setsysprop name="javax.net.ssl.trustStore" value="${buildetc.dir}/cacerts.jks"/>
+  <setsysprop name="javax.net.ssl.trustStorePassword" value="changeit"/>
+-->
+
+  <!-- Let everyone know if this is Darwin, so that they can do special magic -->
+  <condition property="platform.darwin">
+    <and>
+      <os family="mac"/>
+      <os family="unix"/>
+    </and>
+  </condition>
+
+  <!-- enable the use of <assert> in our ANT projects -->
+  <property name="ant.enable.asserts" value="true"/>
+
+
+  <!-- a javadoc target for the standard ooo project -->
+  <target name="common-javadoc">
+    <!-- verify we have all the properties we need for this target to work -->
+    <assert name="deploy.dir" message="deploy.dir must be defined for common-javadoc to work."/>
+    <assert name="javadoc.title"
+            message="javadoc.title must be defined for common-javadoc to work."/>
+    <assert name="private.javadoc.base.url"
+            message="private.javadoc.base.url must be defined for common-javadoc to work."/>
+
+    <!-- allow the package names for the javadoc source files to be overridden -->
+    <if><not><isset property="javadoc.pkg.names"/></not><then>
+      <property name="javadoc.pkg.names" value="com.threerings.*"/>
+    </then></if>
+
+    <!-- allow the location of the javadoc source files to be overridden -->
+    <if><not><isreference refid="javadoc.src.path"/></not><then>
+      <assert name="src.dir" message="src.dir must be defined for common-javadoc to work."/>
+      <path id="javadoc.src.path">
+        <dirset dir="${src.dir}" excludes="**/.svn"/>
+      </path>
+    </then></if>
+
+    <javadoc sourcepathref="javadoc.src.path" destdir="${deploy.dir}/docs"
+             packagenames="${javadoc.pkg.names}" failonerror="true"
+             windowtitle="${javadoc.title}" doctitle="${javadoc.title}"
+             bottom="Copyright &#169; 2001-2007 Three Rings Design, Inc. All Rights Reserved."
+             additionalparam="-J-Xmx768m -breakiterator -quiet">
+      <classpath refid="classpath"/>
+      <tag name="gwt.key" enabled="false"/>
+
+      <!-- ooo libraries -->
+      <link href="${private.javadoc.base.url}/ooo/getdown/"/>
+      <link href="${private.javadoc.base.url}/ooo/jme/"/>
+      <link href="${private.javadoc.base.url}/ooo/jme-bui/"/>
+      <link href="${private.javadoc.base.url}/ooo/narya/"/>
+      <link href="${private.javadoc.base.url}/ooo/nenya/"/>
+      <link href="${private.javadoc.base.url}/ooo/samskivert/"/>
+      <link href="${private.javadoc.base.url}/ooo/snark/"/>
+      <link href="${private.javadoc.base.url}/ooo/threerings/"/>
+      <link href="${private.javadoc.base.url}/ooo/vilya/"/>
+      <!-- java libraries -->
+      <link href="${private.javadoc.base.url}/java/java1.5/"/>
+      <link href="${private.javadoc.base.url}/java/javamail1.3.1/"/>
+      <link href="${private.javadoc.base.url}/java/jaxrpc/"/>
+      <link href="${private.javadoc.base.url}/java/servlet2.3/"/>
+      <!-- external libraries -->
+      <link href="${private.javadoc.base.url}/extern/ant1.6.5/"/>
+      <link href="${private.javadoc.base.url}/extern/commons-beanutils/"/>
+      <link href="${private.javadoc.base.url}/extern/commons-codec/"/>
+      <link href="${private.javadoc.base.url}/extern/commons-collections/"/>
+      <link href="${private.javadoc.base.url}/extern/commons-digester/"/>
+      <link href="${private.javadoc.base.url}/extern/commons-fileupload/"/>
+      <link href="${private.javadoc.base.url}/extern/commons-httpclient/"/>
+      <link href="${private.javadoc.base.url}/extern/commons-io/"/>
+      <link href="${private.javadoc.base.url}/extern/commons-lang/"/>
+      <link href="${private.javadoc.base.url}/extern/commons-logging/"/>
+      <link href="${private.javadoc.base.url}/extern/jcharts-1.0/"/>
+      <link href="${private.javadoc.base.url}/extern/lwjgl/"/>
+      <link href="${private.javadoc.base.url}/extern/velocity/"/>
+    </javadoc>
+  </target>
+
+  <!-- import the package support file -->
+<!--
+  <import file="package-support.xml"/>
+-->
+
+  <!-- a task that jetty users can depend on to set up its ant tasks -->
+  <target name="-init-jetty-ant">
+    <!-- download jetty-ant and dependencies via Maven -->
+    <artifact:dependencies pathId="jetty-ant.classpath">
+      <dependency groupId="org.mortbay.jetty" artifactId="jetty-ant"
+                  version="6.1.25" scope="runtime" />
+      <dependency groupId="org.mortbay.jetty" artifactId="jetty-ajp"
+                  version="6.1.25" scope="runtime" />
+      <dependency groupId="org.mortbay.jetty" artifactId="jsp-2.1"
+                  version="6.1.14" scope="runtime" />
+    </artifact:dependencies>
+    <taskdef resource="tasks.properties"
+             classpathref="jetty-ant.classpath" loaderref="jetty.loader"/>
+    <typedef name="selectChannelConnector" classname="org.mortbay.jetty.nio.SelectChannelConnector"
+             classpathref="jetty-ant.classpath" loaderref="jetty.loader"/>
+    <typedef name="ajp13SocketConnector" classname="org.mortbay.jetty.ajp.Ajp13SocketConnector"
+             classpathref="jetty-ant.classpath" loaderref="jetty.loader"/>
+  </target>
+
+  <!-- tasks that selenium users can depend on to set up its ant tasks -->
+  <target name="-init-selenium-client">
+    <artifact:dependencies pathId="selenium.server.classpath">
+      <dependency groupId="org.seleniumhq.selenium.client-drivers"
+                  artifactId="selenium-java-client-driver" version="1.0.1" scope="runtime" />
+    </artifact:dependencies>
+  </target>
+  <target name="-init-selenium-server">
+    <artifact:dependencies pathId="selenium.server.classpath">
+      <dependency groupId="org.seleniumhq.selenium" artifactId="selenium-server"
+                  version="2.0a5" scope="runtime" />
+    </artifact:dependencies>
+  </target>
+
+  <!-- sets up the resourceCheck task - http://rscbundlecheck.sourceforge.net/ -->
+  <target name="-init-resourceCheck">
+    <taskdef name="resourceCheck" classpath="${buildlib.rscbundlecheck.jar}"
+             classname="org.dyndns.fichtner.rsccheck.ant.RscBundleCheckTask"/>
+  </target>
+
+  <!-- runs svnclean checks on the svnclean.fileset. verifies the checkout is cleaning, meaning no
+       no files are in the checkout that are not in subversion. -->
+  <target name="checkclean">
+    <if><not><isreference refid="checkclean.fileset"/></not><then>
+      <!-- default fileset for the checkclean target. build-number.txt is created by Bamboo. -->
+      <fileset id="checkclean.fileset" dir="${basedir}" excludes="build-number.txt"/>
+    </then></if>
+    <!-- haul in the svn clean checker -->
+    <taskdef name="svnclean" classname="com.threerings.ant.SVNClean">
+      <classpath>
+        <pathelement location="${buildlib.svnclean.jar}"/>
+        <path refid="subversion.classpath"/>
+      </classpath>
+    </taskdef>
+    <svnclean>
+      <fileset refid="checkclean.fileset"/>
+    </svnclean>
+  </target>
+
+  <!-- runs checkstyle on src/java/**/*.java using ooo_checks.xml -->
+  <target name="checkstyle">
+    <if><not><isreference refid="check.paths"/></not>
+      <then>
+        <fileset dir="src/java" includes="**/*.java" id="check.paths"/>
+      </then>
+    </if>
+    <artifact:dependencies pathId="checkstyle.classpath">
+      <dependency groupId="checkstyle" artifactId="checkstyle" version="5.0" scope="runtime"/>
+    </artifact:dependencies>
+    <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
+    <checkstyle config="${buildetc.dir}/ooo_checks.xml"
+                failOnViolation="false" classpathref="classpath">
+      <fileset refid="check.paths"/>
+      <formatter type="xml" toFile="${basedir}/${deploy.dir}/checkstyle-output.xml"/>
+    </checkstyle>
+    <xslt in="${basedir}/${deploy.dir}/checkstyle-output.xml"
+          out="${basedir}/${deploy.dir}/checkstyle-output.html"
+          style="${buildetc.dir}/checkstyle.xsl"/>
+  </target>
+
+  <!-- runs PMD on src/java/**/*.java using a few basic rulesets -->
+  <target name="pmd">
+    <if><not><isreference refid="check.paths"/></not>
+      <then>
+        <fileset dir="src/java" includes="**/*.java" id="check.paths"/>
+      </then>
+    </if>
+    <artifact:dependencies pathId="pmd.classpath">
+      <dependency groupId="pmd" artifactId="pmd" version="4.2.5" scope="runtime"/>
+    </artifact:dependencies>
+    <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"
+             classpathref="pmd.classpath"/>
+    <pmd rulesetfiles="${buildetc.dir}/ooo_pmd.xml" targetjdk="1.5">
+        <fileset refid="check.paths"/>
+        <formatter type="xml" toFile="${basedir}/pmd-output.xml"/>
+    </pmd>
+  </target>
+
+  <target name="-init-findbugs">
+    <!-- download findbugs and dependencies via Maven -->
+    <artifact:dependencies pathId="findbugs.classpath">
+      <dependency groupId="com.google.code.findbugs" artifactId="findbugs-ant"
+                  version="1.3.9" scope="runtime" />
+    </artifact:dependencies>
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+             classpathref="findbugs.classpath"/>
+  </target>
+
+  <!-- runs findbugs on src/java/** and ${deploy.dir}/classes -->
+  <target name="findbugs" depends="-init-findbugs">
+    <findbugs classpathref="findbugs.classpath" pluginList="" output="xml"
+              outputFile="${basedir}/findbugs-output.xml">
+      <auxClasspath>
+        <fileset dir="${basedir}/${libs.dir}" includes="*.jar"/>
+      </auxClasspath>
+      <sourcePath path="${basedir}/src/java"/>
+      <class location="${basedir}/${deploy.dir}/classes"/>
+    </findbugs>
+  </target>
+
+  <!-- runs findbugs each project in ${projects} -->
+  <target name="findbugsprojects" depends="-init-findbugs,distprojects">
+    <for list="${projects}" param="project">
+      <sequential>
+        <echo>Running FindBugs in @{project}...</echo>
+        <findbugs home="${buildlibs.dir}/findbugs" output="xml"
+                  outputFile="${basedir}/findbugs-output.xml">
+          <auxClasspath>
+            <fileset dir="${basedir}/@{project}/${deploy.dir}/lib" includes="*.jar"/>
+          </auxClasspath>
+          <sourcePath path="${basedir}/@{project}/src/java"/>
+          <class location="${basedir}/@{project}/${deploy.dir}/classes"/>
+        </findbugs>
+      </sequential>
+    </for>
+  </target>
+
+  <!-- call buildproject on each item in ${webapps} -->
+  <target name="distwebapps">
+    <antcall target="distprojects">
+      <param name="projects"  value="${webapps}"/>
+    </antcall>
+  </target>
+
+  <!-- call buildproject on each item in ${projects} -->
+  <target name="distprojects">
+    <for list="${projects}" param="project">
+      <sequential>
+        <echo>Building in @{project}...</echo>
+        <dirname property="abs.flexsdk.dir" file="${flexsdk.dir}/somefile.txt"/>
+        <dirname property="abs.libs.dir" file="${libs.dir}/somefile.txt"/>
+        <ant dir="${projects.dir}/@{project}" target="dist" inheritAll="false">
+          <property name="libs.dir" value="${abs.libs.dir}"/>
+          <property name="flexsdk.dir" value="${abs.flexsdk.dir}"/>
+          <property name="extdep.suffix" value="${extdep.suffix}"/>
+        </ant>
+        <!-- copy the library jars to ${libs.dir} -->
+        <copy todir="${libs.dir}">
+          <fileset dir="${projects.dir}/@{project}/dist">
+            <include name="*.jar"/>
+            <include name="*.swc"/>
+            <include name="*.abc"/>
+          </fileset>
+        </copy>
+      </sequential>
+    </for>
+  </target>
+
+  <!-- call clean on each item in ${projects} -->
+  <target name="cleanprojects">
+    <antcall target="projectscall">
+      <param name="projects.list" value="${projects}"/>
+      <param name="project.target" value="clean"/>
+    </antcall>
+  </target>
+
+  <!-- call clean on each item in ${webapps} -->
+  <target name="cleanwebapps">
+    <antcall target="projectscall">
+      <param name="projects.list" value="${webapps}"/>
+      <param name="project.target" value="clean"/>
+    </antcall>
+  </target>
+
+  <!-- call distclean on each item in ${projects} -->
+  <target name="distcleanprojects">
+    <antcall target="projectscall">
+      <param name="projects.list" value="${projects}"/>
+      <param name="project.target" value="distclean"/>
+    </antcall>
+  </target>
+
+  <!-- call distclean on each item in ${webapps} -->
+  <target name="distcleanwebapps">
+    <antcall target="projectscall">
+      <param name="projects.list" value="${webapps}"/>
+      <param name="project.target" value="distclean"/>
+    </antcall>
+  </target>
+
+  <!-- call ${project.target} on each item in ${projects.list}. Passes @project. -->
+  <target name="projectscall">
+    <for list="${projects.list}" param="project">
+      <sequential>
+        <echo level="info">Calling ${project.target} in ${projects.dir}/@{project}...</echo>
+        <ant dir="${projects.dir}/@{project}" target="${project.target}" inheritAll="false"/>
+      </sequential>
+    </for>
+  </target>
+
+  <!-- Which class to use for mxmlc in the nailgun compilation in the mxmlc macro.  This
+       value is for flex 3, and it changed to flex2.tools.Mxmlc in flex 4.  -->
+  <property name="mxmlc.class" value="flex2.tools.Compiler"/>
+
+  <!-- Runs mxmlc with Three Rings' default configuration.  If useng is set, nailgun is called
+       instead of the mxmlc jar-->
+  <macrodef name="mxmlc">
+    <attribute name="srcdir"/>
+    <attribute name="config"/>
+    <attribute name="dest"/>
+    <attribute name="main"/>
+    <attribute name="stacktraces" default="true"/>
+    <element name="mxmlc-elements" implicit="true" optional="true"/>
+    <sequential>
+      <if><equals arg1="${useng}" arg2="true"/><then>
+          <exec executable="ng" failonerror="true">
+            <arg value="${mxmlc.class}" />
+            <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
+            <arg value="-verbose-stacktraces=@{stacktraces}"/>
+            <arg value="-load-config+=@{config}"/>
+            <arg value="-source-path+=@{srcdir}"/>
+            <mxmlc-elements/>
+            <arg value="-output=@{dest}"/>
+            <arg value="@{srcdir}/@{main}"/>
+          </exec>
+      </then><else>
+          <java jar="${flexsdk.dir}/lib/mxmlc.jar" fork="true" failonerror="true" maxmemory="1024m">
+            <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
+            <arg value="-verbose-stacktraces=@{stacktraces}"/>
+            <arg value="-load-config+=@{config}"/>
+            <arg value="-source-path+=@{srcdir}"/>
+            <mxmlc-elements/>
+            <arg value="-output=@{dest}"/>
+            <arg value="@{srcdir}/@{main}"/>
+          </java>
+      </else></if>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="importaction"
+      description="Runs the import_action script from tools on the given actionscript code">
+    <attribute name="srcdir"/>
+    <sequential>
+       <exec executable="tools/bin/import_action" failonerror="true">
+           <arg value="@{srcdir}"/>
+       </exec>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="ooojavac" description="Calls javac with Three Rings' standard arguments">
+    <attribute name="srcdir"/>
+    <attribute name="destdir"/>
+    <attribute name="classpathref"/>
+    <attribute name="version" default="1.6"/>
+    <element name="javac-elements" implicit="true" optional="true"/>
+    <sequential>
+        <javac srcdir="@{srcdir}" destdir="@{destdir}" includeAntRuntime="no" encoding="utf-8"
+            classpathref="@{classpathref}" debug="on" optimize="off" deprecation="on"
+            source="@{version}" target="@{version}">
+          <compilerarg value="-Xlint"/>
+          <compilerarg value="-Xlint:-serial"/>
+          <compilerarg value="-Xlint:-path"/>
+          <javac-elements/>
+      </javac>
+    </sequential>
+  </macrodef>
+
+  <!-- VersionMapper macro -->
+  <macrodef name="flattencopy" description="Copies maven libraries flattening the versions.">
+    <attribute name="fileset"/>
+    <attribute name="todir"/>
+    <attribute name="from"/>
+    <sequential>
+      <copy todir="@{todir}">
+        <fileset refid="@{fileset}"/>
+        <mapper classpathref="maven-ant-tasks.classpath"
+                classname="org.apache.maven.artifact.ant.VersionMapper"
+                from="@{from}" to="flatten"/>
+      </copy>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="tlddoc" description="Compiles JSP tag documentation">
+    <element name="args" implicit="true"/>
+    <sequential>
+      <java fork="true" jar="${buildlib.tlddoc.jar}" failonerror="true">
+        <args/>
+      </java>
+    </sequential>
+  </macrodef>
+
+  <!-- if the build.compiler property is set for 1.5, configure java for 1.5 -->
+  <if>
+    <equals arg1="${build.compiler}" arg2="javac1.5"/>
+    <then>
+      <path id="bootpath.ref.jdk1.5">
+        <fileset dir="${buildlib.jdk1.5.dir}" includes="*.jar"/>
+      </path>
+      <presetdef name="javac">
+        <javac>
+          <compilerarg line="-source 1.5"/>
+          <compilerarg line="-target 1.5"/>
+          <compilerarg value="-Xbootclasspath/p:${toString:bootpath.ref.jdk1.5}"/>
+        </javac>
+      </presetdef>
+    </then>
+  </if>
+
+  <!-- if the build.compiler property is set for 1.6, configure java for 1.6 -->
+  <if>
+    <equals arg1="${build.compiler}" arg2="javac1.6"/>
+    <then>
+      <path id="bootpath.ref.jdk1.6">
+        <fileset dir="${buildlib.jdk1.6.dir}" includes="*.jar"/>
+      </path>
+      <presetdef name="javac">
+        <javac>
+          <compilerarg line="-source 1.6"/>
+          <compilerarg line="-target 1.6"/>
+          <compilerarg value="-Xbootclasspath/p:${toString:bootpath.ref.jdk1.6}"/>
+        </javac>
+      </presetdef>
+    </then>
+  </if>
+
+</project>

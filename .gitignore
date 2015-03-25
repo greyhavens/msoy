@@ -1,4 +1,3 @@
-build
 data/swiftly/whirled_sdk/lib/
 dist
 etc/build_settings.properties
