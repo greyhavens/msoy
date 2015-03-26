@@ -92,6 +92,17 @@
       <groupId>com.threerings</groupId>
       <artifactId>orth</artifactId>
       <version>0.9</version>
+      <!-- exclude vile snapshot versions that got shipped, blarg -->
+      <exclusions>
+        <exclusion>
+          <groupId>com.threerings</groupId>
+          <artifactId>vilya</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.threerings</groupId>
+          <artifactId>narya</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -252,40 +263,11 @@
       <version>3.1.2</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.threerings.s3lib</groupId>
-      <artifactId>s3lib</artifactId>
-      <version>r347</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/s3lib-r347.jar</systemPath>
-    </dependency>
-
-    <!-- migrated
-    <file name="${extlibs.dir}/backport-util-concurrent-3.1-jdk1.6.jar"/>
-    <file name="${extlibs.dir}/commons-configuration.jar"/>
-    <file name="${extlibs.dir}/commons-fileupload.jar"/>
-    <file name="${extlibs.dir}/commons-httpclient.jar"/>
-    <file name="${extlibs.dir}/commons-io.jar"/>
-    <file name="${extlibs.dir}/gson.jar"/>
-    <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
-    <file name="${extlibs.dir}/jcip-annotations.jar"/>
-    <file name="${extlibs.dir}/mina-core.jar"/>
-    <file name="${extlibs.dir}/mina-filter-ssl.jar"/>
-    <file name="${extlibs.dir}/mysql-connector-java.jar"/>
-    <file name="${extlibs.dir}/quartz.jar"/>
-    <file name="${extlibs.dir}/slf4j-api.jar"/>
-    <file name="${extlibs.dir}/slf4j-log4j12.jar"/>
-    <file name="${extlibs.dir}/xmlrpc-client.jar"/>
-    <file name="${extlibs.dir}/xmlrpc-common.jar"/>
-    <file name="${extlibs.dir}/xmlrpc-server.jar"/>
-    -->
-
     <!-- not migrated
     <file name="${extlibs.dir}/collectd.jar"/>
     <file name="${extlibs.dir}/ganymed.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
-    <file name="${extlibs.dir}/s3lib.jar"/>
     <file name="${extlibs.dir}/svnClientAdapter.jar"/>
     <file name="${extlibs.dir}/svnjavahl.jar"/>
     <file name="${extlibs.dir}/svnkit-cli.jar"/>

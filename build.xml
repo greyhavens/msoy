@@ -74,6 +74,7 @@
     <file name="${extlibs.dir}/xercesImpl.jar"/>
 -->
 
+    <file name="lib/s3lib-r347.jar"/>
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
     <file name="lib/sdoc-0.5.0-beta-ooo.jar"/>
@@ -126,6 +127,11 @@
 
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
+      <!-- this is needed for orth and underwire, which unfortunately were never publicly released,
+           but we can't just ship public releases seven years later and hope that they're not
+           wildly functionally different from what we originally used -->
+      <remoteRepository url="http://build.earth.threerings.net/maven-repository" id="ooo"/>
+
       <dependency groupId="com.google.gwt" artifactId="gwt-user" version="${gwt.version}"/>
 <!--
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
@@ -133,8 +139,15 @@
       <dependency groupId="net.sf.advanced-gwt" artifactId="advanced-gwt" version="2.0.9"/>
       <dependency groupId="com.allen-sauer.gwt.dnd" artifactId="gwt-dnd" version="3.1.2"/>
 
+      <dependency groupId="com.threerings" artifactId="narya" version="1.8"/>
       <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.8"/>
+      <dependency groupId="com.threerings" artifactId="orth" version="0.9">
+        <!-- exclude vile snapshot versions that got shipped, blarg -->
+        <exclusion groupId="com.threerings" artifactId="narya"/>
+        <exclusion groupId="com.threerings" artifactId="vilya"/>
+      </dependency>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.9"/>
+      <dependency groupId="com.threerings" artifactId="underwire" version="1.0"/>
       <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.7.2"/>
       <dependency groupId="com.google.guava" artifactId="guava-gwt" version="18.0"/>
@@ -165,7 +178,11 @@
                   version="1.1" type="swc"/>
       <dependency groupId="nochump" artifactId="zip" version="1.0" type="swc"/>
       <dependency groupId="com.threerings" artifactId="orthlib"
-                  version="0.9" type="swc"/>
+                  version="0.9" type="swc">
+        <!-- exclude vile snapshot versions that got shipped, blarg -->
+        <exclusion groupId="com.threerings" artifactId="aspirin"/>
+        <exclusion groupId="com.threerings" artifactId="naryalib"/>
+      </dependency>
       <dependency groupId="com.threerings" artifactId="whirledlib"
                   version="1.1-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="aspirin"
@@ -370,6 +387,7 @@
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
       <compilerarg value="-Xlint:-path"/>
+      <compilerarg value="-Xlint:-deprecation"/>
     </javac>
     <delete dir="${deploy.dir}/gclasses"/>
   </target>
