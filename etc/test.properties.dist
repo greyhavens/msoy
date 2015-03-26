@@ -1,8 +1,0 @@
-# Properties used to run the unit tests against the live S3 service.
-# The tests run against the real S3 service; As of 4/6/2007, each test
-# run costs roughly 0.0000080108642578 cents USD.
-
-# Your Amazon Web Services ID
-test.aws.id = AWS ID
-# Your Amazon Web Services Key
-test.aws.key = Secret AWS Key

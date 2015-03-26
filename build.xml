@@ -223,10 +223,15 @@
   <target name="config">
     <mkdir dir="${deploy.dir}"/>
 
+    <!-- determine which deployment we're building -->
+    <if><not><isset property="deployment"/></not><then>
+      <property name="deployment" value="test"/>
+    </then></if>
+
     <!-- grab the deployment et al properties from the configuration location. -->
     <dirname property="absolute.deploy.dir" file="${deploy.dir}/somefile.txt"/>
     <copy todir="${absolute.deploy.dir}">
-      <fileset dir="${basedir}/etc">
+      <fileset dir="${basedir}/etc/${deployment}">
         <include name="msoy-server.properties"/>
         <include name="msoy-server.conf"/>
         <include name="burl-server.properties"/>
@@ -867,41 +872,34 @@
 
   <!-- run the unit tests -->
   <target name="tests" depends="compile" description="Runs unit tests.">
-    <!-- haul in our testing properties -->
-    <if><isset property="msoy.test.propertyfile"/><then>
-        <property file="${msoy.test.propertyfile}"/>
-    </then><else>
-        <property file="test.properties"/>
-    </else></if>
-
     <mkdir dir="${basedir}/${deploy.dir}/tmp"/>
     <taskdef name="unit" classpath="${deploy.dir}/build/junit4.jar"
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
 
-      <unit printsummary="no" haltonfailure="yes" fork="yes" dir="${basedir}">
-        <classpath refid="test.classpath"/>
-        <formatter type="brief" usefile="false" unless="use.xml.output"/>
-        <formatter type="xml" usefile="true" if="use.xml.output"/>
+    <unit printsummary="no" haltonfailure="yes" fork="yes" dir="${basedir}">
+      <classpath refid="test.classpath"/>
+      <formatter type="brief" usefile="false" unless="use.xml.output"/>
+      <formatter type="xml" usefile="true" if="use.xml.output"/>
 
-        <!-- Vend the test. properties -->
-        <syspropertyset>
-            <propertyref prefix="test."/>
-        </syspropertyset>
+      <!-- Vend the test. properties -->
+      <syspropertyset>
+        <propertyref prefix="test."/>
+      </syspropertyset>
 
-        <!-- batch run our tests -->
-        <batchtest todir="${basedir}/${deploy.dir}/tmp" unless="test">
-          <fileset dir="${src.dir}">
-            <include name="**/*UnitTest.java"/>
+      <!-- batch run our tests -->
+      <batchtest todir="${basedir}/${deploy.dir}/tmp" unless="test">
+        <fileset dir="${src.dir}">
+          <include name="**/*UnitTest.java"/>
 
-            <!-- XXX A nasty way to exclude S3 tests. This is fragile and
-                 not-good, but I don't know of a better way to do it -->
-            <exclude name="**/ProjectS3StorageUnitTest.java" unless="test.aws.id"/>
-          </fileset>
-        </batchtest>
+          <!-- XXX A nasty way to exclude S3 tests. This is fragile and
+               not-good, but I don't know of a better way to do it -->
+          <exclude name="**/ProjectS3StorageUnitTest.java" unless="test.aws.id"/>
+        </fileset>
+      </batchtest>
 
-        <!-- or run the requested test -->
-        <test name="${test}" if="test"/>
-      </unit>
+      <!-- or run the requested test -->
+      <test name="${test}" if="test"/>
+    </unit>
   </target>
 
   <!-- build the java class files -->
@@ -1049,17 +1047,21 @@
     <echo>Assigned build version ${version}</echo>
   </target>
 
-  <!-- defines properties needed by the individual foo-package targets -->
-  <target name="prepare-package">
-    <!-- define the directory from which we're going to build our packages -->
-    <property name="pkgroot.root" value="${deploy.dir}/packages"/>
-    <mkdir dir="${pkgroot.root}"/>
+  <!-- warns if calling package with non-production deployment -->
+  <target name="check-package" depends="config">
+    <if><not><equals arg1="${deployment}" arg2="prod"/></not><then>
+      <echo>WARNING: Building package for ${deployment} deployment.</echo>
+      <echo>WARNING: Usually one only packages the 'prod' deployment.</echo>
+    </then></if>
   </target>
 
   <!-- prepares and builds the msoy package(s) -->
-  <target name="package" depends="assignversion,distall-package,prepare-package">
+  <target name="package" depends="check-package,assignversion,distall-package">
+    <!-- define the directory from which we're going to build our packages -->
+    <property name="pkgroot.root" value="${deploy.dir}/packages"/>
+    <mkdir dir="${pkgroot.root}"/>
 
-    <!-- define the root of our packages on the target machine -->
+  <!-- define the root of our packages on the target machine -->
     <property name="app.prefix" value="/export/${app.name}"/>
 
     <!-- define the root of the msoy-server-code package -->
