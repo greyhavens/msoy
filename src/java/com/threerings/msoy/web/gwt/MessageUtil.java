@@ -10,8 +10,9 @@ import com.google.common.collect.Lists;
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+// import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.HashMediaDesc;
 
 /**
  * Message (forum and other) related utilities.
@@ -71,9 +72,9 @@ public class MessageUtil
         return buf.toString();
     }
 
-    public static String makeBox (String token, CloudfrontMediaDesc desc, int size, String name)
+    public static String makeBox (String token, HashMediaDesc desc, int size, String name)
     {
-        return BOX_START + token + "\t" + CloudfrontMediaDesc.cfmdToString(desc) + "\t" +
+        return BOX_START + token + "\t" + HashMediaDesc.hmdToString(desc) + "\t" +
             size + "\t" + name + BOX_END;
     }
 
@@ -162,7 +163,7 @@ public class MessageUtil
         public Box (String text) {
             String[] bits = text.split("\t", 4);
             this.token = bits[0];
-            this.desc = CloudfrontMediaDesc.stringToCFMD(bits[1]);
+            this.desc = HashMediaDesc.stringToHMD(bits[1]);
             int msize;
             try {
                 msize = Integer.parseInt(bits[2]);

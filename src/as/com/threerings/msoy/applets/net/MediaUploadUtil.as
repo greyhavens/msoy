@@ -70,8 +70,8 @@ public class MediaUploadUtil
      *    hash: String (MediaDesc hash)
      *    mimeType: int (MediaDesc mimeType)
      *    constraint: int (MediaDesc constraint)
-     *    expiration :int (CloudfrontMediaDesc expiration)
-     *    signature :String (CloudfrontMediaDesc signature, base64-encoded)
+     *    XXX expiration :int (CloudfrontMediaDesc expiration)
+     *    XXX signature :String (CloudfrontMediaDesc signature, base64-encoded)
      *    width: int
      *    height: int
      * }
@@ -89,10 +89,10 @@ public class MediaUploadUtil
                 hash: bits[2],
                 mimeType: parseInt(bits[3]),
                 constraint: parseInt(bits[4]),
-                expiration: parseInt(bits[5]),
-                signature : bits[6],
-                width: parseInt(bits[7]),
-                height: parseInt(bits[8])
+                // expiration: parseInt(bits[5]),
+                // signature : bits[6],
+                width: parseInt(bits[5]),
+                height: parseInt(bits[6])
             };
         }
         return result;

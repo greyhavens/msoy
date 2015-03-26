@@ -38,7 +38,7 @@ import com.threerings.msoy.applets.image.NewImageDialog;
 import com.threerings.msoy.applets.image.SizeRestriction;
 import com.threerings.msoy.applets.net.Downloader;
 import com.threerings.msoy.applets.net.Uploader;
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+// import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDescImpl;
 
@@ -237,9 +237,8 @@ public class PopupFilePreview extends TitleWindow
         var response :String = stuff.shift();
         stuff = response.split(" ");
 
-        var desc :CloudfrontMediaDesc = new CloudfrontMediaDesc(
-            HashMediaDesc.stringToHash(stuff[0]), parseInt(stuff[1]), MediaDescImpl.NOT_CONSTRAINED,
-            parseInt(stuff[2]), stuff[3]);
+        var desc :HashMediaDesc = new HashMediaDesc(
+            HashMediaDesc.stringToHash(stuff[0]), parseInt(stuff[1]), MediaDescImpl.NOT_CONSTRAINED);
         var url :String = desc.getMediaPath();
 
         // now, download the mofo

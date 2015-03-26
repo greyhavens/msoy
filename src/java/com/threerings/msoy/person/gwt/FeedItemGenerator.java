@@ -13,7 +13,8 @@ import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
+// import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Args;
@@ -544,7 +545,7 @@ public class FeedItemGenerator
     protected Media buildMedia (FeedMessage msg, int idx, Pages page, Object... args)
     {
         MediaDesc md = (idx >= 0 && idx < msg.data.length) ?
-            CloudfrontMediaDesc.stringToCFMD(msg.data[idx]) : null;
+            HashMediaDesc.stringToHMD(msg.data[idx]) : null;
         if (md == null) {
             return null;
         }

@@ -14,7 +14,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.samskivert.io.StreamUtil;
 
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+// import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.server.MediaDescFactory;
@@ -135,17 +135,17 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
                     String mediaId = mediaIds.get(ii);
                     MediaInfo info = mediaInfos.get(ii);
 
-                    // this is one of the few places where we need to explicitly type
-                    // something as a CloudfrontMediaDesc, since we have to send the
-                    // precise signature and expiration through the damn JavaScript
-                    // layer, allowing GWT to reconstruct the CloudfrontMediaDesc on
-                    // the other side. Bah.
-                    CloudfrontMediaDesc desc = MediaDescFactory.createMediaDesc(
-                        info.hash, info.mimeType, info.constraint);
+                    // // this is one of the few places where we need to explicitly type
+                    // // something as a CloudfrontMediaDesc, since we have to send the
+                    // // precise signature and expiration through the damn JavaScript
+                    // // layer, allowing GWT to reconstruct the CloudfrontMediaDesc on
+                    // // the other side. Bah.
+                    // CloudfrontMediaDesc desc = MediaDescFactory.createMediaDesc(
+                    //     info.hash, info.mimeType, info.constraint);
                     script += "parent.setHash('" + mediaId + "', '" + filename +
                         "', '" + info.hash + "', " + info.mimeType + ", " + info.constraint +
-                        ", " + desc.getExpiration() + ", '" + desc.getSignature() +
-                        "', " + info.width + ", " + info.height + ");";
+                        // ", " + desc.getExpiration() + ", '" + desc.getSignature() + "'" +
+                        ", " + info.width + ", " + info.height + ");";
                 }
                 out.println("<body onLoad=\"" + script + "\"></body>");
                 out.println("</html>");
@@ -156,11 +156,11 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
                     String mediaId = mediaIds.get(ii);
                     MediaInfo info = mediaInfos.get(ii);
 
-                    CloudfrontMediaDesc desc = MediaDescFactory.createMediaDesc(
-                        info.hash, info.mimeType, info.constraint);
+                    // CloudfrontMediaDesc desc = MediaDescFactory.createMediaDesc(
+                    //     info.hash, info.mimeType, info.constraint);
                     out.println(mediaId + " " + filename + " " + info.hash + " " +
                         info.mimeType + " " + info.constraint + " " +
-                        desc.getExpiration() + " " + desc.getSignature() + " " +
+                        // desc.getExpiration() + " " + desc.getSignature() + " " +
                         info.width + " " + info.height);
                 }
                 break;

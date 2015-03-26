@@ -9,7 +9,7 @@ import com.threerings.bureau.data.BureauMarshaller;
 
 import com.threerings.msoy.bureau.client.MsoyBureauClient;
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+// import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -34,7 +34,7 @@ import com.threerings.msoy.room.data.SceneOwnershipUpdate;
 public class Reference
 {
     BureauMarshaller;
-    CloudfrontMediaDesc;
+    // CloudfrontMediaDesc;
     ControllableEntity;
     CrowdPermissionPolicy;
     DeploymentConfig;

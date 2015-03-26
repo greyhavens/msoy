@@ -18,8 +18,9 @@ import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+// import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.fora.gwt.ForumCodes;
 import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
@@ -625,8 +626,8 @@ public class ForumServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         CatalogRecord crec = repo.loadListing(catalogId, true);
         Item item = (crec == null) ? null : crec.item.toItem();
-        return (item == null) ? null : MessageUtil.makeBox(token,
-            (CloudfrontMediaDesc) item.getThumbnailMedia(),
+        return (item == null) ? null : MessageUtil.makeBox(
+            token, (HashMediaDesc)item.getThumbnailMedia(),
             MediaDescSize.THUMBNAIL_SIZE, item.name);
     }
 
@@ -634,7 +635,7 @@ public class ForumServlet extends MsoyServiceServlet
     {
         GameInfoRecord grec = _mgameRepo.loadGame(gameId);
         return (grec == null) ? null :
-            MessageUtil.makeBox(token, (CloudfrontMediaDesc) grec.getShotMedia(),
+            MessageUtil.makeBox(token, (HashMediaDesc)grec.getShotMedia(),
                 MediaDescSize.GAME_SHOT_SIZE, grec.name);
     }
 
@@ -642,7 +643,7 @@ public class ForumServlet extends MsoyServiceServlet
     {
         GroupRecord grec = _groupRepo.loadGroup(groupId);
         return (grec == null) ? null :
-            MessageUtil.makeBox(token, (CloudfrontMediaDesc) grec.toLogo(),
+            MessageUtil.makeBox(token, (HashMediaDesc)grec.toLogo(),
                 MediaDescSize.THUMBNAIL_SIZE, grec.name);
     }
 
@@ -650,7 +651,7 @@ public class ForumServlet extends MsoyServiceServlet
     {
         SceneRecord srec = _sceneRepo.loadScene(sceneId);
         return (srec == null) ? null : MessageUtil.makeBox(
-            token, (CloudfrontMediaDesc) srec.getSnapshotThumb(),
+            token, (HashMediaDesc)srec.getSnapshotThumb(),
             MediaDescSize.SNAPSHOT_THUMB_SIZE, srec.name);
     }
 

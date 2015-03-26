@@ -49,10 +49,10 @@ public class FurnitureEditor extends ItemEditor
     @Override // from ItemEditor
     protected void setHash (
         String id, String filename, String mediaHash, int mimeType, int constraint,
-        int expiration, String signature, int width, int height)
+        /*int expiration, String signature,*/ int width, int height)
     {
         super.setHash(id, filename, mediaHash, mimeType, constraint,
-            expiration, signature, width, height);
+            /*expiration, signature,*/ width, height);
 
         if (Item.FURNI_MEDIA.equals(id)) {
             maybeSetNameFromFilename(filename);

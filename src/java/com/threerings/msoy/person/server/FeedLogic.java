@@ -29,7 +29,7 @@ import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.comment.server.persist.CommentRecord;
 import com.threerings.msoy.comment.server.persist.CommentRepository.CommentThread;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+// import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -198,7 +198,7 @@ public class FeedLogic
             } else if (activity instanceof FeedMessageRecord) {
                 FeedMessageRecord record = (FeedMessageRecord) activity;
                 FeedMessage message = record.toMessage(memberNames, groupNames);
-                signAllMedia(message);
+                // signAllMedia(message);
                 resolved.add(message);
             }
         }
@@ -284,22 +284,22 @@ public class FeedLogic
         }
     }
 
-    /** Prepare message arguments for viewing on the client. */
-    protected void signAllMedia (FeedMessage message)
-    {
-        // Hackily iterate over the arguments and sign anything that looks like media.
-        for (int ii = message.data.length-1; ii >= 0; ii --) {
-            String[] bits = message.data[ii].split(":");
-            if (bits.length == 3 && bits[0].length() == 40) {
-                HashMediaDesc hmd = HashMediaDesc.stringToHMD(message.data[ii]);
-                if (hmd != null) {
-                    // we have to sign the media descs.
-                    message.data[ii] = CloudfrontMediaDesc.cfmdToString(
-                        MediaDescFactory.createMediaDesc(hmd));
-                }
-            }
-        }
-    }
+    // /** Prepare message arguments for viewing on the client. */
+    // protected void signAllMedia (FeedMessage message)
+    // {
+    //     // Hackily iterate over the arguments and sign anything that looks like media.
+    //     for (int ii = message.data.length-1; ii >= 0; ii --) {
+    //         String[] bits = message.data[ii].split(":");
+    //         if (bits.length == 3 && bits[0].length() == 40) {
+    //             HashMediaDesc hmd = HashMediaDesc.stringToHMD(message.data[ii]);
+    //             if (hmd != null) {
+    //                 // we have to sign the media descs.
+    //                 message.data[ii] = CloudfrontMediaDesc.cfmdToString(
+    //                     MediaDescFactory.createMediaDesc(hmd));
+    //             }
+    //         }
+    //     }
+    // }
 
     /** Prepare message arguments for persisting to database. */
     protected String feedToString (Object[] args)

@@ -66,7 +66,7 @@ public class HashMediaDesc extends BasicMediaDesc
         if (data.length != 3) {
             return null;
         }
-        byte[] hash = HashMediaDesc.stringToHash(data[0]);
+        byte[] hash = stringToHash(data[0]);
         if (hash == null) {
             return null;
         }
@@ -98,6 +98,14 @@ public class HashMediaDesc extends BasicMediaDesc
     }
 
     /**
+     * Creates a HashMediaDesc based on a string hash.
+     */
+    public static HashMediaDesc create (String s, byte mimeType, byte constraint)
+    {
+        return new HashMediaDesc(stringToHash(s), mimeType, constraint);
+    }
+
+    /**
      * Returns the supplied media descriptor's hash or null if the descriptor is null. This
      * method throws an error if the supplied argument is not a {@link HashMediaDesc}.
      */
@@ -114,9 +122,9 @@ public class HashMediaDesc extends BasicMediaDesc
     }
 
     /** For serialization. */
-	public HashMediaDesc ()
-	{
-	}
+    public HashMediaDesc ()
+    {
+    }
 
     /**
      * Creates a media descriptor from the supplied configuration.

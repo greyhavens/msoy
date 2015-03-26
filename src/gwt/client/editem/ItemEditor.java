@@ -33,7 +33,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.StringUtil;
 
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+// import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
@@ -630,7 +630,7 @@ public abstract class ItemEditor extends FlowPanel
      * Configures this item editor with the hash value for media that it is about to upload.
      */
     protected void setHash (String id, String filename, String mediaHash, int mimeType,
-        int constraint, int expiration, String signature, int width, int height)
+        int constraint/*, int expiration, String signature*/, int width, int height)
     {
         ItemMediaUploader mu = _uploaders.get(id);
         if (mu == null) {
@@ -642,9 +642,11 @@ public abstract class ItemEditor extends FlowPanel
         cancelRemix();
 
         // set the new media in preview and in the item
-        MediaDesc desc = new CloudfrontMediaDesc(HashMediaDesc.stringToHash(mediaHash),
-            (byte)mimeType, (byte)constraint, expiration, signature);
-        mu.setUploadedMedia(filename, desc, width, height);
+        mu.setUploadedMedia(filename, HashMediaDesc.create(
+            mediaHash, (byte)mimeType, (byte)constraint), width, height);
+        // MediaDesc desc = new CloudfrontMediaDesc(HashMediaDesc.stringToHash(mediaHash),
+        //     (byte)mimeType, (byte)constraint, expiration, signature);
+        // mu.setUploadedMedia(filename, desc, width, height);
 
         // have the item re-validate that no media ids are duplicated unnecessarily
         _item.checkConsolidateMedia();
@@ -685,13 +687,13 @@ public abstract class ItemEditor extends FlowPanel
      */
     protected static void callBridge (
         String id, String filename, String mediaHash, int mimeType, int constraint,
-        int expiration, String signature, int width, int height)
+        /*int expiration, String signature,*/ int width, int height)
     {
         // for some reason the strings that come in from JavaScript are not "real" and if we just
         // pass them straight on through to GWT, freakoutery occurs (of the non-hand-waving
         // variety); so we convert them hackily to GWT strings here
         _singleton.setHash("" + id, "" + filename, "" + mediaHash, mimeType, constraint,
-            expiration, signature, width, height);
+            /*expiration, signature,*/ width, height);
     }
 
     /**
@@ -871,10 +873,11 @@ public abstract class ItemEditor extends FlowPanel
      * This wires up a sensibly named function that our POST response JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (id, filename, hash, type, constraint,
-            expiration, signature, width, height) {
-            @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIILjava/lang/String;II)(
-                 id, filename, hash, type, constraint, expiration, signature, width, height);
+        $wnd.setHash = function (id, filename, hash, type, constraint, // expiration, signature,
+                                 width, height) {
+            @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIII)(
+                 id, filename, hash, type, constraint, // expiration, signature,
+                 width, height);
         };
         $wnd.uploadError = function () {
             @client.editem.ItemEditor::uploadError()();
