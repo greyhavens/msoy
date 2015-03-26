@@ -930,9 +930,6 @@
     </javac>
   </target>
 
-  <!-- builds the javadoc documentation -->
-  <target name="javadoc" depends="prepare,common-javadoc"/>
-
   <!-- builds the ActionScript documention -->
   <target name="asdoc">
     <mkdir dir="${deploy.dir}/asdocs"/>
@@ -1057,15 +1054,13 @@
     <!-- define the directory from which we're going to build our packages -->
     <property name="pkgroot.root" value="${deploy.dir}/packages"/>
     <mkdir dir="${pkgroot.root}"/>
-    <!-- TEMP: define where our .dpkg files will be written -->
-    <propertycopy name="package.output" from="ooo.deprecated.package.deploy"/>
   </target>
 
   <!-- prepares and builds the msoy package(s) -->
   <target name="package" depends="assignversion,distall-package,prepare-package">
 
     <!-- define the root of our packages on the target machine -->
-    <property name="app.prefix" value="${ooo.prefix}/${app.name}"/>
+    <property name="app.prefix" value="/export/${app.name}"/>
 
     <!-- define the root of the msoy-server-code package -->
     <property name="pkgroot.server.code" value="${pkgroot.root}/${app.name}-server-code"/>
@@ -1090,11 +1085,13 @@
     </copy>
 
     <!-- copy the thane native binaries needed by all servers -->
-    <copy todir="${approot.server.code}/bin/thane">
+<!-- TODO
+  <copy todir="${approot.server.code}/bin/thane">
       <fileset dir="projects/thane/bin">
         <include name="*/avmthane"/>
       </fileset>
     </copy>
+-->
 
     <!-- copy this project's jar files and configuration -->
     <copy todir="${approot.server.code}/${deploy.dir}">
@@ -1188,18 +1185,11 @@
       <fileset dir="pages">
         <exclude name="**/*.in"/>
         <exclude name="**/.gwt-tmp/**"/>
+        <exclude name="**/gwt-unitCache/**"/>
         <exclude name="**/*-aux/**"/>
       </fileset>
       <fileset dir="data" includes="whirled_sdk*.zip"/>
     </copy>
-
-    <!-- set up our buildresults -->
-    <mkdir dir="${approot.server}/pages/buildresults"/>
-
-    <!-- copy svn info into svninfo.txt -->
-    <exec executable="svn" output="${approot.server}/pages/buildresults/svninfo.txt">
-        <arg line="info"/>
-    </exec>
 
     <!-- copy in our Linux msoy server startup script (msoy only) -->
     <mkdir dir="${approot.server}/etc/init.d"/>
@@ -1213,6 +1203,7 @@
     <copy file="${basedir}/etc/init.d/msoy-burl" todir="${approot.burlserver}/etc/init.d"/>
 
     <!-- Also create our FreeBSD msoy server startup scripts (msoy only) -->
+<!--
     <mkdir dir="${approot.server}/etc/rc.d"/>
     <startupscript name="msoy_server" runas="${msoy.user}"
                    output="${approot.server}/etc/rc.d/${app.name}-server.sh">
@@ -1221,13 +1212,17 @@
         <stop cmdline="${app.prefix}/bin/msoy stop"/>
       </commands>
     </startupscript>
+-->
     <!-- create FreeBSD policy server startup script (msoy only) -->
+<!--
     <startupscript name="policy_server" runas="root"
                    pidfile="${app.prefix}/run/policy-server.pid"
                    output="${approot.server}/etc/rc.d/policy-server.sh">
       <command cmd="/usr/sbin/daemon" args="-f ${app.prefix}/bin/runpolicy" procname="*java*"/>
     </startupscript>
+-->
     <!-- create FreeBSD bureau launcher startup script -->
+<!--
     <mkdir dir="${approot.burlserver}/etc/rc.d"/>
     <startupscript name="msoy_bureau" runas="${burl.user}"
                    output="${approot.burlserver}/etc/rc.d/${app.name}-bureau.sh">
@@ -1236,16 +1231,17 @@
         <stop cmdline="${app.prefix}/bin/burl stop"/>
       </commands>
     </startupscript>
+-->
 
     <!-- build the actual Debian packages -->
 
     <!-- msoy-server-code -->
-    <dpkg output="${pkgroot.root}" prefix="${app.prefix}" distribution="${ooo.distribution}">
+    <dpkg output="${pkgroot.root}" prefix="${app.prefix}" distribution="local">
       <package destroot="${pkgroot.server.code}">
         <info>
           <name>${app.name}-server-code</name>
           <version>${version}</version>
-          <arch>${ooo.architecture}</arch>
+          <arch>all</arch>
           <description>Msoy Game Server Code</description>
           <maintainer>
             <name>${maintainer.name}</name>
@@ -1267,12 +1263,12 @@
     </dpkg>
 
     <!-- msoy-server -->
-    <dpkg output="${pkgroot.root}" prefix="${app.prefix}" distribution="${ooo.distribution}">
+    <dpkg output="${pkgroot.root}" prefix="${app.prefix}" distribution="local">
       <package destroot="${pkgroot.server}">
         <info>
           <name>${app.name}-server</name>
           <version>${version}</version>
-          <arch>${ooo.architecture}</arch>
+          <arch>all</arch>
           <description>Msoy Game Server</description>
           <maintainer>
             <name>${maintainer.name}</name>
@@ -1302,12 +1298,12 @@
     </dpkg>
 
     <!-- burl-server -->
-    <dpkg output="${pkgroot.root}" prefix="${app.prefix}" distribution="${ooo.distribution}">
+    <dpkg output="${pkgroot.root}" prefix="${app.prefix}" distribution="local">
       <package destroot="${pkgroot.burlserver}">
         <info>
           <name>burl-server</name>
           <version>${version}</version>
-          <arch>${ooo.architecture}</arch>
+          <arch>all</arch>
           <description>Msoy Bureau Server</description>
           <maintainer>
             <name>${maintainer.name}</name>
@@ -1329,44 +1325,6 @@
             <path>dist/burl-server.properties</path>
           </permission>
         </permissions>
-      </package>
-    </dpkg>
-
-    <!-- now that all of our packages are generated, move them into place all at once -->
-    <move todir="${package.output}">
-      <fileset dir="${pkgroot.root}" includes="*.dpkg"/>
-    </move>
-  </target>
-
-  <!-- builds our javadocs and packages them up -->
-  <target name="package-docs" depends="distall-package,javadoc,asdoc,prepare-package">
-    <property name="pkgroot.docs" value="${pkgroot.root}/msoy-docs"/>
-    <property name="approot.docs" value="${pkgroot.docs}/${ooo.docs.prefix}"/>
-
-    <!-- copy our built documentation into place -->
-    <mkdir dir="${approot.docs}"/>
-    <copy todir="${approot.docs}/msoy">
-      <fileset dir="${deploy.dir}/docs"/>
-    </copy>
-    <copy todir="${approot.docs}/msoy-as">
-      <fileset dir="${deploy.dir}/asdocs"/>
-    </copy>
-
-    <!-- Set up a version number to use for docs package. -->
-    <tstamp><format property="docsVersion" pattern="yyyyMMddHHmmss"/></tstamp>
-
-    <dpkg output="${package.output}" prefix="${ooo.docs.prefix}" distribution="${ooo.distribution}">
-      <package destroot="${pkgroot.docs}">
-        <info>
-          <name>msoy-docs</name>
-          <version>${docsVersion}</version>
-          <arch>${ooo.architecture}</arch>
-          <description>Msoy Development Docs</description>
-          <maintainer>
-            <name>${maintainer.name}</name>
-            <email>${maintainer.email}</email>
-          </maintainer>
-        </info>
       </package>
     </dpkg>
   </target>

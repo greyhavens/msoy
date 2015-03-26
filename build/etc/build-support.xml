@@ -12,8 +12,6 @@
   <!-- enumerate our available libraries -->
   <property name="buildlib.ant-contrib.jar" value="${buildlibs.dir}/ant-contrib.jar"/>
   <property name="buildlib.ant-copyfilelist.jar" value="${buildlibs.dir}/ant-copyfilelist.jar"/>
-  <property name="buildlib.ant-gatherconfiguration.jar"
-      value="${buildlibs.dir}/ant-gatherconfiguration.jar"/>
   <property name="buildlib.ant-gettext.jar" value="${buildlibs.dir}/ant-gettext.jar"/>
   <property name="buildlib.antidote.jar" value="${buildlibs.dir}/antidote-1.4.jar"/>
   <property name="buildlib.ant-oooscripts.jar" value="${buildlibs.dir}/ant-oooscripts.jar"/>
@@ -49,17 +47,6 @@
   <property name="buildlib.xmlrpc-client.jar" value="${buildlibs.dir}/xmlrpc-client-3.1.jar"/>
   <property name="buildlib.xmlrpc-common.jar" value="${buildlibs.dir}/xmlrpc-common-3.1.jar"/>
   <property name="buildlib.xmltask.jar" value="${buildlibs.dir}/xmltask-v1.15.1.jar"/>
-
-  <!-- we rely on subversion in multiple locations, so define the classpath once here -->
-  <path id="subversion.classpath">
-    <pathelement location="${buildlib.ganymed.jar}"/>
-    <pathelement location="${buildlib.svnant.jar}"/>
-    <pathelement location="${buildlib.svnClientAdapter.jar}"/>
-    <pathelement location="${buildlib.svnjavahl.jar}"/>
-    <pathelement location="${buildlib.svnkit.jar}"/>
-    <pathelement location="${buildlib.svnkit-javahl.jar}"/>
-    <pathelement location="${buildlib.svnkit-cli.jar}"/>
-  </path>
 
   <!-- class path for maven ant tasks -->
   <path id="maven-ant-tasks.classpath">
@@ -97,11 +84,6 @@
       <taskdef resource="com/threerings/ant/gettext/antlib.xml"
              classpath="${buildlib.ant-gettext.jar}"/>
 -->
-    <!-- Setup the svnant tasks -->
-<!--
-    <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml"
-             classpathref="subversion.classpath"/>
--->
 
     <!-- Setup the JPkg <dpkg> task and the oooscripts -->
     <path id="jpkg.classpath">
@@ -109,58 +91,17 @@
       <pathelement location="${buildlib.ant-oooscripts.jar}"/>
     </path>
     <!-- include the dpkg task -->
-<!--
     <taskdef resource="antlib.xml" classpathref="jpkg.classpath" loaderref="jpkg.loader"/>
--->
+
     <!-- include the oooscripts -->
 <!--
     <typedef resource="antlib-oooscripts.xml" classpathref="jpkg.classpath"
              loaderref="jpkg.loader"/>
 -->
 
-    <!-- Setup the <gatherconfiguration> task -->
-<!--
-    <taskdef resource="antlib-gatherconfiguration.xml">
-      <classpath>
-        <pathelement location="${buildlib.ant-gatherconfiguration.jar}"/>
-        <pathelement location="${buildlib.antidote.jar}"/>
-        <pathelement location="${buildlib.commons-io.jar}"/>
-        <pathelement location="${buildlib.ws-commons-util.jar}"/>
-      </classpath>
-    </taskdef>
-
-    <macrodef name="gatherappconfig"
-        description="Gathers configuration for the current app from etc and the ooo source">
-       <element name="filesets" implicit="yes"/>
-       <sequential>
-         <gatherconfiguration app="${ant.project.name}" distribution="${ooo.distribution}"
-             dest="${deploy.dir}">
-             <sources refid="ooo.oooconfig.source"/>
-             <sources>
-                 <directory path="${basedir}/etc"/>
-             </sources>
-             <files>
-                 <filesets/>
-             </files>
-         </gatherconfiguration>
-       </sequential>
-    </macrodef>
--->
-
     <!-- Setup the <startupscript> task -->
 <!--
     <taskdef name="startupscript" classname="com.threerings.ant.startupscript.StartupScript">
-      <classpath>
-        <pathelement location="${buildlib.ant-startupscript.jar}"/>
-        <pathelement location="${buildlib.commons-collections.jar}"/>
-        <pathelement location="${buildlib.velocity-dev.jar}"/>
-      </classpath>
-    </taskdef>
--->
-
-    <!-- Setup the <jettystartup> task -->
-<!--
-    <taskdef name="jettystartup" classname="com.threerings.ant.startupscript.JettyStartup">
       <classpath>
         <pathelement location="${buildlib.ant-startupscript.jar}"/>
         <pathelement location="${buildlib.commons-collections.jar}"/>
@@ -268,209 +209,11 @@
   <!-- enable the use of <assert> in our ANT projects -->
   <property name="ant.enable.asserts" value="true"/>
 
+  <!-- figure out the absolute path to this build file -->
+  <dirname property="packageetc.dir" file="${ant.file.package-support}"/>
 
-  <!-- a javadoc target for the standard ooo project -->
-  <target name="common-javadoc">
-    <!-- verify we have all the properties we need for this target to work -->
-    <assert name="deploy.dir" message="deploy.dir must be defined for common-javadoc to work."/>
-    <assert name="javadoc.title"
-            message="javadoc.title must be defined for common-javadoc to work."/>
-    <assert name="private.javadoc.base.url"
-            message="private.javadoc.base.url must be defined for common-javadoc to work."/>
-
-    <!-- allow the package names for the javadoc source files to be overridden -->
-    <if><not><isset property="javadoc.pkg.names"/></not><then>
-      <property name="javadoc.pkg.names" value="com.threerings.*"/>
-    </then></if>
-
-    <!-- allow the location of the javadoc source files to be overridden -->
-    <if><not><isreference refid="javadoc.src.path"/></not><then>
-      <assert name="src.dir" message="src.dir must be defined for common-javadoc to work."/>
-      <path id="javadoc.src.path">
-        <dirset dir="${src.dir}" excludes="**/.svn"/>
-      </path>
-    </then></if>
-
-    <javadoc sourcepathref="javadoc.src.path" destdir="${deploy.dir}/docs"
-             packagenames="${javadoc.pkg.names}" failonerror="true"
-             windowtitle="${javadoc.title}" doctitle="${javadoc.title}"
-             bottom="Copyright &#169; 2001-2007 Three Rings Design, Inc. All Rights Reserved."
-             additionalparam="-J-Xmx768m -breakiterator -quiet">
-      <classpath refid="classpath"/>
-      <tag name="gwt.key" enabled="false"/>
-
-      <!-- ooo libraries -->
-      <link href="${private.javadoc.base.url}/ooo/getdown/"/>
-      <link href="${private.javadoc.base.url}/ooo/jme/"/>
-      <link href="${private.javadoc.base.url}/ooo/jme-bui/"/>
-      <link href="${private.javadoc.base.url}/ooo/narya/"/>
-      <link href="${private.javadoc.base.url}/ooo/nenya/"/>
-      <link href="${private.javadoc.base.url}/ooo/samskivert/"/>
-      <link href="${private.javadoc.base.url}/ooo/snark/"/>
-      <link href="${private.javadoc.base.url}/ooo/threerings/"/>
-      <link href="${private.javadoc.base.url}/ooo/vilya/"/>
-      <!-- java libraries -->
-      <link href="${private.javadoc.base.url}/java/java1.5/"/>
-      <link href="${private.javadoc.base.url}/java/javamail1.3.1/"/>
-      <link href="${private.javadoc.base.url}/java/jaxrpc/"/>
-      <link href="${private.javadoc.base.url}/java/servlet2.3/"/>
-      <!-- external libraries -->
-      <link href="${private.javadoc.base.url}/extern/ant1.6.5/"/>
-      <link href="${private.javadoc.base.url}/extern/commons-beanutils/"/>
-      <link href="${private.javadoc.base.url}/extern/commons-codec/"/>
-      <link href="${private.javadoc.base.url}/extern/commons-collections/"/>
-      <link href="${private.javadoc.base.url}/extern/commons-digester/"/>
-      <link href="${private.javadoc.base.url}/extern/commons-fileupload/"/>
-      <link href="${private.javadoc.base.url}/extern/commons-httpclient/"/>
-      <link href="${private.javadoc.base.url}/extern/commons-io/"/>
-      <link href="${private.javadoc.base.url}/extern/commons-lang/"/>
-      <link href="${private.javadoc.base.url}/extern/commons-logging/"/>
-      <link href="${private.javadoc.base.url}/extern/jcharts-1.0/"/>
-      <link href="${private.javadoc.base.url}/extern/lwjgl/"/>
-      <link href="${private.javadoc.base.url}/extern/velocity/"/>
-    </javadoc>
-  </target>
-
-  <!-- import the package support file -->
-<!--
-  <import file="package-support.xml"/>
--->
-
-  <!-- a task that jetty users can depend on to set up its ant tasks -->
-  <target name="-init-jetty-ant">
-    <!-- download jetty-ant and dependencies via Maven -->
-    <artifact:dependencies pathId="jetty-ant.classpath">
-      <dependency groupId="org.mortbay.jetty" artifactId="jetty-ant"
-                  version="6.1.25" scope="runtime" />
-      <dependency groupId="org.mortbay.jetty" artifactId="jetty-ajp"
-                  version="6.1.25" scope="runtime" />
-      <dependency groupId="org.mortbay.jetty" artifactId="jsp-2.1"
-                  version="6.1.14" scope="runtime" />
-    </artifact:dependencies>
-    <taskdef resource="tasks.properties"
-             classpathref="jetty-ant.classpath" loaderref="jetty.loader"/>
-    <typedef name="selectChannelConnector" classname="org.mortbay.jetty.nio.SelectChannelConnector"
-             classpathref="jetty-ant.classpath" loaderref="jetty.loader"/>
-    <typedef name="ajp13SocketConnector" classname="org.mortbay.jetty.ajp.Ajp13SocketConnector"
-             classpathref="jetty-ant.classpath" loaderref="jetty.loader"/>
-  </target>
-
-  <!-- tasks that selenium users can depend on to set up its ant tasks -->
-  <target name="-init-selenium-client">
-    <artifact:dependencies pathId="selenium.server.classpath">
-      <dependency groupId="org.seleniumhq.selenium.client-drivers"
-                  artifactId="selenium-java-client-driver" version="1.0.1" scope="runtime" />
-    </artifact:dependencies>
-  </target>
-  <target name="-init-selenium-server">
-    <artifact:dependencies pathId="selenium.server.classpath">
-      <dependency groupId="org.seleniumhq.selenium" artifactId="selenium-server"
-                  version="2.0a5" scope="runtime" />
-    </artifact:dependencies>
-  </target>
-
-  <!-- sets up the resourceCheck task - http://rscbundlecheck.sourceforge.net/ -->
-  <target name="-init-resourceCheck">
-    <taskdef name="resourceCheck" classpath="${buildlib.rscbundlecheck.jar}"
-             classname="org.dyndns.fichtner.rsccheck.ant.RscBundleCheckTask"/>
-  </target>
-
-  <!-- runs svnclean checks on the svnclean.fileset. verifies the checkout is cleaning, meaning no
-       no files are in the checkout that are not in subversion. -->
-  <target name="checkclean">
-    <if><not><isreference refid="checkclean.fileset"/></not><then>
-      <!-- default fileset for the checkclean target. build-number.txt is created by Bamboo. -->
-      <fileset id="checkclean.fileset" dir="${basedir}" excludes="build-number.txt"/>
-    </then></if>
-    <!-- haul in the svn clean checker -->
-    <taskdef name="svnclean" classname="com.threerings.ant.SVNClean">
-      <classpath>
-        <pathelement location="${buildlib.svnclean.jar}"/>
-        <path refid="subversion.classpath"/>
-      </classpath>
-    </taskdef>
-    <svnclean>
-      <fileset refid="checkclean.fileset"/>
-    </svnclean>
-  </target>
-
-  <!-- runs checkstyle on src/java/**/*.java using ooo_checks.xml -->
-  <target name="checkstyle">
-    <if><not><isreference refid="check.paths"/></not>
-      <then>
-        <fileset dir="src/java" includes="**/*.java" id="check.paths"/>
-      </then>
-    </if>
-    <artifact:dependencies pathId="checkstyle.classpath">
-      <dependency groupId="checkstyle" artifactId="checkstyle" version="5.0" scope="runtime"/>
-    </artifact:dependencies>
-    <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
-    <checkstyle config="${buildetc.dir}/ooo_checks.xml"
-                failOnViolation="false" classpathref="classpath">
-      <fileset refid="check.paths"/>
-      <formatter type="xml" toFile="${basedir}/${deploy.dir}/checkstyle-output.xml"/>
-    </checkstyle>
-    <xslt in="${basedir}/${deploy.dir}/checkstyle-output.xml"
-          out="${basedir}/${deploy.dir}/checkstyle-output.html"
-          style="${buildetc.dir}/checkstyle.xsl"/>
-  </target>
-
-  <!-- runs PMD on src/java/**/*.java using a few basic rulesets -->
-  <target name="pmd">
-    <if><not><isreference refid="check.paths"/></not>
-      <then>
-        <fileset dir="src/java" includes="**/*.java" id="check.paths"/>
-      </then>
-    </if>
-    <artifact:dependencies pathId="pmd.classpath">
-      <dependency groupId="pmd" artifactId="pmd" version="4.2.5" scope="runtime"/>
-    </artifact:dependencies>
-    <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"
-             classpathref="pmd.classpath"/>
-    <pmd rulesetfiles="${buildetc.dir}/ooo_pmd.xml" targetjdk="1.5">
-        <fileset refid="check.paths"/>
-        <formatter type="xml" toFile="${basedir}/pmd-output.xml"/>
-    </pmd>
-  </target>
-
-  <target name="-init-findbugs">
-    <!-- download findbugs and dependencies via Maven -->
-    <artifact:dependencies pathId="findbugs.classpath">
-      <dependency groupId="com.google.code.findbugs" artifactId="findbugs-ant"
-                  version="1.3.9" scope="runtime" />
-    </artifact:dependencies>
-    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
-             classpathref="findbugs.classpath"/>
-  </target>
-
-  <!-- runs findbugs on src/java/** and ${deploy.dir}/classes -->
-  <target name="findbugs" depends="-init-findbugs">
-    <findbugs classpathref="findbugs.classpath" pluginList="" output="xml"
-              outputFile="${basedir}/findbugs-output.xml">
-      <auxClasspath>
-        <fileset dir="${basedir}/${libs.dir}" includes="*.jar"/>
-      </auxClasspath>
-      <sourcePath path="${basedir}/src/java"/>
-      <class location="${basedir}/${deploy.dir}/classes"/>
-    </findbugs>
-  </target>
-
-  <!-- runs findbugs each project in ${projects} -->
-  <target name="findbugsprojects" depends="-init-findbugs,distprojects">
-    <for list="${projects}" param="project">
-      <sequential>
-        <echo>Running FindBugs in @{project}...</echo>
-        <findbugs home="${buildlibs.dir}/findbugs" output="xml"
-                  outputFile="${basedir}/findbugs-output.xml">
-          <auxClasspath>
-            <fileset dir="${basedir}/@{project}/${deploy.dir}/lib" includes="*.jar"/>
-          </auxClasspath>
-          <sourcePath path="${basedir}/@{project}/src/java"/>
-          <class location="${basedir}/@{project}/${deploy.dir}/classes"/>
-        </findbugs>
-      </sequential>
-    </for>
-  </target>
+  <!-- give access to environmental variables -->
+  <property environment="env"/>
 
   <!-- call buildproject on each item in ${webapps} -->
   <target name="distwebapps">
