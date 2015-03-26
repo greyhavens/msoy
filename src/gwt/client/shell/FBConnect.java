@@ -25,7 +25,7 @@ public class FBConnect
      * Loads up our Facebook Connect credentials from cookies. Returns null if no creds could be
      * found.
      *
-     * DANGER: Do not call unless you're sure fbhelper has loaded! Use wait()
+     * DANGER: Do not call unless you're sure fbhelper has loaded! Use waitFor()
      */
     public static FacebookCreds readCreds ()
     {
@@ -48,8 +48,8 @@ public class FBConnect
                 // nada
             }
             public void didLogoff () {
-                wait(new InfoCallback<Void>() {
-                    public void onSuccess (Void _) {
+                waitFor(new InfoCallback<Void>() {
+                    public void onSuccess (Void unused) {
                         logoff();
                     }
                 });
@@ -65,8 +65,8 @@ public class FBConnect
      */
     public void requireSession (final AsyncCallback<String> onReady)
     {
-        wait(new AsyncCallback<Void>() {
-            public void onSuccess (Void _) {
+        waitFor(new AsyncCallback<Void>() {
+            public void onSuccess (Void unused) {
                 getSession(onReady);
             }
             public void onFailure (Throwable t) {
@@ -109,7 +109,7 @@ public class FBConnect
     /**
      * Gets the FB app ID.
      *
-     * DANGER: Do not call unless you're sure fbhelper has loaded! Use wait()
+     * DANGER: Do not call unless you're sure fbhelper has loaded! Use waitFor()
      */
     public static native String getKey () /*-{
         return $wnd.top.FB_GetKey();
@@ -118,7 +118,7 @@ public class FBConnect
     /**
      * Calls onReady when the fbhelper script has finished loading.
      */
-    public static native void wait (AsyncCallback<Void> onReady) /*-{
+    public static native void waitFor (AsyncCallback<Void> onReady) /*-{
         var onload = function () {
             onReady.@com.google.gwt.user.client.rpc.AsyncCallback::onSuccess(Ljava/lang/Object;)();
         };
