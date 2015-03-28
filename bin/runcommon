@@ -15,17 +15,11 @@ if [ ! -z "$SMTP_HOST" ]; then
     JAVA_ARGS="$JAVA_ARGS -Dmail.smtp.host=$SMTP_HOST"
 fi
 
-# Some temporary business for multiprocessor FreeBSD machines
-NEEDS_MEMBAR=`$JAVA_VM -fullversion 2>&1 | grep diablo`
-if [ ! -z "$NEEDS_MEMBAR" ]; then
-     JAVA_ARGS="$JAVA_ARGS -XX:+UseMembar"
-fi
-
 # Add all necessary JAR files to the CLASSPATH
 CLASSPATH=$MSOY_HOME/dist
 for JAR in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-*.jar; do
     if [ -e $JAR ]; then
-	CLASSPATH=$CLASSPATH:$JAR
+        CLASSPATH=$CLASSPATH:$JAR
     fi
 done
 export CLASSPATH

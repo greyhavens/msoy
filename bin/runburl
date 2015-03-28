@@ -2,7 +2,7 @@
 #
 # $Id$
 #
-# A script to invoke the MetaSOY! bureau launcher and email the generated 
+# A script to invoke the MetaSOY! bureau launcher and email the generated
 # logs when it eventually exits.
 
 ulimit -n 65536
@@ -23,7 +23,6 @@ PROCID=$1
 PIDFILE=$2
 
 LOGFILE=$MSOY_HOME/log/burl-stdout-$PROCID.log
-LOG_EMAIL=nightly-logs@threerings.net
 SERVER_MEMORY=32M
 
 # Override settings with those from MSOY_HOME/dist/burl-server.conf
@@ -71,10 +70,10 @@ EXIT_CODE=$?
 
 # If any stdout or stderr logs were generated, send those via email (all normal
 # logs should be redirected to a separate file)
-if [ -s $LOGFILE ]; then
-    cat $LOGFILE | $MAIL -s "$HOSTNAME: bureau launcher stray log output" $LOG_EMAIL
+if [ -s $LOGFILE -a ! -z "$LOG_EMAIL" ]; then
+    cat $LOGFILE | $MAIL -r $LOG_EMAIL -s "$HOSTNAME: bureau launcher stray log output" $LOG_EMAIL
+    rm -f $LOGFILE
 fi
-rm -f $LOGFILE
 
 # Prune old logs
 # find $MSOY_HOME/log -name 'stdout-$PROCID.log*' -a -mtime +7 | xargs rm -f

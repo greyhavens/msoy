@@ -13,7 +13,6 @@ HOSTNAME=`hostname`
 
 LOGFILE=$MSOY_HOME/log/stdout-policy.log
 PIDFILE=$MSOY_HOME/run/policy-server.pid
-LOG_EMAIL=nightly-logs@threerings.net
 
 # Override settings with those from MSOY_HOME/dist/msoy-server.conf
 if [ -f $MSOY_HOME/dist/msoy-server.conf ]; then
@@ -41,9 +40,9 @@ EXIT_CODE=$?
 
 # If any stdout or stderr logs were generated, send those via email (all normal
 # logs should be redirected to a separate file)
-if [ -s $LOGFILE ]; then
-    cat $LOGFILE | $MAIL -s "$HOSTNAME: $MSOY_HOME stray policy log output" $LOG_EMAIL
+if [ -s $LOGFILE -a ! -z "$LOG_EMAIL" ]; then
+    cat $LOGFILE | $MAIL -r $LOG_EMAIL -s "$HOSTNAME: $MSOY_HOME stray policy log output" $LOG_EMAIL
+    rm -f $LOGFILE
 fi
-rm -f $LOGFILE
 
 exit $EXIT_CODE

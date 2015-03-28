@@ -5,7 +5,7 @@
     CacheManager Configuration
     ==========================
     An ehcache.xml corresponds to a single CacheManager.
-    
+
     See instructions below or the ehcache schema (ehcache.xsd) on how to configure.
 
     System property tokens can be specified in this file which are replaced when the configuration
@@ -128,7 +128,7 @@
 
     The hostname is the hostname of the remote CacheManager peer. The port is the listening
     port of the RMICacheManagerPeerListener of the remote CacheManager peer.
-    
+
     Configuring JGroups replication:
     <cacheManagerPeerProviderFactory
          class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
@@ -210,9 +210,9 @@
     maxElementsInMemory:
     Sets the maximum number of objects that will be created in memory
 
-	maxElementsOnDisk:
+ maxElementsOnDisk:
     Sets the maximum number of objects that will be maintained in the DiskStore
-	The default value is zero, meaning unlimited.
+ The default value is zero, meaning unlimited.
 
     eternal:
     Sets whether elements are eternal. If eternal,  timeouts are ignored and the
@@ -251,7 +251,7 @@
     to this area and then asynchronously written to disk. The default size is 30MB.
     Each spool buffer is used only by its cache. If you get OutOfMemory errors consider
     lowering this value. To improve DiskStore performance consider increasing it. Trace level
-    logging in the DiskStore will show if put back ups are occurring. 
+    logging in the DiskStore will show if put back ups are occurring.
 
     memoryStoreEvictionPolicy:
     Policy would be enforced upon reaching the maxElementsInMemory limit. Default
@@ -314,13 +314,13 @@
       is 10. This property is only applicable if replicateAsynchronously=true
 
 
-	For the Jgroups replication this is done with:
-	<cacheEventListenerFactory
+ For the Jgroups replication this is done with:
+ <cacheEventListenerFactory
            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
            properties="replicateAsynchronously=true, replicatePuts=true,
            replicateUpdates=true, replicateUpdatesViaCopy=false,
            replicateRemovals=true,asynchronousReplicationIntervalMillis=1000"/>
-    This listener supports the same property than the RMICacheReplicationFactory. 
+    This listener supports the same property than the RMICacheReplicationFactory.
 
     Cluster Bootstrapping
 

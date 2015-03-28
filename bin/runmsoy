@@ -21,7 +21,6 @@ PROCID=$1
 PIDFILE=$2
 
 LOGFILE=$MSOY_HOME/log/stdout-$PROCID.log
-LOG_EMAIL=nightly-logs@threerings.net
 SERVER_MEMORY=384M
 
 DEPOT_PG83=false
@@ -48,7 +47,6 @@ JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Dcom.samskivert.depot.pg83=$DEPOT_PG83
     -Dresource_dir=$MSOY_HOME/rsrc \
     -Drsrc_cache_dir=/tmp \
-    -Djava.rmi.server.hostname=$HOSTNAME \
     -Dlog4j.configuration=log4j.properties \
     -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties \
     -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger \
@@ -76,9 +74,9 @@ EXIT_CODE=$?
 
 # If any stdout or stderr logs were generated, send those via email (all normal
 # logs should be redirected to a separate file)
-if [ -s $LOGFILE ]; then
-    cat $LOGFILE | $MAIL -s "$HOSTNAME: $MSOY_HOME stray log output" $LOG_EMAIL
+if [ -s $LOGFILE -a ! -z "$LOG_EMAIL" ]; then
+    cat $LOGFILE | $MAIL -r $LOG_EMAIL -s "$HOSTNAME: $MSOY_HOME stray log output" $LOG_EMAIL
+    rm -f $LOGFILE
 fi
-rm -f $LOGFILE
 
 exit $EXIT_CODE

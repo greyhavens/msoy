@@ -72,12 +72,6 @@ while [ ! -z "$1" ]; do
     shift
 done
 
-# Some temporary business for multiprocessor FreeBSD machines
-NEEDS_MEMBAR=`"$JAVA_VM" -fullversion 2>&1 | grep diablo`
-if [ ! -z "$NEEDS_MEMBAR" ]; then
-     JAVA_ARGS="$JAVA_ARGS -XX:+UseMembar"
-fi
-
 { [ -z "$CYGWIN" ] && SEP=:; } || SEP=';'
 
 # Add all necessary JAR files to the CLASSPATH
