@@ -1045,7 +1045,8 @@
   </target>
 
   <!-- warns if calling package with non-production deployment -->
-  <target name="check-package" depends="config">
+  <target name="check-package">
+    <property name="deployment" value="prod"/>
     <if><not><equals arg1="${deployment}" arg2="prod"/></not><then>
       <echo>WARNING: Building package for ${deployment} deployment.</echo>
       <echo>WARNING: Usually one only packages the 'prod' deployment.</echo>
