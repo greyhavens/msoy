@@ -16,11 +16,11 @@
   <property name="javadoc.title" value="Metasoy API"/>
 
   <!-- define various packaging properties -->
-  <property name="msoy.user"        value="_msoy"/>
-  <property name="burl.user"        value="_burl"/>
-  <property name="msoy.group"       value="_msoy"/>
-  <property name="maintainer.name"  value="Three Rings Design"/>
-  <property name="maintainer.email" value="msoy-dev@threerings.net"/>
+  <property name="msoy.user"        value="ubuntu"/>
+  <property name="burl.user"        value="ubuntu"/>
+  <property name="msoy.group"       value="ubuntu"/>
+  <property name="maintainer.name"  value="Michael Bayne"/>
+  <property name="maintainer.email" value="mdb@threerings.net"/>
 
   <!-- defines the build version (normally zero unless we're doing a package build) -->
   <property name="version" value="0"/>
