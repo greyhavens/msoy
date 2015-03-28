@@ -30,13 +30,6 @@ while (1) {
     my $start = time();
     my $now = localtime($start);
 
-    # update the code to the latest version
-    if (read_prop("$root/dist/msoy-server.properties", "dev_deployment") ne "true") {
-        check_system("apt-get --assume-yes update");
-        check_system("apt-get --assume-yes install msoy-server");
-        check_system("apt-get --assume-yes clean");
-    }
-
     # now run the server
     print $LOG "$now Running msoy server: $root/bin/runmsoy $procid $server_pidfile\n";
     my $rcode = system("su -m $msoy_user -c \"$root/bin/runmsoy $procid $server_pidfile\"");
@@ -50,7 +43,7 @@ while (1) {
     if ($rcode != 0) {
         print $LOG "$fnow MetaSOY server failed (return code: $rcode) after $duration seconds.\n";
     } else {
-	print $LOG "$fnow MetaSOY server exited healthily after $duration seconds.\n";
+        print $LOG "$fnow MetaSOY server exited healthily after $duration seconds.\n";
     }
 
     # don't spiral out of control; only restart once per minute
