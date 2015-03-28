@@ -4,20 +4,9 @@
 # Configuration for the Whirled build
 
 #
-# Indicates which ehcache configuration file to use.
-
-ehcache_config = etc/ehcache.xml
-
-#
 # Where to find the Flex 3 SDK (absolute path or relative to project root)
 
 flexsdk.dir = flex3
-
-#
-# Indicates which log4j configuration file to use.
-
-log4j_config = etc/log4j.properties
-log4j_bureau_config = etc/log4j-bureaulauncher.properties
 
 #
 # Indicates whether or not GWT should build OBFuscated or PRETTY JavaScript. We

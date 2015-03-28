@@ -237,6 +237,9 @@
         <include name="burl-server.properties"/>
         <include name="burl-server.conf"/>
         <include name="build_settings.properties"/>
+        <include name="log4j.properties"/>
+        <include name="log4j-bureaulauncher.properties"/>
+        <include name="ehcache.xml"/>
       </fileset>
     </copy>
 
@@ -282,10 +285,6 @@
 
     <!-- copy a few configuration files into place -->
     <copy todir="${deploy.dir}" file="${basedir}/etc/logging.properties"/>
-    <copy tofile="${deploy.dir}/log4j.properties" file="${basedir}/${log4j_config}"/>
-    <copy tofile="${deploy.dir}/log4j-bureaulauncher.properties"
-          file="${basedir}/${log4j_bureau_config}"/>
-    <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/${ehcache_config}"/>
 
     <!-- generate index.html and crossdomain.xml-->
     <propertyregex property="server_url_host" input="${server_url}"
@@ -969,8 +968,7 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,
-          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient"
+  <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,audioplayer,remixer,imageeditor,camerabutton,uploader,asclient"
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 
@@ -980,11 +978,10 @@
     <ant dir="projects/thane" target="distbinary"/>
 
     <!-- copy the distbinary result into our dist directory -->
-    <if><available file="projects/thane/dist/avmthane"/><then>
-        <property name="avmthane" value="avmthane"/>
-    </then><else>
-        <property name="avmthane" value="avmthane.exe"/>
-    </else></if>
+    <if><available file="projects/thane/dist/avmthane"/>
+      <then><property name="avmthane" value="avmthane"/></then>
+      <else><property name="avmthane" value="avmthane.exe"/></else>
+    </if>
     <copy file="projects/thane/dist/${avmthane}" todir="${deploy.dir}/lib"/>
 
     <!-- executable permission must be set manually :( -->
