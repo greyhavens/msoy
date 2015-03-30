@@ -993,8 +993,7 @@
   <target name="distall-package"
           depends="prepare,mavendeps,mavendeps-as,distbits,tests,gclients"
           description="Rebuilds all architecture independent targets."/>
-  <!-- <target name="distall" depends="copythanebinaries,distall-package" -->
-  <target name="distall" depends="distall-package"
+  <target name="distall" depends="copythanebinaries,distall-package"
           description="Rebuilds all subprojects and whole top-level distribution."/>
 
   <!-- cleans out the compiled code -->
@@ -1059,7 +1058,7 @@
     <property name="pkgroot.root" value="${deploy.dir}/packages"/>
     <mkdir dir="${pkgroot.root}"/>
 
-  <!-- define the root of our packages on the target machine -->
+    <!-- define the root of our packages on the target machine -->
     <property name="app.prefix" value="/export/${app.name}"/>
 
     <!-- define the root of the msoy-server-code package -->
@@ -1085,13 +1084,11 @@
     </copy>
 
     <!-- copy the thane native binaries needed by all servers -->
-<!-- TODO
-  <copy todir="${approot.server.code}/bin/thane">
+    <copy todir="${approot.server.code}/bin/thane">
       <fileset dir="projects/thane/bin">
         <include name="*/avmthane"/>
       </fileset>
     </copy>
--->
 
     <!-- copy this project's jar files and configuration -->
     <copy todir="${approot.server.code}/${deploy.dir}">
