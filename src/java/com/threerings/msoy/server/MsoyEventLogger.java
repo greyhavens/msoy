@@ -25,7 +25,7 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MsoyEvents.Experience.Type;
 import com.threerings.msoy.server.MsoyEvents.ItemPurchase.PseudoItem;
-import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
+// import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -103,264 +103,264 @@ public class MsoyEventLogger
     public void currentMemberStats (String serverName, int total, int active, int guests,
         int viewers)
     {
-        post(new MsoyEvents.CurrentMemberStats(serverName, total, active, guests, viewers));
+        // post(new MsoyEvents.CurrentMemberStats(serverName, total, active, guests, viewers));
     }
 
     public void moneyTransaction (UserAction action, Currency currency, int amountDelta)
     {
-        post(new MsoyEvents.FlowTransaction(
-            action.memberId, action.type.getNumber(), currency, amountDelta));
+        // post(new MsoyEvents.FlowTransaction(
+        //     action.memberId, action.type.getNumber(), currency, amountDelta));
     }
 
     public void moneyExchangeRate (String serverName, float rate)
     {
-        post(new MsoyEvents.ExchangeRate(serverName, rate));
+        // post(new MsoyEvents.ExchangeRate(serverName, rate));
     }
 
     public void pseudoItemPurchased (int memberId, PseudoItem itemType, MoneyTransaction transaction)
     {
-        post(new MsoyEvents.ItemPurchase(
-            memberId, itemType, 0, transaction.currency, transaction.amount));
+        // post(new MsoyEvents.ItemPurchase(
+        //     memberId, itemType, 0, transaction.currency, transaction.amount));
     }
 
     public void itemPurchased (int memberId, MsoyItemType itemType, int itemId, Currency currency,
         int amountPaid)
     {
-        post(new MsoyEvents.ItemPurchase(memberId, itemType, itemId, currency, amountPaid));
+        // post(new MsoyEvents.ItemPurchase(memberId, itemType, itemId, currency, amountPaid));
     }
 
     public void itemUploaded (int creatorId, String tracker)
     {
-        post(new MsoyEvents.Experience(Type.ITEM_UPLOADED, creatorId, tracker));
+        // post(new MsoyEvents.Experience(Type.ITEM_UPLOADED, creatorId, tracker));
     }
 
     public void itemListedInCatalog (int creatorId, String tracker, MsoyItemType itemType, int itemId,
         Currency currency, int cost, int pricing, int salesTarget)
     {
-        int flowCost = (currency == Currency.COINS) ? cost : 0;
-        int goldCost = (currency == Currency.BARS) ? cost : 0;
-        post(new MsoyEvents.ItemCatalogListing(creatorId, itemType, itemId, flowCost, goldCost,
-            pricing, salesTarget));
-        post(new MsoyEvents.Experience(Type.ITEM_LISTED, creatorId, tracker));
+        // int flowCost = (currency == Currency.COINS) ? cost : 0;
+        // int goldCost = (currency == Currency.BARS) ? cost : 0;
+        // post(new MsoyEvents.ItemCatalogListing(creatorId, itemType, itemId, flowCost, goldCost,
+        //     pricing, salesTarget));
+        // post(new MsoyEvents.Experience(Type.ITEM_LISTED, creatorId, tracker));
     }
 
     public void userLoggedIn (int memberId, String tracker, String vector, boolean firstLogin,
         boolean isGuest, long createdOn)
     {
-        if (!MemberName.isViewer(memberId)) {
-            post(new MsoyEvents.Experience(Type.ACCOUNT_LOGIN, memberId, tracker));
-        }
-        post(new MsoyEvents.Login(memberId, firstLogin, isGuest, createdOn, tracker, vector));
+        // if (!MemberName.isViewer(memberId)) {
+        //     post(new MsoyEvents.Experience(Type.ACCOUNT_LOGIN, memberId, tracker));
+        // }
+        // post(new MsoyEvents.Login(memberId, firstLogin, isGuest, createdOn, tracker, vector));
     }
 
     public void logPlayerMetrics (MemberObject member, String sessionToken)
     {
-        MemberLocal local = member.getLocal(MemberLocal.class);
-        PlayerMetrics.RoomVisit room = local.metrics.room;
-        PlayerMetrics.Idle idle = local.metrics.idle;
-        post(new MsoyEvents.SessionMetrics(member.getMemberId(), member.isPermaguest(),
-            room.timeInMyRoom, room.timeInFriendRooms, room.timeInStrangerRooms,
-            room.timeInWhirleds, idle.timeActive, idle.timeIdle, sessionToken));
+        // MemberLocal local = member.getLocal(MemberLocal.class);
+        // PlayerMetrics.RoomVisit room = local.metrics.room;
+        // PlayerMetrics.Idle idle = local.metrics.idle;
+        // post(new MsoyEvents.SessionMetrics(member.getMemberId(), member.isPermaguest(),
+        //     room.timeInMyRoom, room.timeInFriendRooms, room.timeInStrangerRooms,
+        //     room.timeInWhirleds, idle.timeActive, idle.timeIdle, sessionToken));
     }
 
     public void mailSent (int senderId, int recipientId, int payloadType)
     {
-        post(new MsoyEvents.MailSent(senderId, recipientId, payloadType));
+        // post(new MsoyEvents.MailSent(senderId, recipientId, payloadType));
     }
 
     public void retentionMailSent (int recipientId, String visitorId, String lapseStatus,
         String subjectLine, String bucket, int numFriends, int numPersonalMessages,
         boolean validated)
     {
-        post(new MsoyEvents.RetentionMailSent(recipientId, visitorId, lapseStatus, subjectLine,
-            bucket, numFriends, numPersonalMessages, validated));
+        // post(new MsoyEvents.RetentionMailSent(recipientId, visitorId, lapseStatus, subjectLine,
+        //     bucket, numFriends, numPersonalMessages, validated));
     }
 
     public void friendAdded (int memberId, int friendId)
     {
-        post(new MsoyEvents.FriendshipAction(memberId, friendId, true));
+        // post(new MsoyEvents.FriendshipAction(memberId, friendId, true));
     }
 
     public void friendRemoved (int memberId, int friendId)
     {
-        post(new MsoyEvents.FriendshipAction(memberId, friendId, false));
+        // post(new MsoyEvents.FriendshipAction(memberId, friendId, false));
     }
 
     public void batchFriendRequestSent (int memberId, int count, int failures)
     {
-        post(new MsoyEvents.BatchFriendRequestSent(memberId, count, failures));
+        // post(new MsoyEvents.BatchFriendRequestSent(memberId, count, failures));
     }
 
     public void groupJoined (int memberId, int groupId)
     {
-        post(new MsoyEvents.GroupMembershipAction(memberId, groupId, true));
+        // post(new MsoyEvents.GroupMembershipAction(memberId, groupId, true));
     }
 
     public void groupLeft (int memberId, int groupId)
     {
-        post(new MsoyEvents.GroupMembershipAction(memberId, groupId, false));
+        // post(new MsoyEvents.GroupMembershipAction(memberId, groupId, false));
     }
 
     public void groupRankChange (int memberId, int groupId, byte newRank)
     {
-        post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
+        // post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
     }
 
     public void roomEntered (int memberId, boolean isWhirled, String tracker)
     {
-        if (!MemberName.isViewer(memberId)) {
-            Type type = isWhirled ? Type.VISIT_WHIRLED : Type.VISIT_ROOM;
-            post(new MsoyEvents.Experience(type, memberId, tracker));
-        }
+        // if (!MemberName.isViewer(memberId)) {
+        //     Type type = isWhirled ? Type.VISIT_WHIRLED : Type.VISIT_ROOM;
+        //     post(new MsoyEvents.Experience(type, memberId, tracker));
+        // }
     }
 
     public void roomLeft (int playerId, int sceneId, boolean isWhirled, int secondsInRoom,
         int occupantsLeft, String tracker)
     {
-        post(new MsoyEvents.RoomExit(playerId, sceneId, isWhirled, secondsInRoom, occupantsLeft,
-            tracker));
+        // post(new MsoyEvents.RoomExit(playerId, sceneId, isWhirled, secondsInRoom, occupantsLeft,
+        //     tracker));
     }
 
     public void avrgEntered (int playerId, String tracker)
     {
-        post(new MsoyEvents.Experience(Type.GAME_AVRG, playerId, tracker));
+        // post(new MsoyEvents.Experience(Type.GAME_AVRG, playerId, tracker));
     }
 
     public void avrgLeft (int playerId, int gameId, int seconds, int playersLeft, String tracker)
     {
-        post(new MsoyEvents.AVRGExit(playerId, gameId, seconds, playersLeft, tracker));
+        // post(new MsoyEvents.AVRGExit(playerId, gameId, seconds, playersLeft, tracker));
     }
 
     public void gameEntered (int playerId, boolean multiplayer, String tracker)
     {
-        Type type = multiplayer ? Type.GAME_MULTIPLAYER : Type.GAME_SINGLEPLAYER;
-        post(new MsoyEvents.Experience(type, playerId, tracker));
+        // Type type = multiplayer ? Type.GAME_MULTIPLAYER : Type.GAME_SINGLEPLAYER;
+        // post(new MsoyEvents.Experience(type, playerId, tracker));
     }
 
     public void gameLeft (int playerId, byte gameGenre, int gameId, int seconds,
         boolean multiplayer, String tracker)
     {
-        post(new MsoyEvents.GameExit(playerId, gameGenre, gameId, seconds, multiplayer, tracker));
+        // post(new MsoyEvents.GameExit(playerId, gameGenre, gameId, seconds, multiplayer, tracker));
     }
 
     public void gamePlayed (int gameGenre, int gameId, int itemId, int payout, int secondsPlayed,
         int playerId)
     {
-        post(new MsoyEvents.GamePlayed(gameGenre, gameId, itemId, payout, secondsPlayed, playerId));
+        // post(new MsoyEvents.GamePlayed(gameGenre, gameId, itemId, payout, secondsPlayed, playerId));
     }
 
     public void trophyEarned (int recipientId, int gameId, String trophyIdent)
     {
-        post(new MsoyEvents.TrophyEarned(recipientId, gameId, trophyIdent));
+        // post(new MsoyEvents.TrophyEarned(recipientId, gameId, trophyIdent));
     }
 
     public void prizeEarned (int recipientId, int gameId, String prizeIdent, MsoyItemType prizeItemType)
     {
-        post(new MsoyEvents.PrizeEarned(recipientId, gameId, prizeIdent, prizeItemType));
+        // post(new MsoyEvents.PrizeEarned(recipientId, gameId, prizeIdent, prizeItemType));
     }
 
     public void inviteSent (String inviteId, int inviterId, String recipient)
     {
-        post(new MsoyEvents.InviteSent(inviteId, inviterId, recipient));
+        // post(new MsoyEvents.InviteSent(inviteId, inviterId, recipient));
     }
 
     public void gameInviteSent (int gameId, int inviterId, String recipient, String type)
     {
-        post(new MsoyEvents.GameInviteSent(gameId, inviterId, recipient, type));
+        // post(new MsoyEvents.GameInviteSent(gameId, inviterId, recipient, type));
     }
 
     public void inviteViewed (String inviteId)
     {
-        post(new MsoyEvents.InviteViewed(inviteId));
+        // post(new MsoyEvents.InviteViewed(inviteId));
     }
 
     public void visitorInfoCreated (VisitorInfo info, boolean fromWeb)
     {
-        if (info != null) {
-            post(new MsoyEvents.VisitorInfoCreated(info, fromWeb));
-        }
+        // if (info != null) {
+        //     post(new MsoyEvents.VisitorInfoCreated(info, fromWeb));
+        // }
     }
 
     public void vectorAssociated (VisitorInfo info, String vector)
     {
-        post(new MsoyEvents.VectorAssociated(info, vector));
+        // post(new MsoyEvents.VectorAssociated(info, vector));
     }
 
     public void referrerAssociated (VisitorInfo info, String referrer)
     {
-        if (info != null) {
-            post(new MsoyEvents.HttpReferrerAssociated(info, referrer));
-        } else {
-            log.warning("Unexpected null VisitorInfo for vector: " + referrer);
-        }
+        // if (info != null) {
+        //     post(new MsoyEvents.HttpReferrerAssociated(info, referrer));
+        // } else {
+        //     log.warning("Unexpected null VisitorInfo for vector: " + referrer);
+        // }
     }
 
     public void webSessionStatusChanged (VisitorInfo info, boolean guest, boolean newInfo)
     {
-        if (info == null) {
-            log.warning("Got null VisitorInfo during web status change", "guest", guest);
-        } else if (info.id == null) {
-            log.warning("Got null VisitorInfo.id during web status change", "guest", guest);
-        } else {
-            boolean player = info.isAuthoritative;
-            boolean other = player ? false : !guest;
-            post(new MsoyEvents.WebSessionStatusChanged(info.id, player, guest, other, newInfo));
-        }
+        // if (info == null) {
+        //     log.warning("Got null VisitorInfo during web status change", "guest", guest);
+        // } else if (info.id == null) {
+        //     log.warning("Got null VisitorInfo.id during web status change", "guest", guest);
+        // } else {
+        //     boolean player = info.isAuthoritative;
+        //     boolean other = player ? false : !guest;
+        //     post(new MsoyEvents.WebSessionStatusChanged(info.id, player, guest, other, newInfo));
+        // }
     }
 
     public void accountCreated (
         int newMemberId, boolean isGuest, String inviteId, int affiliateId, String tracker)
     {
-        post(new MsoyEvents.Experience(Type.ACCOUNT_CREATED, newMemberId, tracker));
-        post(new MsoyEvents.AccountCreated(newMemberId, isGuest, inviteId, affiliateId, tracker));
+        // post(new MsoyEvents.Experience(Type.ACCOUNT_CREATED, newMemberId, tracker));
+        // post(new MsoyEvents.AccountCreated(newMemberId, isGuest, inviteId, affiliateId, tracker));
     }
 
     public void roomUpdated (int memberId, int sceneId, String tracker)
     {
-        post(new MsoyEvents.Experience(Type.EDIT_ROOM, memberId, tracker));
-        post(new MsoyEvents.RoomUpdated(memberId, sceneId));
+        // post(new MsoyEvents.Experience(Type.EDIT_ROOM, memberId, tracker));
+        // post(new MsoyEvents.RoomUpdated(memberId, sceneId));
     }
 
     public void profileUpdated (int memberId, String tracker)
     {
-        post(new MsoyEvents.Experience(Type.EDIT_PROFILE, memberId, tracker));
-        post(new MsoyEvents.ProfileUpdated(memberId));
+        // post(new MsoyEvents.Experience(Type.EDIT_PROFILE, memberId, tracker));
+        // post(new MsoyEvents.ProfileUpdated(memberId));
     }
 
     public void forumMessageRead (int memberId, String tracker)
     {
-        post(new MsoyEvents.Experience(Type.FORUMS_READ, memberId, tracker));
+        // post(new MsoyEvents.Experience(Type.FORUMS_READ, memberId, tracker));
     }
 
     public void forumMessagePosted (int memberId, String tracker, int threadId, int postCount)
     {
-        post(new MsoyEvents.Experience(Type.FORUMS_POSTED, memberId, tracker));
-        post(new MsoyEvents.ForumMessagePosted(memberId, threadId, postCount));
+        // post(new MsoyEvents.Experience(Type.FORUMS_POSTED, memberId, tracker));
+        // post(new MsoyEvents.ForumMessagePosted(memberId, threadId, postCount));
     }
 
     public void shopPurchase (int memberId, String tracker)
     {
-        post(new MsoyEvents.Experience(Type.SHOP_PURCHASED, memberId, tracker));
+        // post(new MsoyEvents.Experience(Type.SHOP_PURCHASED, memberId, tracker));
     }
 
     public void shopPageBrowsed (int memberId, String tracker)
     {
-        post(new MsoyEvents.Experience(Type.SHOP_BROWSED, memberId, tracker));
+        // post(new MsoyEvents.Experience(Type.SHOP_BROWSED, memberId, tracker));
     }
 
     public void shopDetailsViewed (int memberId, String tracker)
     {
-        post(new MsoyEvents.Experience(Type.SHOP_DETAILS, memberId, tracker));
+        // post(new MsoyEvents.Experience(Type.SHOP_DETAILS, memberId, tracker));
     }
 
     public void broadcastSent (int memberId, int barsPaid)
     {
-        post(new MsoyEvents.BroadcastSent(memberId, barsPaid));
+        // post(new MsoyEvents.BroadcastSent(memberId, barsPaid));
     }
 
     public void facebookMochiGameEntered (int memberId, String mochiTag)
     {
-        post(new MsoyEvents.FacebookMochiGameEntered(memberId, mochiTag));
+        // post(new MsoyEvents.FacebookMochiGameEntered(memberId, mochiTag));
     }
 
     /**
@@ -371,7 +371,7 @@ public class MsoyEventLogger
      */
     public void clientAction (String tracker, String actionName, String details)
     {
-        post(new MsoyEvents.ClientAction(tracker, actionName, details));
+        // post(new MsoyEvents.ClientAction(tracker, actionName, details));
     }
 
     /**
@@ -384,7 +384,7 @@ public class MsoyEventLogger
      */
     public void testAction (String tracker, String actionName, String testName, int abTestGroup)
     {
-        post(new MsoyEvents.TestAction(tracker, actionName, testName, abTestGroup));
+        // post(new MsoyEvents.TestAction(tracker, actionName, testName, abTestGroup));
     }
 
     // /**
@@ -402,14 +402,14 @@ public class MsoyEventLogger
     //     }
     // }
 
-    /** Posts a log message to the appropriate place. */
-    protected synchronized void post (MsoyEvent message)
-    {
-        // // log remotely (if applicable)
-        // if (_remote != null) {
-        //     _remote.log(message);
-        // }
-    }
+    // /** Posts a log message to the appropriate place. */
+    // protected synchronized void post (MsoyEvent message)
+    // {
+    //     // log remotely (if applicable)
+    //     if (_remote != null) {
+    //         _remote.log(message);
+    //     }
+    // }
 
     /** Should we display debug info about what's being logged? */
     protected boolean _debugDisplayEnabled;
