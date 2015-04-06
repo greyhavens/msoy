@@ -25,7 +25,7 @@
   <!-- defines the build version (normally zero unless we're doing a package build) -->
   <property name="version" value="0"/>
 
-  <!-- import any custom configuration -->
+  <!-- import any local build configuration -->
   <property file="build.properties"/>
 
   <!-- define our subprojects and include the standard build system -->
