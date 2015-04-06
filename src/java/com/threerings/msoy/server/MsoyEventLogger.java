@@ -13,7 +13,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.presents.server.ReportManager.Reporter;
 import com.threerings.presents.server.ReportManager;
 
-import com.threerings.panopticon.client.EventLogger;
+// import com.threerings.panopticon.client.EventLogger;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.UserAction;
@@ -58,24 +58,24 @@ public class MsoyEventLogger
         // do we want local debug?
         _debugDisplayEnabled = ServerConfig.eventLogDebugDisplay;
 
-        // if we're configure to log to panopticon, do so
-        String uri = ServerConfig.eventRemoteURI;
-        // if our spool directory is not an absolute path, prefix it with the server root
-        File spoolDir = new File(ServerConfig.eventLogSpoolDir);
-        if (!spoolDir.getAbsolutePath().equals(ServerConfig.eventLogSpoolDir)) {
-            spoolDir = new File(ServerConfig.serverRoot, ServerConfig.eventLogSpoolDir);
-        }
-        if (!StringUtil.isBlank(uri)) {
-            _remote = new EventLogger(spoolDir.getAbsolutePath(), uri,
-                ServerConfig.eventLogDebugDisplay);
-        } else {
-            _remote = new EventLogger(spoolDir.getAbsolutePath(),
-                ServerConfig.eventLogDebugDisplay);
-        }
-        if (!initialized) {
-            initialized = true;
-            _reportMan.registerReporter(PANOPTICON_REPORT_TYPE, new EventLoggerReporter());
-        }
+        // // if we're configure to log to panopticon, do so
+        // String uri = ServerConfig.eventRemoteURI;
+        // // if our spool directory is not an absolute path, prefix it with the server root
+        // File spoolDir = new File(ServerConfig.eventLogSpoolDir);
+        // if (!spoolDir.getAbsolutePath().equals(ServerConfig.eventLogSpoolDir)) {
+        //     spoolDir = new File(ServerConfig.serverRoot, ServerConfig.eventLogSpoolDir);
+        // }
+        // if (!StringUtil.isBlank(uri)) {
+        //     _remote = new EventLogger(spoolDir.getAbsolutePath(), uri,
+        //         ServerConfig.eventLogDebugDisplay);
+        // } else {
+        //     _remote = new EventLogger(spoolDir.getAbsolutePath(),
+        //         ServerConfig.eventLogDebugDisplay);
+        // }
+        // if (!initialized) {
+        //     initialized = true;
+        //     _reportMan.registerReporter(PANOPTICON_REPORT_TYPE, new EventLoggerReporter());
+        // }
     }
 
     /**
@@ -84,9 +84,9 @@ public class MsoyEventLogger
      */
     public synchronized void shutdown ()
     {
-        if (_remote != null) {
-            _remote.shutdown();
-        }
+        // if (_remote != null) {
+        //     _remote.shutdown();
+        // }
     }
 
     /**
@@ -387,43 +387,43 @@ public class MsoyEventLogger
         post(new MsoyEvents.TestAction(tracker, actionName, testName, abTestGroup));
     }
 
-    /**
-     * Reporter for Panopticon client info.
-     */
-    protected final class EventLoggerReporter
-        implements Reporter
-    {
-        public void appendReport (StringBuilder buffer, long now, long sinceLast,
-                boolean reset) {
-            buffer.append("Events in queue: ").append(_remote.getQueued());
-            buffer.append("\nEvents dropped: ").append(_remote.getDropped());
-            buffer.append("\nEvents sent: ").append(_remote.getWritten());
-            buffer.append('\n');
-        }
-    }
+    // /**
+    //  * Reporter for Panopticon client info.
+    //  */
+    // protected final class EventLoggerReporter
+    //     implements Reporter
+    // {
+    //     public void appendReport (StringBuilder buffer, long now, long sinceLast,
+    //             boolean reset) {
+    //         buffer.append("Events in queue: ").append(_remote.getQueued());
+    //         buffer.append("\nEvents dropped: ").append(_remote.getDropped());
+    //         buffer.append("\nEvents sent: ").append(_remote.getWritten());
+    //         buffer.append('\n');
+    //     }
+    // }
 
     /** Posts a log message to the appropriate place. */
     protected synchronized void post (MsoyEvent message)
     {
-        // log remotely (if applicable)
-        if (_remote != null) {
-            _remote.log(message);
-        }
+        // // log remotely (if applicable)
+        // if (_remote != null) {
+        //     _remote.log(message);
+        // }
     }
 
     /** Should we display debug info about what's being logged? */
     protected boolean _debugDisplayEnabled;
 
-    /** The connection via which we deliver our log messages. */
-    protected EventLogger _remote;
+    // /** The connection via which we deliver our log messages. */
+    // protected EventLogger _remote;
 
     /** Identity used to initialize this logger. */
     protected String _ident;
 
-    /** True if we've intialized this event logger before. */
-    protected boolean initialized;
+    // /** True if we've intialized this event logger before. */
+    // protected boolean initialized;
 
-    @Inject protected ReportManager _reportMan;
+    // @Inject protected ReportManager _reportMan;
 
     /** Timeout value when connecting to the Panopticon server, in milliseconds. */
     protected static final int TIMEOUT = 1000;
