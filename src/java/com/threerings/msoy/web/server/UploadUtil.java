@@ -24,6 +24,7 @@ import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import com.google.common.collect.ImmutableMap;
 
+import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -366,7 +367,9 @@ public class UploadUtil
         throws IOException
     {
         try {
-            S3Connection conn = new S3Connection(ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
+            HostConfiguration host = new HostConfiguration();
+            host.setHost("s3-us-west-2.amazonaws.com", 80, "http");
+            S3Connection conn = new S3Connection(ServerConfig.mediaS3Id, ServerConfig.mediaS3Key, host);
             S3FileObject uploadTarget = new S3FileObject(name, file, new MediaType(mimeType));
 
             if (headers == null) {
