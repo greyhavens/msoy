@@ -42,7 +42,7 @@ public class HTMLSanitizer
     static {
         URL policyLoc = HTMLSanitizer.class.getClassLoader().getResource("antisamy-config.xml");
         try {
-            _policy = Policy.getInstance(policyLoc.toString());
+            _policy = Policy.getInstance(policyLoc.openStream());
         } catch (Exception e) {
             log.warning("Failed to parse HTML sanitizer policy file", "loc", policyLoc, e);
         }
