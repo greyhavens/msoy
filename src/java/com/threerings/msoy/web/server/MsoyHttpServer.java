@@ -44,7 +44,7 @@ import com.samskivert.servlet.util.ParameterUtil;
 import com.threerings.admin.web.server.ConfigServlet;
 
 import com.threerings.pulse.jetty.server.JettyPulseHttpServer;
-import com.threerings.pulse.web.server.PulseFlotServlet;
+import com.threerings.pulse.web.server.PulseServlet;
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.gwt.AdminService;
@@ -149,15 +149,14 @@ public class MsoyHttpServer extends JettyPulseHttpServer
     /**
      * Prepares our HTTP server for operation but does not yet start listening on the HTTP port.
      */
-    public void init (File logdir)
-        throws IOException
+    public void init (File logdir) throws IOException
     {
         // use a custom connector that works around some jetty non-awesomeness
         setConnectors(new Connector[] { new MsoyChannelConnector() });
 
         // add the PulseServlet, which can't be resolved earlier because it depends on
         // PulseModule to have been installed.
-        _servlets.put("/pulse/*", _injector.getInstance(PulseFlotServlet.class));
+        _servlets.put("/pulse/*", _injector.getInstance(PulseServlet.class));
 
         // wire up our various servlets
         ContextHandlerCollection contexts = new ContextHandlerCollection();
@@ -201,8 +200,7 @@ public class MsoyHttpServer extends JettyPulseHttpServer
      * opposed to {@link HttpServletResponse#sendRedirect}, which only works for the frame making
      * the request.
      */
-    public static void sendTopRedirect (HttpServletResponse rsp, String url)
-        throws IOException
+    public static void sendTopRedirect (HttpServletResponse rsp, String url) throws IOException
     {
         PrintStream out = null;
         try {
@@ -287,21 +285,20 @@ public class MsoyHttpServer extends JettyPulseHttpServer
     protected static class MsoyConfigServlet extends ConfigServlet
     {
         @Override // from ConfigServlet
-        protected void requireAdminUser ()
-			throws ServiceException
+        protected void requireAdminUser () throws ServiceException
         {
-			MemberRecord mrec =  _mhelper.getAuthedUser(
-				CookieUtil.getCookieValue(getThreadLocalRequest(), WebCreds.credsCookie()));
+            MemberRecord mrec =  _mhelper.getAuthedUser(
+                CookieUtil.getCookieValue(getThreadLocalRequest(), WebCreds.credsCookie()));
 
-			if (mrec == null) {
-				throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
-			}
-			if (!mrec.isAdmin()) {
-				throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-			}
+            if (mrec == null) {
+                throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
+            }
+            if (!mrec.isAdmin()) {
+                throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+            }
         }
 
-		@Inject protected MemberHelper _mhelper;
+        @Inject protected MemberHelper _mhelper;
     }
 
     /** Populated during {@link #preInit} with dependency resolved servlet instances. */
