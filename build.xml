@@ -257,7 +257,7 @@
     <mkdir dir="${classes.dir}/rsrc"/>
     <copy todir="${classes.dir}/rsrc">
       <fileset dir="rsrc">
-       <include name="**/*"/>
+        <include name="**/*"/>
       </fileset>
     </copy>
     <mkdir dir="${tclasses.dir}"/>
@@ -945,7 +945,7 @@
   </target>
 
   <!-- builds the distribution jar files -->
-  <target name="dist" depends="prepare,compile">
+  <target name="dist" depends="prepare,compile,distcode">
     <!-- copy the translation strings for the news feed emails -->
     <mkdir dir="${classes.dir}/rsrc/i18n/feed"/>
     <copy todir="${classes.dir}/rsrc/i18n/feed" flatten="true">
@@ -954,6 +954,14 @@
         <include name="**/DynamicMessages.properties"/>
       </fileset>
     </copy>
+    <!-- and all of our configuration and media in another -->
+    <jar file="${deploy.dir}/${app.name}-media.jar" basedir="${classes.dir}" includes="rsrc/**"/>
+    <!-- and our server-only data in yet another -->
+    <jar file="${deploy.dir}/${app.name}-data.jar" basedir="." includes="data/dictionary/**"/>
+  </target>
+
+  <!-- just builds the msoy-code.jar without changing any config or any futzing -->
+  <target name="distcode" depends="qcompile">
     <!-- stick all our code in one jar file -->
     <jar file="${deploy.dir}/${app.name}-code.jar" basedir="${classes.dir}">
       <include name="com/**"/>
@@ -961,10 +969,6 @@
       <include name="rsrc/**/*.properties"/>
       <include name="rsrc/**/*.tmpl"/>
     </jar>
-    <!-- and all of our configuration and media in another -->
-    <jar file="${deploy.dir}/${app.name}-media.jar" basedir="${classes.dir}" includes="rsrc/**"/>
-    <!-- and our server-only data in yet another -->
-    <jar file="${deploy.dir}/${app.name}-data.jar" basedir="." includes="data/dictionary/**"/>
   </target>
 
   <!-- builds top-level flash applications. -->
