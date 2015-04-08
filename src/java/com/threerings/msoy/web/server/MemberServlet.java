@@ -23,7 +23,7 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.threerings.gwt.util.PagedResult;
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.admin.server.ABTestLogic;
+// import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.Friendship;
@@ -328,23 +328,23 @@ public class MemberServlet extends MsoyServiceServlet
     // from WebMemberService
     public int getABTestGroup (VisitorInfo info, String testName, boolean logEvent)
     {
-        return _testLogic.getABTestGroup(testName, info, logEvent);
+        return 0; // _testLogic.getABTestGroup(testName, info, logEvent);
     }
 
     // from WebMemberService
     public void logLandingABTestGroup (VisitorInfo info, String test, int group)
     {
-        int realGroup = _testLogic.getABTestGroup(test, info, true);
-        if (realGroup != group) {
-            log.warning("Funky, the client landing group is different from the server",
-                        "test", test, "client", group, "server", realGroup);
-        }
+        // int realGroup = _testLogic.getABTestGroup(test, info, true);
+        // if (realGroup != group) {
+        //     log.warning("Funky, the client landing group is different from the server",
+        //                 "test", test, "client", group, "server", realGroup);
+        // }
     }
 
     // from WebMemberService
     public void trackTestAction (String test, String action, VisitorInfo info)
     {
-        _testLogic.trackTestAction(test, action, info);
+        // _testLogic.trackTestAction(test, action, info);
     }
 
     // from WebMemberService
@@ -413,7 +413,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ABTestLogic _testLogic;
+    // @Inject protected ABTestLogic _testLogic;
     @Inject protected FriendManager _friendMan;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected InviteRepository _inviteRepo;

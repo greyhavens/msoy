@@ -29,7 +29,7 @@ import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.data.CostsConfigObject;
-import com.threerings.msoy.admin.server.ABTestLogic;
+// import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
@@ -107,27 +107,28 @@ public class MsoyManager
     {
         final MemberObject memObj = _locator.requireMember(caller);
         final VisitorInfo vinfo = memObj.visitorInfo;
-        _invoker.postUnit(new PersistingUnit("getABTestGroup", listener) {
-            @Override public void invokePersistent () throws Exception {
-                _testGroup = _testLogic.getABTestGroup(test, vinfo, logEvent);
-            }
-            @Override public void handleSuccess () {
-                reportRequestProcessed(_testGroup);
-            }
-            protected Integer _testGroup;
-        });
+        listener.requestProcessed(0);
+        // _invoker.postUnit(new PersistingUnit("getABTestGroup", listener) {
+        //     @Override public void invokePersistent () throws Exception {
+        //         _testGroup = _testLogic.getABTestGroup(test, vinfo, logEvent);
+        //     }
+        //     @Override public void handleSuccess () {
+        //         reportRequestProcessed(_testGroup);
+        //     }
+        //     protected Integer _testGroup;
+        // });
     }
 
     // from interface MemberProvider
     public void trackTestAction (ClientObject caller, final String test, final String action)
     {
-        final MemberObject memObj = _locator.requireMember(caller);
-        final VisitorInfo vinfo = memObj.visitorInfo;
-        _invoker.postUnit(new WriteOnlyUnit("trackTestAction") {
-            @Override public void invokePersist () throws Exception {
-                _testLogic.trackTestAction(test, action, vinfo);
-            }
-        });
+        // final MemberObject memObj = _locator.requireMember(caller);
+        // final VisitorInfo vinfo = memObj.visitorInfo;
+        // _invoker.postUnit(new WriteOnlyUnit("trackTestAction") {
+        //     @Override public void invokePersist () throws Exception {
+        //         _testLogic.trackTestAction(test, action, vinfo);
+        //     }
+        // });
     }
 
     // from interface MemberProvider
@@ -213,7 +214,7 @@ public class MsoyManager
                     new BuyOperation<Void>() {
                         public Void create (boolean magicFree, Currency currency, int amountPaid)
                             throws ServiceException
-						{
+      {
                             _moneyRepo.noteBroadcastPurchase(memberId, amountPaid, message);
                             return null;
                         }
@@ -250,7 +251,7 @@ public class MsoyManager
 
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected ABTestLogic _testLogic;
+    // @Inject protected ABTestLogic _testLogic;
     @Inject protected ChatProvider _chatprov;
     @Inject protected MailSender _mailer;
     @Inject protected MemberRepository _memberRepo;
