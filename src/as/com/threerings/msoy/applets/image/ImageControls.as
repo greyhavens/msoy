@@ -137,7 +137,7 @@ public class ImageControls
             var data :Object = result[mediaId];
             try {
                 ExternalInterface.call("setHash", mediaId, data.filename, data.hash, data.mimeType,
-                    data.constraint, data.expiration, data.signature, data.width, data.height);
+                    data.constraint, /*data.expiration, data.signature,*/ data.width, data.height);
             } catch (err :Error) {
                 log.warning("Error setting hash", err);
             }

@@ -432,7 +432,7 @@ public class RemixControls extends HBox
                 var mimeType :int = (forcedType == MediaMimeTypes.INVALID_MIME_TYPE) ?
                     data.mimeType : forcedType;
                 ExternalInterface.call("setHash", mediaId, "", data.hash, mimeType,
-                    data.constraint, data.expiration, data.signature, data.width, data.height);
+                    data.constraint, /*data.expiration, data.signature,*/ data.width, data.height);
             }
         }
     }
