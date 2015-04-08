@@ -205,34 +205,36 @@ public class MeServlet extends MsoyServiceServlet
         data.medals = Maps.newHashMap();
         data.officialGroups = Lists.newArrayList();
         Map<Integer, Award> medals = Maps.newHashMap();
-        for (EarnedMedalRecord earnedMedalRec : _medalRepo.loadEarnedMedals(memberId)) {
-            Award medal = new Award();
-            medal.awardId = earnedMedalRec.medalId;
-            medal.whenEarned = earnedMedalRec.whenEarned.getTime();
-            medals.put(earnedMedalRec.medalId, medal);
-        }
-        // flesh out the details from the MedalRecord
-        Map<Integer, List<Award>> groupMedals = Maps.newHashMap();
-        for (MedalRecord medalRec : _medalRepo.loadMedals(medals.keySet())) {
-            Award medal = medals.get(medalRec.medalId);
-            medal.name = medalRec.name;
-            medal.description = medalRec.description;
-            medal.icon = medalRec.createIconMedia();
+        // for (EarnedMedalRecord earnedMedalRec : _medalRepo.loadEarnedMedals(memberId)) {
+        //     Award medal = new Award();
+        //     medal.awardId = earnedMedalRec.medalId;
+        //     medal.whenEarned = earnedMedalRec.whenEarned.getTime();
+        //     medals.put(earnedMedalRec.medalId, medal);
+        // }
 
-            List<Award> medalList = groupMedals.get(medalRec.groupId);
-            if (medalList == null) {
-                groupMedals.put(medalRec.groupId, medalList = Lists.newArrayList());
-            }
-            medalList.add(medal);
-        }
-        // finally get the group names and the officialness of each group.
-        for (GroupRecord groupRec : _groupRepo.loadGroups(groupMedals.keySet())) {
-            GroupName groupName = groupRec.toGroupName();
-            data.medals.put(groupName, groupMedals.get(groupRec.groupId));
-            if (groupRec.official) {
-                data.officialGroups.add(groupName);
-            }
-        }
+        // flesh out the details from the MedalRecord
+        // Map<Integer, List<Award>> groupMedals = Maps.newHashMap();
+        // for (MedalRecord medalRec : _medalRepo.loadMedals(medals.keySet())) {
+        //     Award medal = medals.get(medalRec.medalId);
+        //     medal.name = medalRec.name;
+        //     medal.description = medalRec.description;
+        //     medal.icon = medalRec.createIconMedia();
+
+        //     List<Award> medalList = groupMedals.get(medalRec.groupId);
+        //     if (medalList == null) {
+        //         groupMedals.put(medalRec.groupId, medalList = Lists.newArrayList());
+        //     }
+        //     medalList.add(medal);
+        // }
+
+        // // finally get the group names and the officialness of each group.
+        // for (GroupRecord groupRec : _groupRepo.loadGroups(groupMedals.keySet())) {
+        //     GroupName groupName = groupRec.toGroupName();
+        //     data.medals.put(groupName, groupMedals.get(groupRec.groupId));
+        //     if (groupRec.official) {
+        //         data.officialGroups.add(groupName);
+        //     }
+        // }
 
         return data;
     }

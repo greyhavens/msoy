@@ -627,35 +627,36 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(GroupCodes.E_INVALID_GROUP);
         }
 
-        // we could do a Join to accomplish a similar result, but we need to make sure we return
-        // Medals that have not been earned by anybody yet, so we need to first grab the full set
-        // of available medals
-        List<MedalRecord> groupMedals = _medalRepo.loadGroupMedals(groupId);
-        Map<Integer, List<VizMemberName>> memberNameLists = Maps.newHashMap();
-        for (MedalRecord medalRec : groupMedals) {
-            GroupService.MedalOwners owners = new GroupService.MedalOwners();
-            owners.medal = medalRec.toMedal();
-            owners.owners = Lists.newArrayList();
-            result.medals.add(owners);
-            memberNameLists.put(medalRec.medalId, owners.owners);
-        }
-        List<EarnedMedalRecord> earnedMedals = _medalRepo.loadEarnedMedals(
-            Lists.transform(groupMedals, MedalRecord.TO_MEDAL_ID));
-        // go through a couple of transformations and a db query to get VizMemberNames for each
-        // member.
-        Set<Integer> memberIds = Sets.newHashSet(
-            Iterables.transform(earnedMedals, EarnedMedalRecord.TO_MEMBER_ID));
-        Map<Integer, VizMemberName> memberNames = Maps.newHashMap();
-        for (VizMemberName vizMemberName :
-                 toVizMemberNames(_memberRepo.loadMemberCards(memberIds))) {
-            memberNames.put(vizMemberName.getId(), vizMemberName);
-        }
-        // now that we have each member's VizMemberName, add them to the appropriate lists and ship
-        // the whole package off to the client.
-        for (EarnedMedalRecord earnedMedalRec : earnedMedals) {
-            List<VizMemberName> earnees = memberNameLists.get(earnedMedalRec.medalId);
-            earnees.add(memberNames.get(earnedMedalRec.memberId));
-        }
+        // // we could do a Join to accomplish a similar result, but we need to make sure we return
+        // // Medals that have not been earned by anybody yet, so we need to first grab the full set
+        // // of available medals
+        // List<MedalRecord> groupMedals = _medalRepo.loadGroupMedals(groupId);
+        // Map<Integer, List<VizMemberName>> memberNameLists = Maps.newHashMap();
+        // for (MedalRecord medalRec : groupMedals) {
+        //     GroupService.MedalOwners owners = new GroupService.MedalOwners();
+        //     owners.medal = medalRec.toMedal();
+        //     owners.owners = Lists.newArrayList();
+        //     result.medals.add(owners);
+        //     memberNameLists.put(medalRec.medalId, owners.owners);
+        // }
+        // List<EarnedMedalRecord> earnedMedals = _medalRepo.loadEarnedMedals(
+        //     Lists.transform(groupMedals, MedalRecord.TO_MEDAL_ID));
+        // // go through a couple of transformations and a db query to get VizMemberNames for each
+        // // member.
+        // Set<Integer> memberIds = Sets.newHashSet(
+        //     Iterables.transform(earnedMedals, EarnedMedalRecord.TO_MEMBER_ID));
+        // Map<Integer, VizMemberName> memberNames = Maps.newHashMap();
+        // for (VizMemberName vizMemberName :
+        //          toVizMemberNames(_memberRepo.loadMemberCards(memberIds))) {
+        //     memberNames.put(vizMemberName.getId(), vizMemberName);
+        // }
+        // // now that we have each member's VizMemberName, add them to the appropriate lists and ship
+        // // the whole package off to the client.
+        // for (EarnedMedalRecord earnedMedalRec : earnedMedals) {
+        //     List<VizMemberName> earnees = memberNameLists.get(earnedMedalRec.medalId);
+        //     earnees.add(memberNames.get(earnedMedalRec.memberId));
+        // }
+
         return result;
     }
 
