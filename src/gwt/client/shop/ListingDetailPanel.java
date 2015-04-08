@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -187,10 +188,14 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _details.add(new ItemBuyPanel(_listing, null));
 
         // display a comment interface below the listing details
-        CommentsPanel comments = new CommentsPanel(
-			CommentType.forItemType(_item.getType()), listing.catalogId, true);
-        comments.expand();
-        addTabBelow("Comments", comments, true);
+        final CommentsPanel comments = new CommentsPanel(
+            CommentType.forItemType(_item.getType()), listing.catalogId, true);
+        comments.addAttachHandler(new AttachEvent.Handler() {
+            public void onAttachOrDetach (AttachEvent event) {
+                if (!comments.isLoaded()) comments.expand();
+            }
+        });
+        addTabBelow("Comments", comments, false);
 
 //         // if this item supports sub-items, add a tab for those item types
 //         byte[] types = _item.getSalableSubTypes();

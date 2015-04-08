@@ -82,6 +82,10 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         }
     }
 
+    public boolean isLoaded () {
+        return !_loadingMessage.isAttached();
+    }
+
     protected void addControls ()
     {
         _post = new Button(_cmsgs.postComment(), new ClickHandler() {
