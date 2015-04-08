@@ -154,20 +154,20 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // load medal info
         result.medals = Lists.newArrayList();
-        Map<Integer, Award> medals = Maps.newHashMap();
-        for (EarnedMedalRecord earnedMedalRec :
-                _medalRepo.loadRecentEarnedMedals(memberId, ProfileResult.MAX_STAMPS)) {
-            Award medal = new Award();
-            medal.whenEarned = earnedMedalRec.whenEarned.getTime();
-            medals.put(earnedMedalRec.medalId, medal);
-            result.medals.add(medal);
-        }
-        for (MedalRecord medalRec : _medalRepo.loadMedals(medals.keySet())) {
-            Award medal = medals.get(medalRec.medalId);
-            medal.name = medalRec.name;
-            medal.description = medalRec.description;
-            medal.icon = medalRec.createIconMedia();
-        }
+        // Map<Integer, Award> medals = Maps.newHashMap();
+        // for (EarnedMedalRecord earnedMedalRec :
+        //         _medalRepo.loadRecentEarnedMedals(memberId, ProfileResult.MAX_STAMPS)) {
+        //     Award medal = new Award();
+        //     medal.whenEarned = earnedMedalRec.whenEarned.getTime();
+        //     medals.put(earnedMedalRec.medalId, medal);
+        //     result.medals.add(medal);
+        // }
+        // for (MedalRecord medalRec : _medalRepo.loadMedals(medals.keySet())) {
+        //     Award medal = medals.get(medalRec.medalId);
+        //     medal.name = medalRec.name;
+        //     medal.description = medalRec.description;
+        //     medal.icon = medalRec.createIconMedia();
+        // }
 
         // load gallery info
         result.galleries = _galleryLogic.loadGalleries(tgtrec.memberId);
