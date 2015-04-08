@@ -53,6 +53,7 @@ public class ForumMessageRecord extends PersistentRecord
     public int messageId;
 
     /** The id of the thread to which this message belongs. */
+    @Index(name="ixThreadId")
     public int threadId;
 
     /** The id of the message to which this message is a reply, or zero. */
