@@ -108,7 +108,14 @@
     <dependency>
       <groupId>com.threerings</groupId>
       <artifactId>pulse</artifactId>
-      <version>1.1</version>
+      <version>1.5-SNAPSHOT</version>
+      <!-- exclude Guice 3.0 as we're still on 2.0 -->
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.inject.extensions</groupId>
+          <artifactId>guice-multibindings</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
