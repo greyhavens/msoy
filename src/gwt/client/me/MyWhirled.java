@@ -64,9 +64,11 @@ public class MyWhirled extends FlowPanel
         }
         feedBox.add(titleBar);
 
-        StreamPanel stream = new StreamPanel(data.stream);
-        stream.expand();
-        feedBox.add(stream);
+        // StreamPanel stream = new StreamPanel(data.stream);
+        // stream.expand();
+        // feedBox.add(stream);
+        feedBox.add(MsoyUI.createLabel(
+            "The feed is currently disabled while we investigate performance issues.", null));
 
         // promo and news feed on the left, bits and friends on the right
         HorizontalPanel horiz = new HorizontalPanel();

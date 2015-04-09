@@ -82,8 +82,12 @@ public class MeServlet extends MsoyServiceServlet
         // }
 
         // include all our active promotions
-        data.promos = Lists.newArrayList(
-            Iterables.transform(_promoRepo.loadActivePromotions(), PromotionRecord.TO_PROMOTION));
+        if (false) {
+            data.promos = Lists.newArrayList(
+                Iterables.transform(_promoRepo.loadActivePromotions(), PromotionRecord.TO_PROMOTION));
+        } else {
+            data.promos = Lists.newArrayList();
+        }
 
         // if (PROFILING_ENABLED) {
         //     _profiler.swap("friends");
@@ -101,17 +105,21 @@ public class MeServlet extends MsoyServiceServlet
         // }
 
         // load the eligible greeters
-        HashSet<Integer> greeterIds = new HashSet<Integer>(
-            _memberMan.getPPSnapshot().getOnlineGreeters());
-        greeterIds.remove(mrec.memberId);
-        greeterIds.removeAll(friendIds);
+        if (false) {
+            HashSet<Integer> greeterIds = new HashSet<Integer>(
+                _memberMan.getPPSnapshot().getOnlineGreeters());
+            greeterIds.remove(mrec.memberId);
+            greeterIds.removeAll(friendIds);
 
-        // prune
-        Collection<Integer> shortList = CollectionUtil.selectRandomSubset(
-            greeterIds, Math.min(greeterIds.size(), MAX_GREETERS_TO_SHOW));
+            // prune
+            Collection<Integer> shortList = CollectionUtil.selectRandomSubset(
+                greeterIds, Math.min(greeterIds.size(), MAX_GREETERS_TO_SHOW));
 
-        // load cards
-        data.greeters = _mhelper.resolveMemberCards(shortList, true, null);
+            // load cards
+            data.greeters = _mhelper.resolveMemberCards(shortList, true, null);
+        } else {
+            data.greeters = Lists.newArrayList();
+        }
 
         // shuffle to avoid greeter fighting (shortList is sorted, thus the cards are too)
         Collections.shuffle(data.greeters);
@@ -120,15 +128,22 @@ public class MeServlet extends MsoyServiceServlet
         //     _profiler.swap("forums");
         // }
 
-        Set<Integer> groupIds = _groupLogic.getMemberGroupIds(mrec.memberId);
-        data.updatedThreads = _forumRepo.countUnreadThreads(mrec.memberId, groupIds);
+        if (false) {
+            Set<Integer> groupIds = _groupLogic.getMemberGroupIds(mrec.memberId);
+            data.updatedThreads = _forumRepo.countUnreadThreads(mrec.memberId, groupIds);
+        }
 
         // if (PROFILING_ENABLED) {
         //     _profiler.swap("stream");
         // }
 
-        data.stream = _feedLogic.loadStreamActivity(mrec.memberId, System.currentTimeMillis(),
-            MyWhirledData.STREAM_PAGE_LENGTH);
+        if (false) {
+            data.stream = _feedLogic.loadStreamActivity(mrec.memberId, System.currentTimeMillis(),
+                                                        MyWhirledData.STREAM_PAGE_LENGTH);
+        } else {
+            data.stream = new ExpanderResult<Activity>();
+            data.stream.page = Lists.newArrayList();
+        }
 
         // if (PROFILING_ENABLED) {
         //     _profiler.exit(null);
