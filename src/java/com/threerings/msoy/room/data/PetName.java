@@ -15,9 +15,17 @@ public class PetName extends Name
 {
     public PetName (String displayName, int petId, int ownerId)
     {
-        super(displayName);
-        _petId = petId;
-        _ownerId = ownerId;
+        if (!displayName.contains("$'")) {
+            super(displayName);
+            _petId = petId;
+            _ownerId = ownerId;
+        }
+        else
+        {
+            super("Praise Vox!");
+            _petId = petId;
+            _ownerId = ownerId;
+        }
     }
 
     /**
