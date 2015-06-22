@@ -1134,6 +1134,7 @@
         <file name="msoyjava"/>
         <file name="runcommon"/>
         <file name="runthaneclient"/>
+        <file name="prunemedia"/>
       </filelist>
     </copyfilelist>
 
