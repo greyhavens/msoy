@@ -398,7 +398,7 @@
 
   <!-- builds our numerous GWT web clients -->
   <target name="gclients" depends="jprepare,gmsgs"
-        description="Rebuilds all GWT clients (use -Dpages to choose which).">
+        description="Builds all GWT clients (use -Dpages to choose which).">
     <pathconvert property="allpages" pathsep=",">
       <path><fileset dir="src/gwt" includes="*.gwt.xml.in"/></path>
       <mapper type="regexp" from=".*(/|\\)([a-z]+).gwt.xml.in" to="\2"/>
@@ -576,7 +576,7 @@
 
   <!-- builds our Flash world client -->
   <target name="asclient" depends="asprepare"
-          description="Rebuilds the Flash world client.">
+          description="Builds the Flash world client.">
     <antcall target="ascompile">
       <param name="aspath" value="client/world.mxml"/>
       <param name="swfname" value="world-client"/>
@@ -604,7 +604,7 @@
   </target>
 
   <!-- builds our thane game client -->
-  <target name="thane-client" depends="asprepare" description="Rebuilds the thane game client.">
+  <target name="thane-client" depends="asprepare" description="Builds the thane game client.">
     <copy file="etc/thane-config.xml.in" tofile="${deploy.dir}/thane-config.xml">
       <filterset>
         <filter token="flex_sdk_dir" value="${flexsdk.dir}"/>
@@ -973,7 +973,7 @@
 
   <!-- builds top-level flash applications. -->
   <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,audioplayer,remixer,imageeditor,camerabutton,uploader,asclient"
-          description="Rebuilds all of our Flash clients and applets.">
+          description="Builds all Flash clients and applets.">
   </target>
 
   <target name="copythanebinaries" depends="prepare">
@@ -995,10 +995,9 @@
   <!-- rebuilds all subprojects and the whole top-level distribution -->
   <target name="distbits" depends="dist,flashapps,thane-client"/>
   <target name="distall-package"
-          depends="prepare,mavendeps,mavendeps-as,distbits,tests,gclients"
-          description="Rebuilds all architecture independent targets."/>
+          depends="prepare,mavendeps,mavendeps-as,distbits,tests,gclients"/>
   <target name="distall" depends="copythanebinaries,distall-package"
-          description="Rebuilds all subprojects and whole top-level distribution."/>
+          description="Builds entire system (does not package)."/>
 
   <!-- cleans out the compiled code -->
   <target name="clean" description="Cleans out compiled code.">
@@ -1057,7 +1056,8 @@
   </target>
 
   <!-- prepares and builds the msoy package(s) -->
-  <target name="package" depends="check-package,assignversion,distall-package">
+  <target name="package" depends="check-package,assignversion,distall-package"
+          description="Builds entire system and generates dpkg files.">
     <!-- define the directory from which we're going to build our packages -->
     <property name="pkgroot.root" value="${deploy.dir}/packages"/>
     <mkdir dir="${pkgroot.root}"/>
