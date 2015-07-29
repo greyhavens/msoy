@@ -338,15 +338,15 @@ public class SpamLogic
      */
     public void init ()
     {
-        // run nightly at 1am
-        _cronLogic.scheduleAt(1, "SpamLogic retention mailings", new Runnable() {
-            public void run () {
-                sendRetentionEmails();
-            }
-            public String toString () {
-                return "News feed emailer";
-            }
-        });
+        // // run nightly at 1am
+        // _cronLogic.scheduleAt(1, "SpamLogic retention mailings", new Runnable() {
+        //     public void run () {
+        //         sendRetentionEmails();
+        //     }
+        //     public String toString () {
+        //         return "News feed emailer";
+        //     }
+        // });
     }
 
     /**
