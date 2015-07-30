@@ -305,24 +305,24 @@ public class MemberServlet extends MsoyServiceServlet
     public void noteNewVisitor (VisitorInfo info, String page, boolean requested)
         throws ServiceException
     {
-        String vector = StringUtil.truncate("gpage." + page, 100);
+        // String vector = StringUtil.truncate("gpage." + page, 100);
 
-        if (requested) {
-            // if we requested this update from GWT, the visitor entry should already exist --
-            // it'll just have a useless page.default vector
-            CookieUtil.clearCookie(getThreadLocalResponse(), CookieNames.NEED_GWT_VECTOR);
-            if (_memberRepo.updateEntryVector(info.id, vector)) {
-                log.info("EntryVector updated", "info", info, "vector", vector);
-                return;
-            }
-            log.warning("Requested entry vector update without existing vector", "info", info,
-                "page", page);
-        }
-        // if the update was not requested by the server, GWT simply found itself without visitor
-        // information for reasons unknown and decided to make its own; insert it here
-        log.info("VisitorInfo created", "info", info, "reason", "noteNewVisitor", "page", page,
-            "addr", getThreadLocalRequest().getRemoteAddr());
-        _memberLogic.noteNewVisitor(info, true, vector, null, 0);
+        // if (requested) {
+        //     // if we requested this update from GWT, the visitor entry should already exist --
+        //     // it'll just have a useless page.default vector
+        //     CookieUtil.clearCookie(getThreadLocalResponse(), CookieNames.NEED_GWT_VECTOR);
+        //     if (_memberRepo.updateEntryVector(info.id, vector)) {
+        //         log.info("EntryVector updated", "info", info, "vector", vector);
+        //         return;
+        //     }
+        //     log.warning("Requested entry vector update without existing vector", "info", info,
+        //         "page", page);
+        // }
+        // // if the update was not requested by the server, GWT simply found itself without visitor
+        // // information for reasons unknown and decided to make its own; insert it here
+        // log.info("VisitorInfo created", "info", info, "reason", "noteNewVisitor", "page", page,
+        //     "addr", getThreadLocalRequest().getRemoteAddr());
+        // _memberLogic.noteNewVisitor(info, true, vector, null, 0);
     }
 
     // from WebMemberService
