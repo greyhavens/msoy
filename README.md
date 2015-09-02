@@ -12,9 +12,9 @@ expertise to clean it up and make it easy for normal humans to hack on and impro
 the time or money to do that, so you're stuck with what you see here. A complex, tempermental
 project that uses half a dozen major technologies to do hundreds of barely related things.
 
-If you're not **very** proficient in [Java], reasonably proficient in [ActionScript] and [Flex],
-familiar with [GWT] and [JDBC], and either [Postgres] or [MySQL], then you're going to have a long
-hard road in front of you.
+If you're not **very** proficient in [Java], [JDBC] and [servlets], reasonably proficient in
+[ActionScript] and [Flex], familiar with [GWT], and familiar with either [Postgres] or [MySQL],
+then you're going to have a long hard road in front of you.
 
 Good luck!
 
@@ -120,3 +120,4 @@ The Whirled code is released under the BSD License. See the [LICENSE] file for d
 [MySQL]: https://www.mysql.com/
 [Postgres]: http://www.postgresql.org/
 [Whirled]: http://whirled.com/
+[servlets]: http://www.oracle.com/technetwork/java/index-jsp-135475.html
