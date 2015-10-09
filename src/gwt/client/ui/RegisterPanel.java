@@ -95,6 +95,7 @@ public class RegisterPanel extends FlowPanel
         Widgets.setPlaceholderText(_birthdate, "DD");
         regi.setWidget(2, 1, brow);
         ButtonBase doCreate = MsoyUI.createButton(MsoyUI.SHORT_THIN, _cmsgs.regiRegGo(), null);
+        regi.setWidget(3, 0, Widgets.newHTML(_cmsgs.regiRegPP()));
         regi.setWidget(3, 1, doCreate);
         regi.getFlexCellFormatter().setHorizontalAlignment(3, 1, HasAlignment.ALIGN_RIGHT);
         add(regi);
