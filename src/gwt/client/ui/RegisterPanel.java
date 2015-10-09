@@ -20,7 +20,9 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.NumberTextBox;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.Widgets;
 import com.threerings.gwt.util.CookieUtil;
 import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.StringUtil;
@@ -82,10 +84,16 @@ public class RegisterPanel extends FlowPanel
         regi.setWidget(0, 1, _newemail);
         regi.setText(1, 0, _cmsgs.regiRegPass(), 1, "Right");
         regi.setWidget(1, 1, _newpass);
-        String ageTitle = _cmsgs.regiRegAge();
-        _birthday = new AgeDropdown();
-        regi.setText(2, 0, ageTitle, 1, "Right");
-        regi.setWidget(2, 1, _birthday);
+        // _birthday = new AgeDropdown();
+        regi.setText(2, 0, _cmsgs.regiRegBirth(), 1, "Right");
+        RowPanel brow = new RowPanel();
+        brow.add(_birthyear);
+        Widgets.setPlaceholderText(_birthyear, "YYYY");
+        brow.add(_birthmonth);
+        Widgets.setPlaceholderText(_birthmonth, "MM");
+        brow.add(_birthdate);
+        Widgets.setPlaceholderText(_birthdate, "DD");
+        regi.setWidget(2, 1, brow);
         ButtonBase doCreate = MsoyUI.createButton(MsoyUI.SHORT_THIN, _cmsgs.regiRegGo(), null);
         regi.setWidget(3, 1, doCreate);
         regi.getFlexCellFormatter().setHorizontalAlignment(3, 1, HasAlignment.ALIGN_RIGHT);
@@ -101,7 +109,7 @@ public class RegisterPanel extends FlowPanel
                 } else if (StringUtil.isBlank(_newpass.getText().trim())) {
                     MsoyUI.errorNear(_cmsgs.regiFillAll(), _newpass);
                 } else if (!isThirteen()) {
-                    CookieUtil.set("/", 9001, NOT_THIRTEEN_COOKIE, "1");
+                    CookieUtil.set("/", 1, NOT_THIRTEEN_COOKIE, "1");
                     blockKiddies();
                 } else if (!MemberMailUtil.isValidAddress(_newemail.getValue())) {
                     MsoyUI.errorNear(_smsgs.invalid_email(), _newemail);
@@ -210,12 +218,33 @@ public class RegisterPanel extends FlowPanel
 
     protected int[] getBirthday ()
     {
-        return ((AgeDropdown)_birthday).getDate();
+        return new int[] {
+            parseInt(_birthyear, "Invalid birth year."),
+            parseInt(_birthmonth, "Invalid birth month.")-1,
+            parseInt(_birthdate, "Invalid birth date.")
+        };
+    }
+
+    private int parseInt (NumberTextBox box, String errmsg) {
+        try {
+            return box.getNumber().intValue();
+        } catch (Throwable t) {
+            MsoyUI.errorNear(errmsg, box);
+            return 0;
+        }
     }
 
     protected boolean isThirteen ()
     {
-        return ((AgeDropdown)_birthday).getAge() >= 13;
+        int[] bdvec = getBirthday();
+        Date birthday = DateUtil.toDate(bdvec);
+        Date today = new Date();
+        DateUtil.zeroTime(today);
+        int todayYear = DateUtil.getYear(today);
+        int age = todayYear - DateUtil.getYear(birthday);
+        Date birthdayThisYear = DateUtil.toDate(new int[] { todayYear, bdvec[1], bdvec[2] });
+        if (birthdayThisYear.after(today)) { age--; }
+        return age >= 13;
     }
 
     protected void blockKiddies ()
@@ -242,39 +271,42 @@ public class RegisterPanel extends FlowPanel
         return null;
     }
 
-    /**
-     * Dropdown of ages which produces a date in the same format as the DateFields class.
-     */
-    protected static class AgeDropdown extends FlowPanel
-    {
-        public AgeDropdown () {
-            setStyleName("ageDropdown");
-            int minAge = 4;
-            for (int ii = 0; ii < 100; ii++) {
-                _agelist.addItem("" + (minAge + ii));
-            }
-            _agelist.setSelectedIndex(13-minAge); // Start with 13 selected
-            add(_agelist);
-        }
+    // /**
+    //  * Dropdown of ages which produces a date in the same format as the DateFields class.
+    //  */
+    // protected static class AgeDropdown extends FlowPanel
+    // {
+    //     public AgeDropdown () {
+    //         setStyleName("ageDropdown");
+    //         int minAge = 4;
+    //         for (int ii = 0; ii < 100; ii++) {
+    //             _agelist.addItem("" + (minAge + ii));
+    //         }
+    //         _agelist.setSelectedIndex(13-minAge); // Start with 13 selected
+    //         add(_agelist);
+    //     }
 
-        /**
-         * Return January 1st in the estimated year that the person was born. Subtract their age
-         * from the current year, minus one so we are rounding older rather than younger.
-         */
-        public int[] getDate () {
-            int currentYear = DateUtil.getYear(new Date());
-            int year = currentYear - getAge() - 1;
-            return new int[] { year, 0, 1 };
-        }
-        public int getAge () {
-            return Integer.parseInt(_agelist.getItemText(_agelist.getSelectedIndex()));
-        }
-        protected ListBox _agelist = new ListBox();
-    }
+    //     /**
+    //      * Return January 1st in the estimated year that the person was born. Subtract their age
+    //      * from the current year, minus one so we are rounding older rather than younger.
+    //      */
+    //     public int[] getDate () {
+    //         int currentYear = DateUtil.getYear(new Date());
+    //         int year = currentYear - getAge() - 1;
+    //         return new int[] { year, 0, 1 };
+    //     }
+    //     public int getAge () {
+    //         return Integer.parseInt(_agelist.getItemText(_agelist.getSelectedIndex()));
+    //     }
+    //     protected ListBox _agelist = new ListBox();
+    // }
 
     protected TextBox _newemail = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
     protected PasswordTextBox _newpass = new PasswordTextBox();
-    protected Widget _birthday;
+    protected NumberTextBox _birthdate = NumberTextBox.newIntBox(2);
+    protected NumberTextBox _birthmonth = NumberTextBox.newIntBox(2);
+    protected NumberTextBox _birthyear = NumberTextBox.newIntBox(4);
+    // protected Widget _birthday;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final ServerMessages _smsgs = GWT.create(ServerMessages.class);
@@ -285,5 +317,5 @@ public class RegisterPanel extends FlowPanel
         { "a.shizmoo", "http://server.cpmstar.com/action.aspx?advertiserid=275&gif=1" }
     };
 
-    protected static final String NOT_THIRTEEN_COOKIE = "NotThirteen";
+    protected static final String NOT_THIRTEEN_COOKIE = "areq";
 }
