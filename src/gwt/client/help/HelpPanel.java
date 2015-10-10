@@ -26,12 +26,12 @@ public class HelpPanel extends VerticalPanel
     {
         setStyleName("helpPanel");
 
-        // thanks and introduction
-        add(MsoyUI.createHTML(_msgs.helpIntro(), "helpIntro"));
+        // // thanks and introduction
+        // add(MsoyUI.createHTML(_msgs.helpIntro(), "helpIntro"));
 
-        // wiki info
-        add(new TongueBox(_msgs.helpWikiTitle(), _msgs.helpWiki(), true));
-        add(WidgetUtil.makeShim(10, 10));
+        // // wiki info
+        // add(new TongueBox(_msgs.helpWikiTitle(), _msgs.helpWiki(), true));
+        // add(WidgetUtil.makeShim(10, 10));
 
         // asking questions
         SmartTable questions = new SmartTable(0, 0);
