@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.ui.Widgets;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MemberMailUtil;
@@ -118,6 +119,8 @@ public class StatusPanel extends SmartTable
             links.add(MsoyUI.createActionLabel(_cmsgs.statusLogon(),
                                                Link.createHandler(Pages.ACCOUNT, "logon")));
         } else {
+            links.add(Widgets.newHTML("<a href=\"/privacy.html\" target=\"_blank\">Privacy</a>"));
+            links.add(MsoyUI.createLabel("|", "Spacer"));
             links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     CShell.frame.logoff();
