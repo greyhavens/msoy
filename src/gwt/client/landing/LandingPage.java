@@ -25,11 +25,6 @@ import client.util.events.ThemeChangeEvent;
  */
 public class LandingPage extends Page
 {
-    public static final String CREATORS = "creators";
-    public static final String DEVIANT_CONTEST_WINNERS = "dawinners";
-    public static final String GAME_CONTEST = "gamecontest";
-    public static final String DESIGN_CONTEST = "designcontest";
-    public static final String DEVELOPER_INTRO = "devintro";
     public static final String OLD_BLUE_LANDING = "bluelanding";
     public static final String PLAY_BLUE_LANDING = "playbluelanding";
     public static final String NEW_MONSTER_LANDING = "monsterlanding";
@@ -42,24 +37,8 @@ public class LandingPage extends Page
     {
         String action = args.get(0, "");
 
-        // creators panel won our creators a/b test
-        if (action.equals(CREATORS)) {
-            setContent(_msgs.titleCreators(), new CreatorsPanel());
-
-        // landing page for flash game developer contest
-        } else if (action.equals(GAME_CONTEST)) {
-            setContent(_msgs.titleGameContest(), new GameContestPanel());
-
-        // landing page for design your whirled contest
-        } else if (action.equals(DESIGN_CONTEST)) {
-            setContent(_msgs.titleDesignContest(), new DesignContestPanel());
-
-        // landing page with an introduction to Whirled for developers
-        } else if (action.equals(DEVELOPER_INTRO)) {
-            setContent(_msgs.titleLanding(), new DeveloperIntroPanel());
-
         // landing page with an introduction to Whirled for players (register-focused blue)
-        } else if (action.equals(OLD_BLUE_LANDING)) {
+        if (action.equals(OLD_BLUE_LANDING)) {
             setContent(_msgs.titleLanding(), NoNavPanel.makeBlue(new LandingPanel(false)));
 
         // landing page with an introduction to Whirled for players (play-as-guest-focused blue)

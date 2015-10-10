@@ -1,6 +1,6 @@
 <?php
 #
-# Copyright (C) 2009 Three Rings, Inc.
+# Copyright (C) 2009 Grey Havens, Inc.
 # All Rights Reserved.
 #
 # Requires $wgOOOAuthServerURL to be set to http://www.whirled.com/ooo (or corollary)

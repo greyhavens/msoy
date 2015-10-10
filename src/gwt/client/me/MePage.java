@@ -18,9 +18,7 @@ import client.util.NaviUtil;
 public class MePage extends Page
 {
     public static final String TRANSACTIONS = "transactions";
-    public static final String DEVIANT_CONTEST = "dacontesti";
     public static final String CONTESTS = "contests";
-    public static final String CONTEST_HALLOWEEN = "contestoct";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -48,12 +46,6 @@ public class MePage extends Page
 
         } else if (action.equals(CONTESTS)) {
             setContent(_msgs.titleContests(), new ContestsPanel());
-
-        } else if (action.equals(DEVIANT_CONTEST)) {
-            Link.go(Pages.LANDING, "dawinners");
-
-        } else if (action.equals(CONTEST_HALLOWEEN)) {
-            setContent(_msgs.titleDesignYourWhirled(), new ContestOctPanel());
 
         } else if (action.equals("survey")) {
             setContent(_msgs.titleSurvey(), new TakeSurveyPanel(args.get(1, 0)));
