@@ -2117,14 +2117,14 @@ public class RoomManager extends SpotSceneManager
     protected void sendPostcardMail (MemberObject sender, String[] recips, String subject,
                                      String caption, String snapURL)
     {
-        String memmail = sender.username.toString();
-        for (String recip : recips) {
-            _mailer.sendTemplateEmail(
-                MailSender.By.HUMAN, recip, memmail, "postcard", "sender", sender.memberName,
-                "sender_email", memmail, "sender_id", sender.getMemberId(), "subject", subject,
-                "caption", caption, "snap_url", snapURL, "title", getScene().getName(),
-                "scene_id", getScene().getId(), "server_url", DeploymentConfig.serverURL);
-        }
+        // String memmail = sender.username.toString();
+        // for (String recip : recips) {
+        //     _mailer.sendTemplateEmail(
+        //         MailSender.By.HUMAN, recip, memmail, "postcard", "sender", sender.memberName,
+        //         "sender_email", memmail, "sender_id", sender.getMemberId(), "subject", subject,
+        //         "caption", caption, "snap_url", snapURL, "title", getScene().getName(),
+        //         "scene_id", getScene().getId(), "server_url", DeploymentConfig.serverURL);
+        // }
     }
 
     /**

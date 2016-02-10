@@ -92,12 +92,12 @@ public class MsoyManager
         final String template = isGame ? "shareGameInvite" : "shareRoomInvite";
         // username is their authentication username which is their email address
         final String from = memObj.username.toString();
-        for (final String recip : emails) {
-            // this just passes the buck to an executor, so we can call it from the dobj thread
-            _mailer.sendTemplateEmail(
-                MailSender.By.HUMAN, recip, from, template, "inviter", memObj.memberName,
-                "name", placeName, "message", message, "link", url);
-        }
+        // for (final String recip : emails) {
+        //     // this just passes the buck to an executor, so we can call it from the dobj thread
+        //     _mailer.sendTemplateEmail(
+        //         MailSender.By.HUMAN, recip, from, template, "inviter", memObj.memberName,
+        //         "name", placeName, "message", message, "link", url);
+        // }
         cl.requestProcessed();
     }
 

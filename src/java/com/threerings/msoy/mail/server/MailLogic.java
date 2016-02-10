@@ -381,16 +381,16 @@ public class MailLogic
     protected void sendMailEmail (MemberRecord sender, MemberRecord recip,
                                   String subject, String body)
     {
-        // if they don't want to hear about it or are spanked or have not validated, stop now
-        if (recip.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL) ||
-            recip.isSet(MemberRecord.Flag.SPANKED) ||
-            !recip.isSet(MemberRecord.Flag.VALIDATED)) {
-            return;
-        }
-        _mailer.sendTemplateEmail(
-            MailSender.By.HUMAN, recip.accountName, ServerConfig.getFromAddress(), "gotMail",
-            "subject", subject,"sender", sender.name, "senderId", sender.memberId,
-            "body", body, "server_url", ServerConfig.getServerURL());
+        // // if they don't want to hear about it or are spanked or have not validated, stop now
+        // if (recip.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL) ||
+        //     recip.isSet(MemberRecord.Flag.SPANKED) ||
+        //     !recip.isSet(MemberRecord.Flag.VALIDATED)) {
+        //     return;
+        // }
+        // _mailer.sendTemplateEmail(
+        //     MailSender.By.HUMAN, recip.accountName, ServerConfig.getFromAddress(), "gotMail",
+        //     "subject", subject,"sender", sender.name, "senderId", sender.memberId,
+        //     "body", body, "server_url", ServerConfig.getServerURL());
     }
 
     @Inject protected @MainInvoker Invoker _invoker;
