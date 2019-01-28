@@ -127,11 +127,6 @@
 
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
-      <!-- this is needed for orth and underwire, which unfortunately were never publicly released,
-           but we can't just ship public releases seven years later and hope that they're not
-           wildly functionally different from what we originally used -->
-      <remoteRepository url="http://build.earth.threerings.net/maven-repository" id="ooo"/>
-
       <dependency groupId="com.google.gwt" artifactId="gwt-user" version="${gwt.version}"/>
 <!--
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
@@ -163,7 +158,7 @@
   <target name="mavendeps-as">
     <!-- these libraries we need for building actionscript -->
     <artifact:dependencies filesetId="aslib.fileset">
-      <remoteRepository id="ooo-public" url="http://ooo-maven.googlecode.com/hg/repository"/>
+      <remoteRepository id="ooo-public" url="https://raw.githubusercontent.com/threerings/maven-repo/master/repository"/>
       <dependency groupId="org.osflash" artifactId="signals"
                   version="0.8.1-ooo" type="swc"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib"
