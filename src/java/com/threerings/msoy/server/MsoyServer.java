@@ -46,6 +46,7 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
 
 import com.threerings.bureau.server.BureauRegistry;
+import com.threerings.cron.server.CronLogic;
 
 import com.threerings.parlor.game.data.UserIdentifier;
 import com.threerings.parlor.server.ParlorManager;
@@ -85,6 +86,7 @@ import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.PetManager;
 import com.threerings.msoy.room.server.SceneLogic;
 import com.threerings.msoy.server.MsoyClientManager;
+import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.spam.server.SpamLogic;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.WorldManager;
@@ -133,6 +135,15 @@ public class MsoyServer extends MsoyBaseServer
             bind(AuthenticationDomain.class).to(OOOAuthenticationDomain.class);
             // Messaging dependencies
             bind(MessageConnection.class).toInstance(createAMQPConnection());
+            // cron logic dependencies
+            bind(CronLogic.class).to(MsoyCronLogic.class);
+        }
+    }
+
+    @Singleton
+    public static class MsoyCronLogic extends CronLogic {
+        @Inject public MsoyCronLogic (Lifecycle cycle, @BatchInvoker Invoker invoker) {
+            super(cycle, invoker);
         }
     }
 
